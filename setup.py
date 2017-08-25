@@ -32,6 +32,9 @@ with open(
 ) as f:
     source = f.read()
 
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
+
 
 # noinspection PyUnresolvedReferences
 def get_simple_vars_from_src(src):
@@ -93,4 +96,5 @@ setuptools.setup(
             'asyncio>=3.4',
         ],
     },
+    install_requires=required,
 )

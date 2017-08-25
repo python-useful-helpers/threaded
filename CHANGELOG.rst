@@ -2,6 +2,11 @@ CHANGELOG
 =========
 Version 0.1.2
 -------------
+Use requirements.txt.
+Prepare for travis.
+
+Version 0.1.2
+-------------
 Dropped out never worked ProcessPooled: not picklable.
 Added unit tests
 

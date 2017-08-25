@@ -1,0 +1,2 @@
+six
+typing >= 3.6
