@@ -30,7 +30,6 @@ from . import _base_pooled
 
 __all__ = (
     'ThreadPooled',
-    'ProcessPooled',
     'AsyncIOTask'
 )
 
@@ -47,22 +46,21 @@ def _get_loop(
     return self.loop_getter
 
 
-def await_if_required(
-    target: typing.Callable,
-    *args, **kwargs
-):
+def await_if_required(target: typing.Callable):
     """Await result if coroutine was returned."""
-    result = target(*args, **kwargs)
-    if asyncio.iscoroutine(result):
-        loop = asyncio.new_event_loop()
-        return loop.run_until_complete(result)
-    return result
+    @functools.wraps(target)
+    def wrapper(*args, **kwargs):
+        """Decorator/wrapper."""
+        result = target(*args, **kwargs)
+        if asyncio.iscoroutine(result):
+            loop = asyncio.new_event_loop()
+            return loop.run_until_complete(result)
+        return result
+    return wrapper
 
 
-# pylint: disable=abstract-method
-# noinspection PyAbstractClass
-class _Py3Pooled(_base_pooled.BasePooled):
-    """Python 3 specific base class."""
+class ThreadPooled(_base_pooled.BasePooled):
+    """ThreadPoolExecutor wrapped."""
 
     __slots__ = (
         '__loop_getter',
@@ -85,13 +83,13 @@ class _Py3Pooled(_base_pooled.BasePooled):
         :param loop_getter: Method to get event loop, if wrap in asyncio task
         :param loop_getter_need_context: Loop getter requires function context
         """
-        super(_Py3Pooled, self).__init__(func=func)
+        super(ThreadPooled, self).__init__(func=func)
         self.__loop_getter = loop_getter
         self.__loop_getter_need_context = loop_getter_need_context
 
     @property
     def loop_getter(
-            self
+        self
     ) -> typing.Union[
         None,
         typing.Callable[..., asyncio.AbstractEventLoop],
@@ -122,13 +120,11 @@ class _Py3Pooled(_base_pooled.BasePooled):
         :return: wrapped coroutine or function
         :rtype: typing.Callable
         """
-        prepared = functools.partial(
-            await_if_required, func
-        )
+        prepared = await_if_required(func)
 
         # pylint: disable=missing-docstring
         # noinspection PyMissingOrEmptyDocstring
-        @functools.wraps(func)
+        @functools.wraps(prepared)
         def wrapper(
             *args, **kwargs
         ) -> typing.Union[
@@ -164,108 +160,15 @@ class _Py3Pooled(_base_pooled.BasePooled):
                 self=self,
                 id=id(self)
             )
-        )
-
-# pylint: enable=abstract-method
-
-
-class ThreadPooled(_Py3Pooled):
-    """ThreadPoolExecutor wrapped."""
-
-    __slots__ = ()
-
-    __executor = None
-
-    @classmethod
-    def configure(
-        cls,
-        max_workers: typing.Optional[int]=None,
-    ):
-        """Pool executor create and configure.
-
-        :param max_workers: Maximum workers
-        """
-        if isinstance(cls.__executor, _base_pooled.ThreadPoolExecutor):
-            if cls.__executor.max_workers == max_workers:
-                return
-            cls.__executor.shutdown()
-
-        cls.__executor = _base_pooled.ThreadPoolExecutor(
-            max_workers=max_workers,
-        )
-
-    @classmethod
-    def shutdown(cls):
-        """Shutdown executor."""
-        if cls.__executor is not None:
-            cls.__executor.shutdown()
-
-    @property
-    def executor(self) -> _base_pooled.ThreadPoolExecutor:
-        """Executor."""
-        if not isinstance(
-            self.__executor,
-            _base_pooled.ThreadPoolExecutor
-        ):
-            self.configure()
-        return self.__executor
-
-
-class ProcessPooled(_Py3Pooled):
-    """ProcessPoolExecutor wrapped."""
-
-    __slots__ = ()
-
-    __executor = None
-
-    @classmethod
-    def configure(
-        cls,
-        max_workers: typing.Optional[int]=None,
-    ):
-        """Pool executor create and configure.
-
-        :param max_workers: Maximum workers
-        """
-        if isinstance(cls.__executor, _base_pooled.ProcessPoolExecutor):
-            if cls.__executor.max_workers == max_workers:
-                return
-            cls.__executor.shutdown()
-
-        cls.__executor = _base_pooled.ProcessPoolExecutor(
-            max_workers=max_workers,
-        )
-
-    @classmethod
-    def shutdown(cls):
-        """Shutdown executor."""
-        if cls.__executor is not None:
-            cls.__executor.shutdown()
-
-    @property
-    def executor(self) -> _base_pooled.ProcessPoolExecutor:
-        """Executor."""
-        if not isinstance(
-            self.__executor,
-            _base_pooled.ProcessPoolExecutor
-        ):
-            self.configure()
-        return self.__executor
+        )  # pragma: no cover
 
 
 class AsyncIOTask(typing.Callable):
     """Wrap to asyncio.Task."""
 
-    __slots__ = (
-        '__loop_getter',
-        '__loop_getter_need_context',
-        '__func',
-        '__wrapped__',
-    )
-
     def __init__(
         self,
-        func: typing.Optional[typing.Callable[..., typing.Awaitable]]=None,
+        func: typing.Optional[typing.Callable]=None,
         *,
         loop_getter: typing.Union[
             typing.Callable[..., asyncio.AbstractEventLoop],
@@ -282,7 +185,7 @@ class AsyncIOTask(typing.Callable):
         self.__func = func
         if self.__func is not None:
             functools.update_wrapper(self, self.__func)
-            if not six.PY34:
+            if not six.PY34:  # pragma: no cover
                 self.__wrapped__ = self.__func
         self.__loop_getter = loop_getter
         self.__loop_getter_need_context = loop_getter_need_context
@@ -304,7 +207,7 @@ class AsyncIOTask(typing.Callable):
 
     def _get_function_wrapper(
         self,
-        func: typing.Callable[..., typing.Awaitable]
+        func: typing.Callable
     ) -> typing.Callable[..., asyncio.Task]:
         """Here should be constructed and returned real decorator.
 
@@ -322,7 +225,6 @@ class AsyncIOTask(typing.Callable):
 
     def __call__(
         self,
-        func: typing.Callable[..., typing.Awaitable],
         *args, **kwargs
     ) -> typing.Union[asyncio.Task, typing.Callable[..., asyncio.Task]]:
         """Main decorator getter.
@@ -335,3 +237,18 @@ class AsyncIOTask(typing.Callable):
         if self.__func:
             return wrapper(*args, **kwargs)
         return wrapper
+
+    def __repr__(self):
+        """For debug purposes."""
+        return (
+            "<{cls}("
+            "{func!r}, "
+            "{self.loop_getter!r}, "
+            "{self.loop_getter_need_context!r}, "
+            ") at 0x{id:X}>".format(
+                cls=self.__class__.__name__,
+                func=self.__func,
+                self=self,
+                id=id(self)
+            )
+        )  # pragma: no cover

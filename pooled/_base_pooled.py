@@ -21,15 +21,23 @@ import abc
 # noinspection PyCompatibility
 import concurrent.futures
 import functools
-import os
 import typing
 
 import six
 
+if six.PY3:  # pragma: no cover
+    from os import cpu_count
+else:  # pragma: no cover
+    try:
+        from multiprocessing import cpu_count
+    except ImportError:
+        def cpu_count():
+            """Fake CPU count."""
+            return 1
+
 __all__ = (
     'BasePooled',
     'ThreadPoolExecutor',
-    'ProcessPoolExecutor',
 )
 
 
@@ -48,8 +56,9 @@ class BasePooled(
         '__wrapped__',
     )
 
+    __executor = None
+
     @classmethod
-    @abc.abstractmethod
     def configure(
         cls,
         max_workers=None,
@@ -59,19 +68,33 @@ class BasePooled(
         :param max_workers: Maximum workers
         :type max_workers: typing.Optional[int]
         """
-        raise NotImplementedError("configure is not implemented")
+        if isinstance(cls.__executor, ThreadPoolExecutor):
+            if cls.__executor.max_workers == max_workers:
+                return
+            cls.__executor.shutdown()
+
+        cls.__executor = ThreadPoolExecutor(
+            max_workers=max_workers,
+        )
 
     @classmethod
-    @abc.abstractmethod
     def shutdown(cls):
         """Shutdown executor."""
-        raise NotImplementedError("shutdown is not implemented")
+        if cls.__executor is not None:
+            cls.__executor.shutdown()
 
     @property
-    @abc.abstractmethod
     def executor(self):
-        """Executor instance."""
-        raise NotImplementedError("executor getter is not implemented")
+        """Executor instance.
+
+        :rtype: ThreadPoolExecutor
+        """
+        if (
+            not isinstance(self.__executor, ThreadPoolExecutor) or
+            self.__executor.is_shutdown
+        ):
+            self.configure()
+        return self.__executor
 
     def __init__(self, func=None):
         """Pooled decorator.
@@ -83,7 +106,7 @@ class BasePooled(
         self.__func = func
         if self.__func is not None:
             functools.update_wrapper(self, self.__func)
-            if not six.PY34:
+            if not six.PY34:  # pragma: no cover
                 self.__wrapped__ = self.__func
         # pylint: enable=assigning-non-slot
         # noinspection PyArgumentList
@@ -97,7 +120,7 @@ class BasePooled(
         :type func: typing.Callable
         :rtype: typing.Callable
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def __call__(self, *args, **kwargs):
         """Main decorator getter.
@@ -118,7 +141,7 @@ class BasePooled(
             cls=self.__class__.__name__,
             func=self.__func,
             id=id(self)
-        )
+        )  # pragma: no cover
 
 
 class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
@@ -129,7 +152,7 @@ class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
     def __init__(self, max_workers=None):
         """Override init due to difference between Python <3.5 and 3.5+."""
         if max_workers is None:  # Use 3.5+ behavior
-            max_workers = (os.cpu_count() or 1) * 5
+            max_workers = (cpu_count() or 1) * 5
         super(
             ThreadPoolExecutor,
             self
@@ -145,27 +168,10 @@ class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
         """
         return self._max_workers
 
-
-class ProcessPoolExecutor(concurrent.futures.ProcessPoolExecutor):
-    """Readers for protected attributes."""
-
-    __slots__ = ()
-
-    def __init__(self, max_workers=None):
-        """Override init due to difference between Python <3.5 and 3.5+."""
-        if max_workers is None:  # Use 3.5+ behavior
-            max_workers = (os.cpu_count() or 1) * 5
-        super(
-            ProcessPoolExecutor,
-            self
-        ).__init__(
-            max_workers=max_workers,
-        )
-
     @property
-    def max_workers(self):
-        """MaxWorkers.
+    def is_shutdown(self):
+        """Executor shutdown state.
 
-        :rtype: int
+        :rtype: bool
         """
-        return self._max_workers
+        return self._shutdown

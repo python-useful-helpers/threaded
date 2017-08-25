@@ -1,5 +1,10 @@
 CHANGELOG
 =========
+Version 0.1.2
+-------------
+Dropped out never worked ProcessPooled: not picklable.
+Added unit tests
+
 Version 0.1.1
 -------------
 Fixed and returned not argumented usage.
