@@ -34,5 +34,5 @@ __all__ = (
 if six.PY3:
     __all__ += ('AsyncIOTask', )
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __author__ = "Alexey Stepanov <penguinolog@gmail.com>"

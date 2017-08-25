@@ -24,6 +24,7 @@ import concurrent.futures
 import functools
 import typing
 
+import six
 
 from . import _base_pooled
 
@@ -32,6 +33,30 @@ __all__ = (
     'ProcessPooled',
     'AsyncIOTask'
 )
+
+
+def _get_loop(
+        self,
+        *args, **kwargs
+) -> typing.Optional[asyncio.AbstractEventLoop]:
+    """Get event loop in decorator class."""
+    if callable(self.loop_getter):
+        if self.loop_getter_need_context:
+            return self.loop_getter(*args, **kwargs)
+        return self.loop_getter()
+    return self.loop_getter
+
+
+def await_if_required(
+    target: typing.Callable,
+    *args, **kwargs
+):
+    """Await result if coroutine was returned."""
+    result = target(*args, **kwargs)
+    if asyncio.iscoroutine(result):
+        loop = asyncio.new_event_loop()
+        return loop.run_until_complete(result)
+    return result
 
 
 # pylint: disable=abstract-method
@@ -46,6 +71,7 @@ class _Py3Pooled(_base_pooled.BasePooled):
 
     def __init__(
         self,
+        func: typing.Optional[typing.Callable]=None,
         *,
         loop_getter: typing.Union[
             None,
@@ -59,7 +85,7 @@ class _Py3Pooled(_base_pooled.BasePooled):
         :param loop_getter: Method to get event loop, if wrap in asyncio task
         :param loop_getter_need_context: Loop getter requires function context
         """
-        super(_Py3Pooled, self).__init__()
+        super(_Py3Pooled, self).__init__(func=func)
         self.__loop_getter = loop_getter
         self.__loop_getter_need_context = loop_getter_need_context
 
@@ -73,6 +99,11 @@ class _Py3Pooled(_base_pooled.BasePooled):
     ]:
         """Loop getter."""
         return self.__loop_getter
+
+    @property
+    def loop_getter_need_context(self) -> bool:
+        """Loop getter need execution context."""
+        return self.__loop_getter_need_context
 
     def _get_function_wrapper(
         self,
@@ -91,23 +122,12 @@ class _Py3Pooled(_base_pooled.BasePooled):
         :return: wrapped coroutine or function
         :rtype: typing.Callable
         """
-        # pylint: disable=missing-docstring
-        # noinspection PyCompatibility,PyMissingOrEmptyDocstring
-        def await_if_required(
-            target: typing.Callable,
-            *args, **kwargs
-        ):
-            result = target(*args, **kwargs)
-            if asyncio.iscoroutine(result):
-                inner_loop = asyncio.get_event_loop()
-                return inner_loop.run_until_complete(result)
-            return result
-
         prepared = functools.partial(
             await_if_required, func
         )
 
-        # noinspection PyCompatibility,PyMissingOrEmptyDocstring
+        # pylint: disable=missing-docstring
+        # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(func)
         def wrapper(
             *args, **kwargs
@@ -115,13 +135,7 @@ class _Py3Pooled(_base_pooled.BasePooled):
             concurrent.futures.Future,
             asyncio.Task
         ]:
-            if callable(self.__loop_getter):
-                if self.__loop_getter_need_context:
-                    loop = self.__loop_getter(*args, **kwargs)
-                else:
-                    loop = self.__loop_getter()
-            else:
-                loop = self.__loop_getter
+            loop = _get_loop(self, *args, **kwargs)
 
             if loop is None:
                 return self.executor.submit(prepared, *args, **kwargs)
@@ -136,6 +150,21 @@ class _Py3Pooled(_base_pooled.BasePooled):
 
         # pylint: enable=missing-docstring
         return wrapper
+
+    def __repr__(self) -> str:
+        """For debug purposes."""
+        return (
+            "<{cls}("
+            "{func!r}, "
+            "{self.loop_getter!r}, "
+            "{self.loop_getter_need_context!r}, "
+            ") at 0x{id:X}>".format(
+                cls=self.__class__.__name__,
+                func=self.__func,
+                self=self,
+                id=id(self)
+            )
+        )
 
 # pylint: enable=abstract-method
 
@@ -172,11 +201,8 @@ class ThreadPooled(_Py3Pooled):
             cls.__executor.shutdown()
 
     @property
-    def executor(self):
-        """Executor.
-
-        :rtype: _base_pooled.ThreadPoolExecutor
-        """
+    def executor(self) -> _base_pooled.ThreadPoolExecutor:
+        """Executor."""
         if not isinstance(
             self.__executor,
             _base_pooled.ThreadPoolExecutor
@@ -217,11 +243,8 @@ class ProcessPooled(_Py3Pooled):
             cls.__executor.shutdown()
 
     @property
-    def executor(self):
-        """Executor.
-
-        :rtype: _base_pooled.ProcessPoolExecutor
-        """
+    def executor(self) -> _base_pooled.ProcessPoolExecutor:
+        """Executor."""
         if not isinstance(
             self.__executor,
             _base_pooled.ProcessPoolExecutor
@@ -235,11 +258,14 @@ class AsyncIOTask(typing.Callable):
 
     __slots__ = (
         '__loop_getter',
-        '__loop_getter_need_context'
+        '__loop_getter_need_context',
+        '__func',
+        '__wrapped__',
     )
 
     def __init__(
         self,
+        func: typing.Optional[typing.Callable[..., typing.Awaitable]]=None,
         *,
         loop_getter: typing.Union[
             typing.Callable[..., asyncio.AbstractEventLoop],
@@ -249,9 +275,15 @@ class AsyncIOTask(typing.Callable):
     ):
         """Wrap function in future and return.
 
+        :param func: Function to wrap
         :param loop_getter: Method to get event loop, if wrap in asyncio task
         :param loop_getter_need_context: Loop getter requires function context
         """
+        self.__func = func
+        if self.__func is not None:
+            functools.update_wrapper(self, self.__func)
+            if not six.PY34:
+                self.__wrapped__ = self.__func
         self.__loop_getter = loop_getter
         self.__loop_getter_need_context = loop_getter_need_context
 
@@ -265,6 +297,11 @@ class AsyncIOTask(typing.Callable):
         """Loop getter."""
         return self.__loop_getter
 
+    @property
+    def loop_getter_need_context(self) -> bool:
+        """Loop getter need execution context."""
+        return self.__loop_getter_need_context
+
     def _get_function_wrapper(
         self,
         func: typing.Callable[..., typing.Awaitable]
@@ -277,14 +314,7 @@ class AsyncIOTask(typing.Callable):
         # noinspection PyCompatibility,PyMissingOrEmptyDocstring
         @functools.wraps(func)
         def wrapper(*args, **kwargs) -> asyncio.Task:
-            if callable(self.__loop_getter):
-                if self.__loop_getter_need_context:
-                    loop = self.__loop_getter(*args, **kwargs)
-                else:
-                    loop = self.__loop_getter()
-            else:
-                loop = self.__loop_getter
-
+            loop = _get_loop(self, *args, **kwargs)
             return loop.create_task(func(*args, **kwargs))
 
         # pylint: enable=missing-docstring
@@ -299,4 +329,9 @@ class AsyncIOTask(typing.Callable):
 
         :returns: Decorated function.
         """
-        return self._get_function_wrapper(func)
+        args = list(args)
+        wrapped = self.__func or args.pop(0)
+        wrapper = self._get_function_wrapper(wrapped)
+        if self.__func:
+            return wrapper(*args, **kwargs)
+        return wrapper

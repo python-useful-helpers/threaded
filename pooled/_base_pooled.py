@@ -20,10 +20,17 @@ from __future__ import unicode_literals
 import abc
 # noinspection PyCompatibility
 import concurrent.futures
+import functools
 import os
 import typing
 
 import six
+
+__all__ = (
+    'BasePooled',
+    'ThreadPoolExecutor',
+    'ProcessPoolExecutor',
+)
 
 
 class BasePooled(
@@ -31,12 +38,15 @@ class BasePooled(
         abc.ABCMeta,
         'BasePooled' if six.PY3 else b'BasePooled',
         (typing.Callable, ),
-        {'__slots__': ()}
+        {}
     )
 ):
     """Base pooled class."""
 
-    __slots__ = ()
+    __slots__ = (
+        '__func',
+        '__wrapped__',
+    )
 
     @classmethod
     @abc.abstractmethod
@@ -63,6 +73,22 @@ class BasePooled(
         """Executor instance."""
         raise NotImplementedError("executor getter is not implemented")
 
+    def __init__(self, func=None):
+        """Pooled decorator.
+
+        :param func: function to wrap
+        :type func: typing.Callable[]
+        """
+        # pylint: disable=assigning-non-slot
+        self.__func = func
+        if self.__func is not None:
+            functools.update_wrapper(self, self.__func)
+            if not six.PY34:
+                self.__wrapped__ = self.__func
+        # pylint: enable=assigning-non-slot
+        # noinspection PyArgumentList
+        super(BasePooled, self).__init__()
+
     @abc.abstractmethod
     def _get_function_wrapper(self, func):
         """Here should be constructed and returned real decorator.
@@ -73,13 +99,26 @@ class BasePooled(
         """
         raise NotImplementedError()
 
-    def __call__(self, func, *args, **kwargs):
+    def __call__(self, *args, **kwargs):
         """Main decorator getter.
 
         :returns: Decorated function. On python 3.3+ asyncio.Task is supported.
         :rtype: typing.Union[typing.Callable, concurrent.futures.Future]
         """
-        return self._get_function_wrapper(func)
+        args = list(args)
+        wrapped = self.__func or args.pop(0)
+        wrapper = self._get_function_wrapper(wrapped)
+        if self.__func:
+            return wrapper(*args, **kwargs)
+        return wrapper
+
+    def __repr__(self):
+        """For debug purposes."""
+        return "<{cls}({func!r}) at 0x{id:X}>".format(
+            cls=self.__class__.__name__,
+            func=self.__func,
+            id=id(self)
+        )
 
 
 class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
