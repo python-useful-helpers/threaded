@@ -1,7 +1,9 @@
 pooled
 ======
 
-.. image:: https://img.shields.io/github/license/penguinolog/logwrap.svg
+.. image:: https://travis-ci.org/penguinolog/pooled.svg?branch=master
+    :target: https://travis-ci.org/penguinolog/pooled
+.. image:: https://img.shields.io/github/license/penguinolog/pooled.svg
     :target: https://raw.githubusercontent.com/penguinolog/pooled/master/LICENSE
 
 pooled is a set of decorators, which wrap functions in concurrent.futures.ThreadPool and asyncio.Task in Python 3.
