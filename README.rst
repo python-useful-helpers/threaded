@@ -1,18 +1,18 @@
-pooled
+threaded
 ======
 
-.. image:: https://travis-ci.org/penguinolog/pooled.svg?branch=master
-    :target: https://travis-ci.org/penguinolog/pooled
-.. image:: https://img.shields.io/github/license/penguinolog/pooled.svg
-    :target: https://raw.githubusercontent.com/penguinolog/pooled/master/LICENSE
+.. image:: https://travis-ci.org/penguinolog/threaded.svg?branch=master
+    :target: https://travis-ci.org/penguinolog/threaded
+.. image:: https://img.shields.io/github/license/penguinolog/threaded.svg
+    :target: https://raw.githubusercontent.com/penguinolog/threaded/master/LICENSE
 
-pooled is a set of decorators, which wrap functions in concurrent.futures.ThreadPool and asyncio.Task in Python 3.
+threaded is a set of decorators, which wrap functions in concurrent.futures.ThreadPool and asyncio.Task in Python 3.
 Why? Because copy-paste of `loop.create_task` and `thread_pool.submit()` is boring,
 especially if target functions is used by this way only.
 
 Pros:
 * Free software: Apache license
-* Open Source: https://github.com/penguinolog/pooled
+* Open Source: https://github.com/penguinolog/threaded
 * Support multiple Python versions:
 
 ::
@@ -42,9 +42,9 @@ Python 2.7 usage from signature:
 
 .. code-block:: python
 
-    pooled.ThreadPooled.configure(max_workers=None)  # Not mandatory.
+    threaded.ThreadPooled.configure(max_workers=None)  # Not mandatory.
     # max_workers=None means (CPU_COUNT or 1) * 5, it's default value.
-    @pooled.ThreadPooled  # Arguments not accepted, so `()` is useless
+    @threaded.ThreadPooled  # Arguments not accepted, so `()` is useless
     def func():
         pass
 
@@ -54,8 +54,8 @@ Python 3.3+ usage from signature:
 
 .. code-block:: python
 
-    pooled.ThreadPooled.configure(max_workers=None)
-    @pooled.ThreadPooled(loop_getter=None, loop_getter_need_context=False)  # strictly keyword arguments. See details below.
+    threaded.ThreadPooled.configure(max_workers=None)
+    @threaded.ThreadPooled(loop_getter=None, loop_getter_need_context=False)  # strictly keyword arguments. See details below.
     # For standard concurrent.futures, arguments is useless and should be omitted (use like Python 2 version)
     def func():
         pass
@@ -67,8 +67,8 @@ Python 3.3+ usage with asyncio:
 .. code-block:: python3
 
     loop = asyncio.get_event_loop()
-    pooled.ThreadPooled.configure(max_workers=None)
-    @pooled.ThreadPooled(loop_getter=loop, loop_getter_need_context=False)  # provide loop directly -> loop_getter_need_context will be ignored
+    threaded.ThreadPooled.configure(max_workers=None)
+    @threaded.ThreadPooled(loop_getter=loop, loop_getter_need_context=False)  # provide loop directly -> loop_getter_need_context will be ignored
     def func():
         pass
 
@@ -79,8 +79,8 @@ Python 3.3+ usage with asyncio and loop extraction from call arguments:
 .. code-block:: python3
 
     loop_getter = lambda tgt_loop: tgt_loop
-    pooled.ThreadPooled.configure(max_workers=None)
-    @pooled.ThreadPooled(loop_getter=loop_getter, loop_getter_need_context=True)  # loop_getter_need_context is required
+    threaded.ThreadPooled.configure(max_workers=None)
+    @threaded.ThreadPooled(loop_getter=loop_getter, loop_getter_need_context=True)  # loop_getter_need_context is required
     def func(*args, **kwargs):
         pass
 
@@ -96,8 +96,8 @@ usage with asyncio:
 .. code-block:: python3
 
     loop = asyncio.get_event_loop()
-    pooled.ThreadPooled.configure(max_workers=None)
-    @pooled.ThreadPooled(loop_getter=loop, loop_getter_need_context=False)  # provide loop directly -> loop_getter_need_context will be ignored
+    threaded.ThreadPooled.configure(max_workers=None)
+    @threaded.ThreadPooled(loop_getter=loop, loop_getter_need_context=False)  # provide loop directly -> loop_getter_need_context will be ignored
     # By default asyncio.get_event_loop is used, so technically, with single asyncio loop, we can use without arguments.
     def func():
         pass
@@ -109,8 +109,8 @@ Usage with asyncio and loop extraction from call arguments:
 .. code-block:: python3
 
     loop_getter = lambda tgt_loop: tgt_loop
-    pooled.ThreadPooled.configure(max_workers=None)
-    @pooled.ThreadPooled(loop_getter=loop_getter, loop_getter_need_context=True)  # loop_getter_need_context is required
+    threaded.ThreadPooled.configure(max_workers=None)
+    @threaded.ThreadPooled(loop_getter=loop_getter, loop_getter_need_context=True)  # loop_getter_need_context is required
     def func(*args, **kwargs):
         pass
 

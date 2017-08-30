@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-"""Python 3 pooled implementation.
+"""Python 3 threaded implementation.
 
 Asyncio is supported
 """
@@ -26,7 +26,7 @@ import typing
 
 import six
 
-from . import _base_pooled
+from . import _base_threaded
 
 __all__ = (
     'ThreadPooled',
@@ -59,7 +59,7 @@ def await_if_required(target: typing.Callable):
     return wrapper
 
 
-class ThreadPooled(_base_pooled.BasePooled):
+class ThreadPooled(_base_threaded.BasePooled):
     """ThreadPoolExecutor wrapped."""
 
     __slots__ = (

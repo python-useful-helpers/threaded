@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-"""Python 2 pooled implementation.
+"""Python 2 threaded implementation.
 
 Uses backport of concurrent.futures.
 """
@@ -22,14 +22,14 @@ from __future__ import unicode_literals
 
 import six
 
-from . import _base_pooled
+from . import _base_threaded
 
 __all__ = (
     'ThreadPooled',
 )
 
 
-class ThreadPooled(_base_pooled.BasePooled):
+class ThreadPooled(_base_threaded.BasePooled):
     """ThreadPoolExecutor wrapped."""
 
     __slots__ = ()

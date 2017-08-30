@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-"""pooled module."""
+"""threaded module."""
 
 from __future__ import absolute_import
 
@@ -20,9 +20,9 @@ import six
 
 # pylint: disable=no-name-in-module
 if six.PY3:  # pragma: no cover
-    from ._pooled3 import ThreadPooled, AsyncIOTask
+    from ._threaded3 import ThreadPooled, AsyncIOTask
 else:  # pragma: no cover
-    from ._pooled2 import ThreadPooled
+    from ._threaded2 import ThreadPooled
 # pylint: enable=no-name-in-module
 
 
@@ -33,5 +33,5 @@ __all__ = (
 if six.PY3:  # pragma: no cover
     __all__ += ('AsyncIOTask', )
 
-__version__ = '0.1.3'
+__version__ = '0.2.0'
 __author__ = "Alexey Stepanov <penguinolog@gmail.com>"

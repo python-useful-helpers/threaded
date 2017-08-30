@@ -27,7 +27,7 @@ PY34 = sys.version_info[:2] > (3, 3)
 with open(
     os.path.join(
         os.path.dirname(__file__),
-        'pooled', '__init__.py'
+        'threaded', '__init__.py'
     )
 ) as f:
     source = f.read()
@@ -86,7 +86,7 @@ def get_simple_vars_from_src(src):
 variables = get_simple_vars_from_src(source)
 
 setuptools.setup(
-    name='pooled',
+    name='threaded',
     version=variables['__version__'],
     extras_require={
         ':python_version == "2.7"': [

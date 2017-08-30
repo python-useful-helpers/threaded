@@ -21,7 +21,7 @@ import unittest
 
 import six
 
-import pooled
+import threaded
 
 if six.PY3:
     from os import cpu_count
@@ -36,10 +36,10 @@ else:
 
 class TestThreadPooled(unittest.TestCase):
     def tearDown(self):
-        pooled.ThreadPooled.shutdown()
+        threaded.ThreadPooled.shutdown()
 
     def test_thread_pooled_default(self):
-        @pooled.ThreadPooled
+        @threaded.ThreadPooled
         def test():
             return threading.current_thread().name
 
@@ -47,7 +47,7 @@ class TestThreadPooled(unittest.TestCase):
         self.assertNotEqual(pooled_name, threading.current_thread().name)
 
     def test_thread_pooled_construct(self):
-        @pooled.ThreadPooled()
+        @threaded.ThreadPooled()
         def test():
             return threading.current_thread().name
 
@@ -55,7 +55,7 @@ class TestThreadPooled(unittest.TestCase):
         self.assertNotEqual(pooled_name, threading.current_thread().name)
 
     def test_thread_pooled_config(self):
-        thread_pooled = pooled.ThreadPooled()
+        thread_pooled = threaded.ThreadPooled()
 
         self.assertEqual(
             thread_pooled.executor.max_workers,
@@ -73,7 +73,7 @@ class TestThreadPooled(unittest.TestCase):
         self.assertEqual(thread_pooled.executor.max_workers, 2)
 
     def test_reconfigure(self):
-        thread_pooled = pooled.ThreadPooled()
+        thread_pooled = threaded.ThreadPooled()
         executor = thread_pooled.executor
         thread_pooled.configure(max_workers=executor.max_workers)
         self.assertIs(executor, thread_pooled.executor)

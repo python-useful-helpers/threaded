@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-"""Base class for pooled."""
+"""Base classes for ThreadPooled and Threaded."""
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
@@ -49,7 +49,7 @@ class BasePooled(
         {}
     )
 ):
-    """Base pooled class."""
+    """Base ThreadPooled class."""
 
     __slots__ = (
         '__func',

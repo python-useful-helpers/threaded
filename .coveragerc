@@ -1,5 +1,5 @@
 [run]
 source =
-    pooled
+    threaded
 omit =
     test/*
