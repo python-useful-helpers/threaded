@@ -1,6 +1,10 @@
 CHANGELOG
 =========
-Version 0.2.0
+Version 0.3.1
+-------------
+Fix Readme.
+
+Version 0.3.0
 -------------
 Old famous Threaded is come back.
 
