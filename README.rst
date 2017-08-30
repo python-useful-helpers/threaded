@@ -3,6 +3,12 @@ threaded
 
 .. image:: https://travis-ci.org/penguinolog/threaded.svg?branch=master
     :target: https://travis-ci.org/penguinolog/threaded
+.. image:: https://img.shields.io/pypi/v/threaded.svg
+    :target: https://pypi.python.org/pypi/threaded
+.. image:: https://img.shields.io/pypi/pyversions/threaded.svg
+    :target: https://pypi.python.org/pypi/threaded
+.. image:: https://img.shields.io/pypi/status/threaded.svg
+    :target: https://pypi.python.org/pypi/threaded
 .. image:: https://img.shields.io/github/license/penguinolog/threaded.svg
     :target: https://raw.githubusercontent.com/penguinolog/threaded/master/LICENSE
 
@@ -11,8 +17,11 @@ Why? Because copy-paste of `loop.create_task` and `thread_pool.submit()` is bori
 especially if target functions is used by this way only.
 
 Pros:
+
 * Free software: Apache license
 * Open Source: https://github.com/penguinolog/threaded
+* PyPI packaged: https://pypi.python.org/pypi/threaded
+* Tested: see bages on top
 * Support multiple Python versions:
 
 ::
@@ -147,7 +156,7 @@ Usage with asyncio and loop extraction from call arguments:
 
 Testing
 =======
-The main test mechanism for the package `logwrap` is using `tox`.
+The main test mechanism for the package `threaded` is using `tox`.
 Test environments available:
 
 ::
