@@ -22,6 +22,7 @@ import asyncio
 # noinspection PyCompatibility
 import concurrent.futures
 import functools
+import threading
 import typing
 
 import six
@@ -30,7 +31,8 @@ from . import _base_threaded
 
 __all__ = (
     'ThreadPooled',
-    'AsyncIOTask'
+    'Threaded',
+    'AsyncIOTask',
 )
 
 
@@ -46,7 +48,7 @@ def _get_loop(
     return self.loop_getter
 
 
-def await_if_required(target: typing.Callable):
+def await_if_required(target: typing.Callable) -> typing.Callable:
     """Await result if coroutine was returned."""
     @functools.wraps(target)
     def wrapper(*args, **kwargs):
@@ -54,7 +56,8 @@ def await_if_required(target: typing.Callable):
         result = target(*args, **kwargs)
         if asyncio.iscoroutine(result):
             loop = asyncio.new_event_loop()
-            return loop.run_until_complete(result)
+            result = loop.run_until_complete(result)
+            loop.close()
         return result
     return wrapper
 
@@ -116,9 +119,7 @@ class ThreadPooled(_base_threaded.BasePooled):
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
-        :type func: typing.Callable
         :return: wrapped coroutine or function
-        :rtype: typing.Callable
         """
         prepared = await_if_required(func)
 
@@ -161,6 +162,48 @@ class ThreadPooled(_base_threaded.BasePooled):
                 id=id(self)
             )
         )  # pragma: no cover
+
+
+class Threaded(_base_threaded.BaseThreaded):
+    """Threaded decorator."""
+
+    __slots__ = ()
+
+    def _get_function_wrapper(
+        self,
+        func: typing.Callable
+    ) -> typing.Callable[..., threading.Thread]:
+        """Here should be constructed and returned real decorator.
+
+        :param func: Wrapped function
+        :return: wrapped function
+        """
+        prepared = await_if_required(func)
+        name = self.name
+        if name is None:
+            name = 'Threaded: ' + getattr(
+                func,
+                '__name__',
+                str(hash(func))
+            )
+
+        # pylint: disable=missing-docstring
+        # noinspection PyMissingOrEmptyDocstring
+        @six.wraps(prepared)
+        def wrapper(*args, **kwargs) -> threading.Thread:
+            thread = threading.Thread(
+                target=prepared,
+                name=name,
+                args=args,
+                kwargs=kwargs,
+                daemon=self.daemon
+            )
+            if self.started:
+                thread.start()
+            return thread
+
+        # pylint: enable=missing-docstring
+        return wrapper
 
 
 class AsyncIOTask(typing.Callable):

@@ -20,18 +20,18 @@ import six
 
 # pylint: disable=no-name-in-module
 if six.PY3:  # pragma: no cover
-    from ._threaded3 import ThreadPooled, AsyncIOTask
+    from ._threaded3 import ThreadPooled, Threaded, AsyncIOTask
 else:  # pragma: no cover
-    from ._threaded2 import ThreadPooled
+    from ._threaded2 import ThreadPooled, Threaded
 # pylint: enable=no-name-in-module
 
 
 __all__ = (
-    'ThreadPooled',
+    'ThreadPooled', 'Threaded'
 )
 
 if six.PY3:  # pragma: no cover
     __all__ += ('AsyncIOTask', )
 
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 __author__ = "Alexey Stepanov <penguinolog@gmail.com>"

@@ -144,6 +144,123 @@ class BasePooled(
         )  # pragma: no cover
 
 
+class BaseThreaded(
+    type.__new__(
+        abc.ABCMeta,
+        'BaseThreaded' if six.PY3 else b'BaseThreaded',
+        (typing.Callable, ),
+        {}
+    )
+):
+    """Base Threaded class."""
+
+    __slots__ = (
+        '__func',
+        '__name',
+        '__daemon',
+        '__started',
+        '__wrapped__',
+    )
+
+    def __init__(
+        self,
+        name=None,
+        daemon=False,
+        started=False,
+    ):
+        """Threaded decorator.
+
+        :param name: New thread name.
+        :type name: typing.Callable
+        :param daemon: Daemonize thread.
+        :type daemon: bool
+        :param started: Return started thread
+        :type started: bool
+        """
+        # pylint: disable=assigning-non-slot
+        self.__daemon = daemon
+        self.__started = started
+        if callable(name):
+            self.__func = name
+            self.__name = 'Threaded: ' + getattr(
+                name,
+                '__name__',
+                str(hash(name))
+            )
+        else:
+            self.__func, self.__name = None, name
+
+        if self.__func is not None:
+            functools.update_wrapper(self, self.__func)
+            if not six.PY34:  # pragma: no cover
+                self.__wrapped__ = self.__func
+        # pylint: enable=assigning-non-slot
+        # noinspection PyArgumentList
+        super(BaseThreaded, self).__init__()
+
+    @property
+    def name(self):
+        """Thread name.
+
+        :rtype: typing.Optional[str]
+        """
+        return self.__name
+
+    @property
+    def daemon(self):
+        """Start thread as daemon.
+
+        :rtype: bool
+        """
+        return self.__daemon
+
+    @property
+    def started(self):
+        """Return started thread.
+
+        :rtype: bool
+        """
+        return self.__started
+
+    @abc.abstractmethod
+    def _get_function_wrapper(self, func):
+        """Here should be constructed and returned real decorator.
+
+        :param func: Wrapped function
+        :type func: typing.Callable
+        :rtype: typing.Callable
+        """
+        raise NotImplementedError()  # pragma: no cover
+
+    def __call__(self, *args, **kwargs):
+        """Main decorator getter.
+
+        :returns: Decorated function. On python 3.3+ asyncio.Task is supported.
+        :rtype: typing.Union[typing.Callable, concurrent.futures.Future]
+        """
+        args = list(args)
+        wrapped = self.__func or args.pop(0)
+        wrapper = self._get_function_wrapper(wrapped)
+        if self.__func:
+            return wrapper(*args, **kwargs)
+        return wrapper
+
+    def __repr__(self):
+        """For debug purposes."""
+        return (
+            "{cls}("
+            "{func!r}, "
+            "name={self.name!r}, "
+            "daemon={self.daemon!r}, "
+            "started={self.started!r}, "
+            ")".format(
+                cls=self.__class__.__name__,
+                func=self.__func,
+                self=self,
+            )
+        )  # pragma: no cover
+
+
 class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
     """Readers for protected attributes."""
 

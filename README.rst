@@ -1,5 +1,5 @@
 threaded
-======
+========
 
 .. image:: https://travis-ci.org/penguinolog/threaded.svg?branch=master
     :target: https://travis-ci.org/penguinolog/threaded
@@ -29,6 +29,8 @@ Decorators:
 
 * `ThreadPooled` - native concurrent.futures.ThreadPool usage on Python 3 and backport on Python 2.7.
 
+* `Threaded` - wrap in threading.Thread.
+
 * `AsyncIOTask` - wrap in asyncio.Task. Uses the same API, as Python 3 `ThreadPooled`.
 
 Usage
@@ -36,7 +38,9 @@ Usage
 
 ThreadPooled
 ------------
-Target decorator. API quite differs between Python 3 and Python 2.7.
+Mostly it is required decorator: submit function to ThreadPoolExecutor on call.
+
+.. note:: API quite differs between Python 3 and Python 2.7.
 
 Python 2.7 usage from signature:
 
@@ -86,6 +90,30 @@ Python 3.3+ usage with asyncio and loop extraction from call arguments:
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(asyncio.wait_for(func(loop), timeout))  # func() will return asyncio.Task bound with loop from argument.
+
+Threaded
+--------
+Classic threading.Thread. Useful for running until close and self-closing threads without return.
+
+Usage example with all arguments:
+
+.. code-block:: python
+
+    @threaded.Threaded(name=None, daemon=False, started=False)  # All defaults. Name will be used from wrapped function.
+    def func(*args, **kwargs):
+        pass
+
+    thread = func()
+    thread.start()
+    thread.join()
+
+If need to use wit all defaults, arguments may be completely omitted:
+
+.. code-block:: python
+
+    @threaded.Threaded
+    def func(*args, **kwargs):
+        pass
 
 AsyncIOTask
 -----------

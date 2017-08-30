@@ -20,12 +20,15 @@ Uses backport of concurrent.futures.
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import threading
+
 import six
 
 from . import _base_threaded
 
 __all__ = (
     'ThreadPooled',
+    'Threaded'
 )
 
 
@@ -40,12 +43,52 @@ class ThreadPooled(_base_threaded.BasePooled):
         :param func: Wrapped function
         :type func: typing.Callable
         :return: wrapped function
-        :rtype: typing.Callable
+        :rtype: typing.Callable[..., concurrent.futures.Future]
         """
         # pylint: disable=missing-docstring
         # noinspection PyMissingOrEmptyDocstring
         @six.wraps(func)
         def wrapper(*args, **kwargs):
             return self.executor.submit(func, *args, **kwargs)
+        # pylint: enable=missing-docstring
+        return wrapper
+
+
+class Threaded(_base_threaded.BaseThreaded):
+    """Threaded decorator."""
+
+    __slots__ = ()
+
+    def _get_function_wrapper(self, func):
+        """Here should be constructed and returned real decorator.
+
+        :param func: Wrapped function
+        :type func: typing.Callable
+        :return: wrapped function
+        :rtype: typing.Callable[..., threading.Thread]
+        """
+        name = self.name
+        if name is None:
+            name = 'Threaded: ' + getattr(
+                func,
+                '__name__',
+                str(hash(func))
+            )
+
+        # pylint: disable=missing-docstring
+        # noinspection PyMissingOrEmptyDocstring
+        @six.wraps(func)
+        def wrapper(*args, **kwargs):
+            thread = threading.Thread(
+                target=func,
+                name=name,
+                args=args,
+                kwargs=kwargs,
+            )
+            thread.daemon = self.daemon
+            if self.started:
+                thread.start()
+            return thread
+
         # pylint: enable=missing-docstring
         return wrapper

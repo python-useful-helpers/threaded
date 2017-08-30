@@ -2,6 +2,10 @@ CHANGELOG
 =========
 Version 0.2.0
 -------------
+Old famous Threaded is come back.
+
+Version 0.2.0
+-------------
 Renamed to threaded: more correct due to not process pool support.
 
 Version 0.1.2
