@@ -28,6 +28,7 @@ import typing
 import six
 
 from . import _base_threaded
+from . import _class_decorator
 
 __all__ = (
     'ThreadPooled',
@@ -153,11 +154,11 @@ class ThreadPooled(_base_threaded.BasePooled):
         return (
             "<{cls}("
             "{func!r}, "
-            "{self.loop_getter!r}, "
-            "{self.loop_getter_need_context!r}, "
+            "loop_getter={self.loop_getter!r}, "
+            "loop_getter_need_context={self.loop_getter_need_context!r}, "
             ") at 0x{id:X}>".format(
                 cls=self.__class__.__name__,
-                func=self.__func,
+                func=self.__wrapped__,
                 self=self,
                 id=id(self)
             )
@@ -206,8 +207,13 @@ class Threaded(_base_threaded.BaseThreaded):
         return wrapper
 
 
-class AsyncIOTask(typing.Callable):
+class AsyncIOTask(_class_decorator.BaseDecorator):
     """Wrap to asyncio.Task."""
+
+    __slots__ = (
+        '__loop_getter',
+        '__loop_getter_need_context',
+    )
 
     def __init__(
         self,
@@ -225,11 +231,7 @@ class AsyncIOTask(typing.Callable):
         :param loop_getter: Method to get event loop, if wrap in asyncio task
         :param loop_getter_need_context: Loop getter requires function context
         """
-        self.__func = func
-        if self.__func is not None:
-            functools.update_wrapper(self, self.__func)
-            if not six.PY34:  # pragma: no cover
-                self.__wrapped__ = self.__func
+        super(AsyncIOTask, self).__init__(func=func)
         self.__loop_getter = loop_getter
         self.__loop_getter_need_context = loop_getter_need_context
 
@@ -266,31 +268,16 @@ class AsyncIOTask(typing.Callable):
         # pylint: enable=missing-docstring
         return wrapper
 
-    def __call__(
-        self,
-        *args, **kwargs
-    ) -> typing.Union[asyncio.Task, typing.Callable[..., asyncio.Task]]:
-        """Main decorator getter.
-
-        :returns: Decorated function.
-        """
-        args = list(args)
-        wrapped = self.__func or args.pop(0)
-        wrapper = self._get_function_wrapper(wrapped)
-        if self.__func:
-            return wrapper(*args, **kwargs)
-        return wrapper
-
     def __repr__(self):
         """For debug purposes."""
         return (
             "<{cls}("
             "{func!r}, "
-            "{self.loop_getter!r}, "
-            "{self.loop_getter_need_context!r}, "
+            "loop_getter={self.loop_getter!r}, "
+            "loop_getter_need_context={self.loop_getter_need_context!r}, "
             ") at 0x{id:X}>".format(
                 cls=self.__class__.__name__,
-                func=self.__func,
+                func=self.__wrapped__,
                 self=self,
                 id=id(self)
             )

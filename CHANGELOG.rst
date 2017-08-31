@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+Version 0.3.2
+-------------
+Base class for decorator has been extracted.
+
 Version 0.3.1
 -------------
 Fix Readme.

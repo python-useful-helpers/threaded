@@ -15,15 +15,14 @@
 """Base classes for ThreadPooled and Threaded."""
 
 from __future__ import absolute_import
-from __future__ import unicode_literals
 
-import abc
 # noinspection PyCompatibility
 import concurrent.futures
-import functools
-import typing
+import threading
 
 import six
+
+from . import _class_decorator
 
 if six.PY3:  # pragma: no cover
     from os import cpu_count
@@ -41,20 +40,10 @@ __all__ = (
 )
 
 
-class BasePooled(
-    type.__new__(
-        abc.ABCMeta,
-        'BasePooled' if six.PY3 else b'BasePooled',
-        (typing.Callable, ),
-        {}
-    )
-):
+class BasePooled(_class_decorator.BaseDecorator):
     """Base ThreadPooled class."""
 
-    __slots__ = (
-        '__func',
-        '__wrapped__',
-    )
+    __slots__ = ()
 
     __executor = None
 
@@ -96,70 +85,30 @@ class BasePooled(
             self.configure()
         return self.__executor
 
-    def __init__(self, func=None):
-        """Pooled decorator.
-
-        :param func: function to wrap
-        :type func: typing.Callable[]
-        """
-        # pylint: disable=assigning-non-slot
-        self.__func = func
-        if self.__func is not None:
-            functools.update_wrapper(self, self.__func)
-            if not six.PY34:  # pragma: no cover
-                self.__wrapped__ = self.__func
-        # pylint: enable=assigning-non-slot
-        # noinspection PyArgumentList
-        super(BasePooled, self).__init__()
-
-    @abc.abstractmethod
     def _get_function_wrapper(self, func):
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
         :type func: typing.Callable
-        :rtype: typing.Callable
+        :return: wrapped function
+        :rtype: typing.Callable[..., concurrent.futures.Future]
         """
-        raise NotImplementedError()  # pragma: no cover
-
-    def __call__(self, *args, **kwargs):
-        """Main decorator getter.
-
-        :returns: Decorated function. On python 3.3+ asyncio.Task is supported.
-        :rtype: typing.Union[typing.Callable, concurrent.futures.Future]
-        """
-        args = list(args)
-        wrapped = self.__func or args.pop(0)
-        wrapper = self._get_function_wrapper(wrapped)
-        if self.__func:
-            return wrapper(*args, **kwargs)
+        # pylint: disable=missing-docstring
+        # noinspection PyMissingOrEmptyDocstring
+        @six.wraps(func)
+        def wrapper(*args, **kwargs):
+            return self.executor.submit(func, *args, **kwargs)
+        # pylint: enable=missing-docstring
         return wrapper
 
-    def __repr__(self):
-        """For debug purposes."""
-        return "<{cls}({func!r}) at 0x{id:X}>".format(
-            cls=self.__class__.__name__,
-            func=self.__func,
-            id=id(self)
-        )  # pragma: no cover
 
-
-class BaseThreaded(
-    type.__new__(
-        abc.ABCMeta,
-        'BaseThreaded' if six.PY3 else b'BaseThreaded',
-        (typing.Callable, ),
-        {}
-    )
-):
+class BaseThreaded(_class_decorator.BaseDecorator):
     """Base Threaded class."""
 
     __slots__ = (
-        '__func',
         '__name',
         '__daemon',
         '__started',
-        '__wrapped__',
     )
 
     def __init__(
@@ -181,22 +130,16 @@ class BaseThreaded(
         self.__daemon = daemon
         self.__started = started
         if callable(name):
-            self.__func = name
+            func = name
             self.__name = 'Threaded: ' + getattr(
                 name,
                 '__name__',
                 str(hash(name))
             )
         else:
-            self.__func, self.__name = None, name
-
-        if self.__func is not None:
-            functools.update_wrapper(self, self.__func)
-            if not six.PY34:  # pragma: no cover
-                self.__wrapped__ = self.__func
+            func, self.__name = None, name
+        super(BaseThreaded, self).__init__(func=func)
         # pylint: enable=assigning-non-slot
-        # noinspection PyArgumentList
-        super(BaseThreaded, self).__init__()
 
     @property
     def name(self):
@@ -222,40 +165,49 @@ class BaseThreaded(
         """
         return self.__started
 
-    @abc.abstractmethod
     def _get_function_wrapper(self, func):
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
         :type func: typing.Callable
-        :rtype: typing.Callable
+        :return: wrapped function
+        :rtype: typing.Callable[..., threading.Thread]
         """
-        raise NotImplementedError()  # pragma: no cover
+        name = self.name
+        if name is None:
+            name = 'Threaded: ' + getattr(
+                func,
+                '__name__',
+                str(hash(func))
+            )
 
-    def __call__(self, *args, **kwargs):
-        """Main decorator getter.
+        # pylint: disable=missing-docstring
+        # noinspection PyMissingOrEmptyDocstring
+        @six.wraps(func)
+        def wrapper(*args, **kwargs):
+            thread = threading.Thread(
+                target=func,
+                name=name,
+                args=args,
+                kwargs=kwargs,
+            )
+            thread.daemon = self.daemon
+            if self.started:
+                thread.start()
+            return thread
 
-        :returns: Decorated function. On python 3.3+ asyncio.Task is supported.
-        :rtype: typing.Union[typing.Callable, concurrent.futures.Future]
-        """
-        args = list(args)
-        wrapped = self.__func or args.pop(0)
-        wrapper = self._get_function_wrapper(wrapped)
-        if self.__func:
-            return wrapper(*args, **kwargs)
+        # pylint: enable=missing-docstring
         return wrapper
 
     def __repr__(self):
         """For debug purposes."""
         return (
             "{cls}("
-            "{func!r}, "
             "name={self.name!r}, "
             "daemon={self.daemon!r}, "
             "started={self.started!r}, "
             ")".format(
                 cls=self.__class__.__name__,
-                func=self.__func,
                 self=self,
             )
         )  # pragma: no cover
