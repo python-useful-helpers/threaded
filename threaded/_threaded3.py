@@ -158,7 +158,7 @@ class ThreadPooled(_base_threaded.BasePooled):
             "loop_getter_need_context={self.loop_getter_need_context!r}, "
             ") at 0x{id:X}>".format(
                 cls=self.__class__.__name__,
-                func=self.__wrapped__,
+                func=self._func,
                 self=self,
                 id=id(self)
             )
@@ -277,7 +277,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
             "loop_getter_need_context={self.loop_getter_need_context!r}, "
             ") at 0x{id:X}>".format(
                 cls=self.__class__.__name__,
-                func=self.__wrapped__,
+                func=self._func,
                 self=self,
                 id=id(self)
             )
