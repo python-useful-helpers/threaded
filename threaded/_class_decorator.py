@@ -58,6 +58,14 @@ class BaseDecorator(
         # noinspection PyArgumentList
         super(BaseDecorator, self).__init__()
 
+    @property
+    def _func(self):
+        """Get wrapped function.
+
+        :rtype: typing.Optional[typing.Callable]
+        """
+        return self.__func  # pragma: no cover
+
     @abc.abstractmethod
     def _get_function_wrapper(self, func):
         """Here should be constructed and returned real decorator.
