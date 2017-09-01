@@ -117,9 +117,11 @@ class BaseThreaded(_class_decorator.BaseDecorator):
         daemon=False,
         started=False,
     ):
-        """Threaded decorator.
+        """Run function in separate thread.
 
         :param name: New thread name.
+                     If callable: use as wrapped function.
+                     If none: use wrapped function name.
         :type name: typing.Union[None, str, typing.Callable]
         :param daemon: Daemonize thread.
         :type daemon: bool
@@ -214,13 +216,18 @@ class BaseThreaded(_class_decorator.BaseDecorator):
 
 
 class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
-    """Readers for protected attributes."""
+    """Provide readers for protected attributes.
+
+    Simply extend concurrent.futures.ThreadPoolExecutor.
+    """
 
     __slots__ = ()
 
     def __init__(self, max_workers=None):
         """Override init due to difference between Python <3.5 and 3.5+.
 
+        :param max_workers: Maximum workers allowed.
+                            If none: cpu_count() or 1) * 5
         :type max_workers: typing.Optional[int]
         """
         if max_workers is None:  # Use 3.5+ behavior

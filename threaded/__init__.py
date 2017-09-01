@@ -49,5 +49,5 @@ if six.PY3:  # pragma: no cover
         'asynciotask'
     )
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 __author__ = "Alexey Stepanov <penguinolog@gmail.com>"

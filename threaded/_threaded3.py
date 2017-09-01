@@ -67,7 +67,7 @@ def await_if_required(target: typing.Callable) -> typing.Callable:
 
 
 class ThreadPooled(_base_threaded.BasePooled):
-    """ThreadPoolExecutor wrapped."""
+    """Post function to ThreadPoolExecutor."""
 
     __slots__ = (
         '__loop_getter',
@@ -195,7 +195,7 @@ class ThreadPooled(_base_threaded.BasePooled):
 
 
 class Threaded(_base_threaded.BaseThreaded):
-    """Threaded decorator."""
+    """Run function in separate thread."""
 
     __slots__ = ()
 
@@ -343,7 +343,7 @@ def threadpooled(
     ]=None,
     loop_getter_need_context: bool = False
 ) -> ThreadPooled:
-    """ThreadPoolExecutor wrapped decorator.
+    """Post function to ThreadPoolExecutor.
 
     :param func: function to wrap
     :type func: typing.Optional[typing.Callable]
@@ -369,9 +369,11 @@ def threaded(
     daemon: bool = False,
     started: bool = False
 ) -> Threaded:
-    """threaded decorator.
+    """Run function in separate thread.
 
     :param name: New thread name.
+                 If callable: use as wrapped function.
+                 If none: use wrapped function name.
     :type name: typing.Union[None, str, typing.Callable]
     :param daemon: Daemonize thread.
     :type daemon: bool

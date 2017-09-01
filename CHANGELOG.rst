@@ -1,5 +1,11 @@
 CHANGELOG
 =========
+Version 0.4.1
+-------------
+Initial documentation.
+Fix readme.
+Update setup.py from doctedsted get_simple_vars_from_src.
+
 Version 0.4.0
 -------------
 Class decorator updated to the last version

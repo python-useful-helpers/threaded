@@ -30,20 +30,20 @@ __all__ = (
 
 
 class ThreadPooled(_base_threaded.BasePooled):
-    """ThreadPoolExecutor wrapped decorator."""
+    """Post function to ThreadPoolExecutor."""
 
     __slots__ = ()
 
 
 class Threaded(_base_threaded.BaseThreaded):
-    """Threaded decorator."""
+    """Run function in separate thread."""
 
     __slots__ = ()
 
 
 # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
 def threadpooled(func=None):
-    """ThreadPoolExecutor wrapped decorator.
+    """Post function to ThreadPoolExecutor.
 
     :param func: function to wrap
     :type func: typing.Optional[typing.Callable]
@@ -57,9 +57,11 @@ def threaded(
     daemon=False,
     started=False
 ):
-    """threaded decorator.
+    """Run function in separate thread.
 
     :param name: New thread name.
+                 If callable: use as wrapped function.
+                 If none: use wrapped function name.
     :type name: typing.Union[None, str, typing.Callable]
     :param daemon: Daemonize thread.
     :type daemon: bool

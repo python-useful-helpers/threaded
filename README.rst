@@ -12,8 +12,13 @@ threaded
 .. image:: https://img.shields.io/github/license/penguinolog/threaded.svg
     :target: https://raw.githubusercontent.com/penguinolog/threaded/master/LICENSE
 
-threaded is a set of decorators, which wrap functions in concurrent.futures.ThreadPool and asyncio.Task in Python 3.
-Why? Because copy-paste of `loop.create_task` and `thread_pool.submit()` is boring,
+threaded is a set of decorators, which wrap functions in:
+
+  * `concurrent.futures.ThreadPool`
+  * `threading.Thread`
+  * `asyncio.Task` in Python 3.
+
+Why? Because copy-paste of `loop.create_task`, `threading.Thread` and `thread_pool.submit` is boring,
 especially if target functions is used by this way only.
 
 Pros:
@@ -36,7 +41,7 @@ Pros:
 
 Decorators:
 
-* `ThreadPooled` - native concurrent.futures.ThreadPool usage on Python 3 and backport on Python 2.7.
+* `ThreadPooled` - native concurrent.futures.ThreadPool usage on Python 3 and it's backport on Python 2.7.
 * `threadpooled` is alias for `ThreadPooled`.
 
 * `Threaded` - wrap in threading.Thread.
@@ -52,27 +57,29 @@ ThreadPooled
 ------------
 Mostly it is required decorator: submit function to ThreadPoolExecutor on call.
 
-.. note:: API quite differs between Python 3 and Python 2.7.
-
-Python 2.7 usage from signature:
+.. note:: API quite differs between Python 3 and Python 2.7. See API section below.
 
 .. code-block:: python
 
-    threaded.ThreadPooled.configure(max_workers=None)  # Not mandatory.
-    # max_workers=None means (CPU_COUNT or 1) * 5, it's default value.
-    @threaded.ThreadPooled  # Arguments not accepted, so `()` is useless
+    threaded.ThreadPooled.configure(max_workers=3)
+
+.. note:: By if executor is not configured - it configures with default parameters: ``max_workers=(CPU_COUNT or 1) * 5``
+
+Python 2.7 usage:
+
+.. code-block:: python
+
+    @threaded.ThreadPooled
     def func():
         pass
 
     concurrent.futures.wait([func()])
 
-Python 3.3+ usage from signature:
+Python 3.3+ usage:
 
 .. code-block:: python
 
-    threaded.ThreadPooled.configure(max_workers=None)
-    @threaded.ThreadPooled(loop_getter=None, loop_getter_need_context=False)  # strictly keyword arguments. See details below.
-    # For standard concurrent.futures, arguments is useless and should be omitted (use like Python 2 version)
+    @threaded.ThreadPooled
     def func():
         pass
 
@@ -80,46 +87,40 @@ Python 3.3+ usage from signature:
 
 Python 3.3+ usage with asyncio:
 
-.. code-block:: python3
+.. note:: if `loop_getter` is not callable, `loop_getter_need_context` is ignored.
+
+.. code-block:: python
 
     loop = asyncio.get_event_loop()
-    threaded.ThreadPooled.configure(max_workers=None)
-    @threaded.ThreadPooled(loop_getter=loop, loop_getter_need_context=False)  # provide loop directly -> loop_getter_need_context will be ignored
+    @threaded.ThreadPooled(loop_getter=loop, loop_getter_need_context=False)
     def func():
         pass
 
-    loop.run_until_complete(asyncio.wait_for(func(), timeout))  # func() will return asyncio.Task bound with decorator argument.
+    loop.run_until_complete(asyncio.wait_for(func(), timeout))
 
 Python 3.3+ usage with asyncio and loop extraction from call arguments:
 
-.. code-block:: python3
+.. code-block:: python
 
     loop_getter = lambda tgt_loop: tgt_loop
-    threaded.ThreadPooled.configure(max_workers=None)
     @threaded.ThreadPooled(loop_getter=loop_getter, loop_getter_need_context=True)  # loop_getter_need_context is required
     def func(*args, **kwargs):
         pass
 
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(asyncio.wait_for(func(loop), timeout))  # func() will return asyncio.Task bound with loop from argument.
+    loop.run_until_complete(asyncio.wait_for(func(loop), timeout))
+
+During application shutdown, pool can be stopped (while it will be recreated automatically, if some component will request).
+
+.. code-block:: python
+
+    threaded.ThreadPooled.shutdown()
 
 Threaded
 --------
 Classic threading.Thread. Useful for running until close and self-closing threads without return.
 
-Usage example with all arguments:
-
-.. code-block:: python
-
-    @threaded.Threaded(name=None, daemon=False, started=False)  # All defaults. Name will be used from wrapped function.
-    def func(*args, **kwargs):
-        pass
-
-    thread = func()
-    thread.start()
-    thread.join()
-
-If need to use wit all defaults, arguments may be completely omitted:
+Usage example:
 
 .. code-block:: python
 
@@ -127,35 +128,80 @@ If need to use wit all defaults, arguments may be completely omitted:
     def func(*args, **kwargs):
         pass
 
+    thread = func()
+    thread.start()
+    thread.join()
+
+Without arguments, thread name will use pattern: 'Threaded: ' + func.__name__
+
+.. note:: If func.__name__ is not accessible, str(hash(func)) will be used instead.
+
+Override name can be don via corresponding argument:
+
+.. code-block:: python
+
+    @threaded.Threaded(name='Function in thread')
+    def func(*args, **kwargs):
+        pass
+
+Thread can be daemonized automatically:
+
+.. code-block:: python
+
+    @threaded.Threaded(daemon=True)
+    def func(*args, **kwargs):
+        pass
+
+Also, if no any addition manipulations expected before thread start,
+it can be started automatically before return:
+
+.. code-block:: python
+
+    @threaded.Threaded(started=True)
+    def func(*args, **kwargs):
+        pass
+
 AsyncIOTask
 -----------
 Wrap in asyncio.Task.
 
+.. note:: Python 3 only.
+
 usage with asyncio:
 
-.. code-block:: python3
+.. code-block:: python
 
-    loop = asyncio.get_event_loop()
-    threaded.ThreadPooled.configure(max_workers=None)
-    @threaded.ThreadPooled(loop_getter=loop, loop_getter_need_context=False)  # provide loop directly -> loop_getter_need_context will be ignored
-    # By default asyncio.get_event_loop is used, so technically, with single asyncio loop, we can use without arguments.
+    @threaded.AsyncIOTask
     def func():
         pass
 
-    loop.run_until_complete(asyncio.wait_for(func(), timeout))  # func() will return asyncio.Task bound with decorator argument.
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(asyncio.wait_for(func(), timeout))
 
-Usage with asyncio and loop extraction from call arguments:
+Provide event loop directly:
 
-.. code-block:: python3
+.. note:: if `loop_getter` is not callable, `loop_getter_need_context` is ignored.
+
+.. code-block:: python
+
+    loop = asyncio.get_event_loop()
+    @threaded.AsyncIOTask(loop_getter=loop)
+    def func():
+        pass
+
+    loop.run_until_complete(asyncio.wait_for(func(), timeout))
+
+Usage with loop extraction from call arguments:
+
+.. code-block:: python
 
     loop_getter = lambda tgt_loop: tgt_loop
-    threaded.ThreadPooled.configure(max_workers=None)
-    @threaded.ThreadPooled(loop_getter=loop_getter, loop_getter_need_context=True)  # loop_getter_need_context is required
+    @threaded.AsyncIOTask(loop_getter=loop_getter, loop_getter_need_context=True)
     def func(*args, **kwargs):
         pass
 
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(asyncio.wait_for(func(loop), timeout))  # func() will return asyncio.Task bound with loop from argument.
+    loop.run_until_complete(asyncio.wait_for(func(loop), timeout))
 
 Testing
 =======
