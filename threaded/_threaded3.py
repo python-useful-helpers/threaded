@@ -334,13 +334,13 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
 
 # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
 def threadpooled(
-    func: typing.Optional[typing.Callable] = None,
+    func: typing.Optional[typing.Callable]=None,
     *,
     loop_getter: typing.Union[
         None,
         typing.Callable[..., asyncio.AbstractEventLoop],
         asyncio.AbstractEventLoop
-    ] = None,
+    ]=None,
     loop_getter_need_context: bool = False
 ) -> ThreadPooled:
     """ThreadPoolExecutor wrapped decorator.
