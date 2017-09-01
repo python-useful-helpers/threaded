@@ -23,12 +23,14 @@ from . import _base_threaded
 
 __all__ = (
     'ThreadPooled',
-    'Threaded'
+    'Threaded',
+    'threadpooled',
+    'threaded',
 )
 
 
 class ThreadPooled(_base_threaded.BasePooled):
-    """ThreadPoolExecutor wrapped."""
+    """ThreadPoolExecutor wrapped decorator."""
 
     __slots__ = ()
 
@@ -37,3 +39,33 @@ class Threaded(_base_threaded.BaseThreaded):
     """Threaded decorator."""
 
     __slots__ = ()
+
+
+# pylint: disable=unexpected-keyword-arg, no-value-for-parameter
+def threadpooled(func=None):
+    """ThreadPoolExecutor wrapped decorator.
+
+    :param func: function to wrap
+    :type func: typing.Optional[typing.Callable]
+    :rtype: ThreadPooled
+    """
+    return ThreadPooled(func=func)
+
+
+def threaded(
+    name=None,
+    daemon=False,
+    started=False
+):
+    """threaded decorator.
+
+    :param name: New thread name.
+    :type name: typing.Union[None, str, typing.Callable]
+    :param daemon: Daemonize thread.
+    :type daemon: bool
+    :param started: Return started thread
+    :type started: bool
+    :rtype: Threaded
+    """
+    return Threaded(name=name, daemon=daemon, started=started)
+# pylint: enable=unexpected-keyword-arg, no-value-for-parameter

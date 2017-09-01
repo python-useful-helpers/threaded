@@ -120,7 +120,7 @@ class BaseThreaded(_class_decorator.BaseDecorator):
         """Threaded decorator.
 
         :param name: New thread name.
-        :type name: typing.Callable
+        :type name: typing.Union[None, str, typing.Callable]
         :param daemon: Daemonize thread.
         :type daemon: bool
         :param started: Return started thread
@@ -219,7 +219,10 @@ class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
     __slots__ = ()
 
     def __init__(self, max_workers=None):
-        """Override init due to difference between Python <3.5 and 3.5+."""
+        """Override init due to difference between Python <3.5 and 3.5+.
+
+        :type max_workers: typing.Optional[int]
+        """
         if max_workers is None:  # Use 3.5+ behavior
             max_workers = (cpu_count() or 1) * 5
         super(

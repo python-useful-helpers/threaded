@@ -1,5 +1,12 @@
 CHANGELOG
 =========
+Version 0.4.0
+-------------
+Class decorator updated to the last version
+Added lowercase aliases
+Fixed docstrings and type hints
+Travis should run pypy and pypy3
+
 Version 0.3.2
 -------------
 Base class for decorator has been extracted.

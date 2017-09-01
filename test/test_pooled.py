@@ -39,7 +39,7 @@ class TestThreadPooled(unittest.TestCase):
         threaded.ThreadPooled.shutdown()
 
     def test_thread_pooled_default(self):
-        @threaded.ThreadPooled
+        @threaded.threadpooled
         def test():
             return threading.current_thread().name
 
@@ -47,7 +47,7 @@ class TestThreadPooled(unittest.TestCase):
         self.assertNotEqual(pooled_name, threading.current_thread().name)
 
     def test_thread_pooled_construct(self):
-        @threaded.ThreadPooled()
+        @threaded.threadpooled()
         def test():
             return threading.current_thread().name
 
@@ -55,7 +55,7 @@ class TestThreadPooled(unittest.TestCase):
         self.assertNotEqual(pooled_name, threading.current_thread().name)
 
     def test_thread_pooled_config(self):
-        thread_pooled = threaded.ThreadPooled()
+        thread_pooled = threaded.threadpooled()
 
         self.assertEqual(
             thread_pooled.executor.max_workers,
@@ -73,7 +73,7 @@ class TestThreadPooled(unittest.TestCase):
         self.assertEqual(thread_pooled.executor.max_workers, 2)
 
     def test_reconfigure(self):
-        thread_pooled = threaded.ThreadPooled()
+        thread_pooled = threaded.threadpooled()
         executor = thread_pooled.executor
         thread_pooled.configure(max_workers=executor.max_workers)
         self.assertIs(executor, thread_pooled.executor)

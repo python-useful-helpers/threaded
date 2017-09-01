@@ -28,7 +28,7 @@ else:
 
 class ThreadedTest(unittest.TestCase):
     def test_add_basic(self):
-        @threaded.Threaded
+        @threaded.threaded
         def func_test():
             pass
         # pylint: disable=assignment-from-no-return
@@ -39,7 +39,7 @@ class ThreadedTest(unittest.TestCase):
         self.assertFalse(test_thread.isAlive())
 
     def test_add_func(self):
-        @threaded.Threaded()
+        @threaded.threaded()
         def func_test():
             pass
 
@@ -51,7 +51,7 @@ class ThreadedTest(unittest.TestCase):
         self.assertFalse(test_thread.isAlive())
 
     def test_name(self):
-        @threaded.Threaded(name='test name')
+        @threaded.threaded(name='test name')
         def func_test():
             pass
 
@@ -63,7 +63,7 @@ class ThreadedTest(unittest.TestCase):
         self.assertFalse(test_thread.isAlive())
 
     def test_daemon(self):
-        @threaded.Threaded(daemon=True)
+        @threaded.threaded(daemon=True)
         def func_test():
             pass
 
@@ -76,7 +76,7 @@ class ThreadedTest(unittest.TestCase):
 
     @mock.patch('threading.Thread', autospec=True)
     def test_started(self, thread):
-        @threaded.Threaded(started=True)
+        @threaded.threaded(started=True)
         def func_test():
             pass
 

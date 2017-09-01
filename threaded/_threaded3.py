@@ -34,6 +34,9 @@ __all__ = (
     'ThreadPooled',
     'Threaded',
     'AsyncIOTask',
+    'threadpooled',
+    'threaded',
+    'asynciotask',
 )
 
 
@@ -84,8 +87,16 @@ class ThreadPooled(_base_threaded.BasePooled):
     ):
         """Wrap function in future and return.
 
+        :param func: function to wrap
+        :type func: typing.Optional[typing.Callable]
         :param loop_getter: Method to get event loop, if wrap in asyncio task
+        :type loop_getter: typing.Union[
+                               None,
+                               typing.Callable[..., asyncio.AbstractEventLoop],
+                               asyncio.AbstractEventLoop
+                           ]
         :param loop_getter_need_context: Loop getter requires function context
+        :type loop_getter_need_context: bool
         """
         super(ThreadPooled, self).__init__(func=func)
         self.__loop_getter = loop_getter
@@ -99,12 +110,22 @@ class ThreadPooled(_base_threaded.BasePooled):
         typing.Callable[..., asyncio.AbstractEventLoop],
         asyncio.AbstractEventLoop
     ]:
-        """Loop getter."""
+        """Loop getter.
+
+        :rtype: typing.Union[
+                    None,
+                    typing.Callable[..., asyncio.AbstractEventLoop],
+                    asyncio.AbstractEventLoop
+                ]
+        """
         return self.__loop_getter
 
     @property
     def loop_getter_need_context(self) -> bool:
-        """Loop getter need execution context."""
+        """Loop getter need execution context.
+
+        :rtype: bool
+        """
         return self.__loop_getter_need_context
 
     def _get_function_wrapper(
@@ -120,7 +141,15 @@ class ThreadPooled(_base_threaded.BasePooled):
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
+        :type func: typing.Callable
         :return: wrapped coroutine or function
+        :rtype: typing.Callable[
+                    ...,
+                    typing.Union[
+                        concurrent.futures.Future,
+                        asyncio.Task
+                    ]
+                ]
         """
         prepared = await_if_required(func)
 
@@ -177,7 +206,9 @@ class Threaded(_base_threaded.BaseThreaded):
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
+        :type func: typing.Callable
         :return: wrapped function
+        :rtype: typing.Callable[..., threading.Thread]
         """
         prepared = await_if_required(func)
         name = self.name
@@ -228,8 +259,14 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
         """Wrap function in future and return.
 
         :param func: Function to wrap
+        :type func: typing.Optional[typing.Callable]
         :param loop_getter: Method to get event loop, if wrap in asyncio task
+        :type loop_getter: typing.Union[
+                               typing.Callable[..., asyncio.AbstractEventLoop],
+                               asyncio.AbstractEventLoop
+                           ]
         :param loop_getter_need_context: Loop getter requires function context
+        :type loop_getter_need_context: bool
         """
         super(AsyncIOTask, self).__init__(func=func)
         self.__loop_getter = loop_getter
@@ -242,12 +279,21 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
         typing.Callable[..., asyncio.AbstractEventLoop],
         asyncio.AbstractEventLoop
     ]:
-        """Loop getter."""
+        """Loop getter.
+
+        :rtype: typing.Union[
+                    typing.Callable[..., asyncio.AbstractEventLoop],
+                    asyncio.AbstractEventLoop
+                ]
+        """
         return self.__loop_getter
 
     @property
     def loop_getter_need_context(self) -> bool:
-        """Loop getter need execution context."""
+        """Loop getter need execution context.
+
+        :rtype: bool
+        """
         return self.__loop_getter_need_context
 
     def _get_function_wrapper(
@@ -257,6 +303,8 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
+        :type func: typing.Callable
+        :rtype: typing.Callable[..., asyncio.Task]
         """
         # pylint: disable=missing-docstring
         # noinspection PyCompatibility,PyMissingOrEmptyDocstring
@@ -282,3 +330,82 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
                 id=id(self)
             )
         )  # pragma: no cover
+
+
+# pylint: disable=unexpected-keyword-arg, no-value-for-parameter
+def threadpooled(
+    func: typing.Optional[typing.Callable] = None,
+    *,
+    loop_getter: typing.Union[
+        None,
+        typing.Callable[..., asyncio.AbstractEventLoop],
+        asyncio.AbstractEventLoop
+    ] = None,
+    loop_getter_need_context: bool = False
+) -> ThreadPooled:
+    """ThreadPoolExecutor wrapped decorator.
+
+    :param func: function to wrap
+    :type func: typing.Optional[typing.Callable]
+    :param loop_getter: Method to get event loop, if wrap in asyncio task
+    :type loop_getter: typing.Union[
+                           None,
+                           typing.Callable[..., asyncio.AbstractEventLoop],
+                           asyncio.AbstractEventLoop
+                       ]
+    :param loop_getter_need_context: Loop getter requires function context
+    :type loop_getter_need_context: bool
+    :rtype: ThreadPooled
+    """
+    return ThreadPooled(
+        func=func,
+        loop_getter=loop_getter,
+        loop_getter_need_context=loop_getter_need_context
+    )
+
+
+def threaded(
+    name: typing.Union[None, str, typing.Callable]=None,
+    daemon: bool = False,
+    started: bool = False
+) -> Threaded:
+    """threaded decorator.
+
+    :param name: New thread name.
+    :type name: typing.Union[None, str, typing.Callable]
+    :param daemon: Daemonize thread.
+    :type daemon: bool
+    :param started: Return started thread
+    :type started: bool
+    :rtype: Threaded
+    """
+    return Threaded(name=name, daemon=daemon, started=started)
+
+
+def asynciotask(
+    func: typing.Optional[typing.Callable]=None,
+    *,
+    loop_getter: typing.Union[
+        typing.Callable[..., asyncio.AbstractEventLoop],
+        asyncio.AbstractEventLoop
+    ]=asyncio.get_event_loop,
+    loop_getter_need_context: bool = False
+) -> AsyncIOTask:
+    """Wrap function in future and return.
+
+    :param func: Function to wrap
+    :type func: typing.Optional[typing.Callable]
+    :param loop_getter: Method to get event loop, if wrap in asyncio task
+    :type loop_getter: typing.Union[
+                           typing.Callable[..., asyncio.AbstractEventLoop],
+                           asyncio.AbstractEventLoop
+                       ]
+    :param loop_getter_need_context: Loop getter requires function context
+    :type loop_getter_need_context: bool
+    """
+    return AsyncIOTask(
+        func=func,
+        loop_getter=loop_getter,
+        loop_getter_need_context=loop_getter_need_context
+    )
+# pylint: enable=unexpected-keyword-arg, no-value-for-parameter

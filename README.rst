@@ -37,10 +37,13 @@ Pros:
 Decorators:
 
 * `ThreadPooled` - native concurrent.futures.ThreadPool usage on Python 3 and backport on Python 2.7.
+* `threadpooled` is alias for `ThreadPooled`.
 
 * `Threaded` - wrap in threading.Thread.
+* `threaded` is alias for `Threaded`.
 
 * `AsyncIOTask` - wrap in asyncio.Task. Uses the same API, as Python 3 `ThreadPooled`.
+* `asynciotask` is alias for `AsyncIOTask`.
 
 Usage
 =====

@@ -29,7 +29,7 @@ class TestThreadPooled(unittest.TestCase):
         threaded.ThreadPooled.shutdown()
 
     def test_thread_pooled_default(self):
-        @threaded.ThreadPooled
+        @threaded.threadpooled
         @asyncio.coroutine
         def test():
             return threading.current_thread().name
@@ -38,7 +38,7 @@ class TestThreadPooled(unittest.TestCase):
         self.assertNotEqual(pooled_name, threading.current_thread().name)
 
     def test_thread_pooled_construct(self):
-        @threaded.ThreadPooled()
+        @threaded.threadpooled()
         @asyncio.coroutine
         def test():
             return threading.current_thread().name
@@ -49,7 +49,7 @@ class TestThreadPooled(unittest.TestCase):
     def test_thread_pooled_loop(self):
         loop = asyncio.get_event_loop()
 
-        @threaded.ThreadPooled(loop_getter=loop)
+        @threaded.threadpooled(loop_getter=loop)
         @asyncio.coroutine
         def test():
             return threading.current_thread().name
@@ -60,7 +60,7 @@ class TestThreadPooled(unittest.TestCase):
     def test_thread_pooled_loop_getter(self):
         loop = asyncio.get_event_loop()
 
-        @threaded.ThreadPooled(loop_getter=asyncio.get_event_loop)
+        @threaded.threadpooled(loop_getter=asyncio.get_event_loop)
         @asyncio.coroutine
         def test():
             return threading.current_thread().name
@@ -74,7 +74,7 @@ class TestThreadPooled(unittest.TestCase):
         def loop_getter(target):
             return target
 
-        @threaded.ThreadPooled(
+        @threaded.threadpooled(
             loop_getter=loop_getter,
             loop_getter_need_context=True
         )
@@ -91,7 +91,7 @@ class TestThreadPooled(unittest.TestCase):
 @unittest.skipIf(asyncio is None, 'No asyncio')
 class TestAsyncIOTask(unittest.TestCase):
     def test_default(self):
-        @threaded.AsyncIOTask
+        @threaded.asynciotask
         @asyncio.coroutine
         def test():
             return 'test'
@@ -101,7 +101,7 @@ class TestAsyncIOTask(unittest.TestCase):
         self.assertEqual(res, 'test')
 
     def test_construct(self):
-        @threaded.AsyncIOTask()
+        @threaded.asynciotask()
         @asyncio.coroutine
         def test():
             return 'test'
