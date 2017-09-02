@@ -35,8 +35,7 @@ API: Decorators: `Threaded` class and `threaded` function.
 
         Decorator entry point.
 
-        :rtype: `typing.Union[typing.Callable[..., threading.Thread]], threading.Thread]`
-
+        :rtype: typing.Union[typing.Callable[..., threading.Thread]], threading.Thread]
 
 
 .. py:function:: threaded(name=None, daemon=False, started=False, )

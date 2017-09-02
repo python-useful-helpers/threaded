@@ -66,7 +66,7 @@ API: Decorators: `ThreadPooled`, `threadpooled`.
 
         Decorator entry point.
 
-        :rtype: `typing.Union[typing.Callable[..., typing.Union[concurrent.futures.Future, asyncio.Task]], typing.Union[concurrent.futures.Future, asyncio.Task]]`
+        :rtype: typing.Union[typing.Callable[..., typing.Union[concurrent.futures.Future, asyncio.Task]], typing.Union[concurrent.futures.Future, asyncio.Task]]
 
 
 .. py:function:: threadpooled(func, *, loop_getter, loop_getter_need_context, )
