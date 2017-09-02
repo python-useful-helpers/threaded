@@ -16,8 +16,10 @@
 import ast
 import collections
 import os.path
+import sys
 
-import six
+PY3 = sys.version_info[:2] > (2, 7)
+PY34 = sys.version_info[:2] > (3, 3)
 
 with open(
     os.path.join(
