@@ -1,5 +1,11 @@
 CHANGELOG
 =========
+Version 0.5.0
+-------------
+CI/CD pipelines.
+Class decorator without __slots__
+Docs.
+
 Version 0.4.1
 -------------
 Initial documentation.

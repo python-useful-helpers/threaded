@@ -3,6 +3,11 @@ threaded
 
 .. image:: https://travis-ci.org/penguinolog/threaded.svg?branch=master
     :target: https://travis-ci.org/penguinolog/threaded
+.. image:: https://coveralls.io/repos/github/penguinolog/threaded/badge.svg?branch=master
+    :target: https://coveralls.io/github/penguinolog/threaded?branch=master
+.. image:: https://readthedocs.org/projects/threaded/badge/?version=latest
+    :target: http://threaded.readthedocs.io/
+    :alt: Documentation Status
 .. image:: https://img.shields.io/pypi/v/threaded.svg
     :target: https://pypi.python.org/pypi/threaded
 .. image:: https://img.shields.io/pypi/pyversions/threaded.svg
@@ -218,3 +223,15 @@ Test environments available:
     pypy
     pypy3
     pylint
+
+CI systems
+==========
+For code checking several CI systems is used in parallel:
+
+1. `Travis CI: <https://travis-ci.org/penguinolog/threaded>`_ is used for checking: PEP8, pylint, bandit, installation possibility and unit tests. Also it's publishes coverage on coveralls.
+
+2. `coveralls: <https://coveralls.io/github/penguinolog/threaded>`_ is used for coverage display.
+
+CD system
+=========
+`Travis CI: <https://travis-ci.org/penguinolog/threaded>`_ is used for package delivery on PyPI.
