@@ -68,13 +68,17 @@ ThreadPooled
 ------------
 Mostly it is required decorator: submit function to ThreadPoolExecutor on call.
 
-.. note:: API quite differs between Python 3 and Python 2.7. See API section below.
+.. note::
+
+    API quite differs between Python 3 and Python 2.7. See API section below.
 
 .. code-block:: python
 
     threaded.ThreadPooled.configure(max_workers=3)
 
-.. note:: By if executor is not configured - it configures with default parameters: ``max_workers=(CPU_COUNT or 1) * 5``
+.. note::
+
+    By default, if executor is not configured - it configures with default parameters: ``max_workers=(CPU_COUNT or 1) * 5``
 
 Python 2.7 usage:
 
@@ -98,7 +102,9 @@ Python 3.3+ usage:
 
 Python 3.3+ usage with asyncio:
 
-.. note:: if `loop_getter` is not callable, `loop_getter_need_context` is ignored.
+.. note::
+
+    if `loop_getter` is not callable, `loop_getter_need_context` is ignored.
 
 .. code-block:: python
 
@@ -143,9 +149,11 @@ Usage example:
     thread.start()
     thread.join()
 
-Without arguments, thread name will use pattern: 'Threaded: ' + func.__name__
+Without arguments, thread name will use pattern: ``'Threaded: ' + func.__name__``
 
-.. note:: If func.__name__ is not accessible, str(hash(func)) will be used instead.
+.. note::
+
+    If func.__name__ is not accessible, str(hash(func)) will be used instead.
 
 Override name can be don via corresponding argument:
 
@@ -176,7 +184,9 @@ AsyncIOTask
 -----------
 Wrap in ``asyncio.Task``.
 
-.. note:: Python 3 only.
+.. note::
+
+    Python 3 only.
 
 usage with asyncio:
 
@@ -191,7 +201,9 @@ usage with asyncio:
 
 Provide event loop directly:
 
-.. note:: if `loop_getter` is not callable, `loop_getter_need_context` is ignored.
+.. note::
+
+    if `loop_getter` is not callable, `loop_getter_need_context` is ignored.
 
 .. code-block:: python
 
@@ -222,9 +234,13 @@ Post function to ``gevent.threadpool.ThreadPool``.
 
     threaded.GThreadPooled.configure(max_workers=3)
 
-.. note:: By if executor is not configured - it configures with default parameters: ``max_workers=(CPU_COUNT or 1) * 5``
+.. note::
 
-.. note:: Instead of standard ThreadPoolExecutor, gevent pool is not re-created during re-configuration.
+    By default, if executor is not configured - it configures with default parameters: ``max_workers=(CPU_COUNT or 1) * 5``
+
+.. note::
+
+    Instead of standard ThreadPoolExecutor, gevent pool is not re-created during re-configuration.
 
 Basic usage example:
 

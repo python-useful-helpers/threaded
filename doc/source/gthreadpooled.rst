@@ -52,4 +52,4 @@ API: Decorators: `GThreadPooled`, `gthreadpooled`.
 
     :param func: function to wrap
     :type func: typing.Optional[typing.Callable]
-    :rtype: ThreadPooled
+    :rtype: GThreadPooled
