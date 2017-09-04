@@ -59,7 +59,9 @@ Decorators:
 * `GThreadPooled` - wrap function in ``gevent.threadpool.ThreadPool``.
 * `gthreadpooled` is alias for `GThreadPooled`.
 
-.. note:: gevent is not in default package requirements.
+.. note::
+
+    gevent is not in default package requirements.
 
 Usage
 =====
