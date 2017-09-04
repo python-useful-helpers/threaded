@@ -16,6 +16,7 @@
 
 from __future__ import absolute_import
 
+import abc
 # noinspection PyCompatibility
 import concurrent.futures
 import threading
@@ -35,12 +36,47 @@ else:  # pragma: no cover
             return 1
 
 __all__ = (
+    'APIPooled',
     'BasePooled',
     'ThreadPoolExecutor',
+    'cpu_count'
 )
 
 
-class BasePooled(_class_decorator.BaseDecorator):
+class APIPooled(_class_decorator.BaseDecorator):
+    """API description for pooled."""
+
+    __slots__ = ()
+
+    __executor = None
+
+    @classmethod
+    @abc.abstractmethod
+    def configure(
+        cls,
+        max_workers=None,
+    ):
+        """Pool executor create and configure.
+
+        :param max_workers: Maximum workers
+        :type max_workers: typing.Optional[int]
+        """
+        raise NotImplementedError()  # pragma: no cover
+
+    @classmethod
+    @abc.abstractmethod
+    def shutdown(cls):
+        """Shutdown executor."""
+        raise NotImplementedError()  # pragma: no cover
+
+    @property
+    @abc.abstractmethod
+    def executor(self):
+        """Executor instance."""
+        raise NotImplementedError()  # pragma: no cover
+
+
+class BasePooled(APIPooled):
     """Base ThreadPooled class."""
 
     __slots__ = ()

@@ -28,6 +28,11 @@ if six.PY3:  # pragma: no cover
         threaded,
         asynciotask
     )
+
+    try:  # pragma: no cover
+        from ._gthreadpooled3 import GThreadPooled, gthreadpooled
+    except ImportError:  # pragma: no cover
+        GThreadPooled = gthreadpooled = None
 else:  # pragma: no cover
     from ._threaded2 import (
         ThreadPooled,
@@ -35,6 +40,10 @@ else:  # pragma: no cover
         threadpooled,
         threaded,
     )
+    try:  # pragma: no cover
+        from ._gthreadpooled2 import GThreadPooled, gthreadpooled
+    except ImportError:  # pragma: no cover
+        GThreadPooled = gthreadpooled = None
 # pylint: enable=no-name-in-module
 
 
@@ -48,6 +57,11 @@ if six.PY3:  # pragma: no cover
         'AsyncIOTask',
         'asynciotask'
     )
+if GThreadPooled is not None:  # pragma: no cover
+    __all__ += (
+        'GThreadPooled',
+        'gthreadpooled'
+    )
 
-__version__ = '0.5.0'
+__version__ = '0.6.0'
 __author__ = "Alexey Stepanov <penguinolog@gmail.com>"

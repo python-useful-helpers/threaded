@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+Version 0.6.0
+-------------
+Gevent is supported.
+
 Version 0.5.0
 -------------
 CI/CD pipelines.

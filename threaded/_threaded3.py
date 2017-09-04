@@ -29,6 +29,7 @@ import six
 
 from . import _base_threaded
 from . import _class_decorator
+from . import _py3_helpers
 
 __all__ = (
     'ThreadPooled',
@@ -38,32 +39,6 @@ __all__ = (
     'threaded',
     'asynciotask',
 )
-
-
-def _get_loop(
-        self,
-        *args, **kwargs
-) -> typing.Optional[asyncio.AbstractEventLoop]:
-    """Get event loop in decorator class."""
-    if callable(self.loop_getter):
-        if self.loop_getter_need_context:
-            return self.loop_getter(*args, **kwargs)
-        return self.loop_getter()
-    return self.loop_getter
-
-
-def await_if_required(target: typing.Callable) -> typing.Callable:
-    """Await result if coroutine was returned."""
-    @functools.wraps(target)
-    def wrapper(*args, **kwargs):
-        """Decorator/wrapper."""
-        result = target(*args, **kwargs)
-        if asyncio.iscoroutine(result):
-            loop = asyncio.new_event_loop()
-            result = loop.run_until_complete(result)
-            loop.close()
-        return result
-    return wrapper
 
 
 class ThreadPooled(_base_threaded.BasePooled):
@@ -151,7 +126,7 @@ class ThreadPooled(_base_threaded.BasePooled):
                     ]
                 ]
         """
-        prepared = await_if_required(func)
+        prepared = _py3_helpers.await_if_required(func)
 
         # pylint: disable=missing-docstring
         # noinspection PyMissingOrEmptyDocstring
@@ -162,7 +137,7 @@ class ThreadPooled(_base_threaded.BasePooled):
             concurrent.futures.Future,
             asyncio.Task
         ]:
-            loop = _get_loop(self, *args, **kwargs)
+            loop = _py3_helpers.get_loop(self, *args, **kwargs)
 
             if loop is None:
                 return self.executor.submit(prepared, *args, **kwargs)
@@ -210,7 +185,7 @@ class Threaded(_base_threaded.BaseThreaded):
         :return: wrapped function
         :rtype: typing.Callable[..., threading.Thread]
         """
-        prepared = await_if_required(func)
+        prepared = _py3_helpers.await_if_required(func)
         name = self.name
         if name is None:
             name = 'Threaded: ' + getattr(
@@ -310,7 +285,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
         # noinspection PyCompatibility,PyMissingOrEmptyDocstring
         @functools.wraps(func)
         def wrapper(*args, **kwargs) -> asyncio.Task:
-            loop = _get_loop(self, *args, **kwargs)
+            loop = _py3_helpers.get_loop(self, *args, **kwargs)
             return loop.create_task(func(*args, **kwargs))
 
         # pylint: enable=missing-docstring

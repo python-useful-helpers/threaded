@@ -1,4 +1,4 @@
-.. logwrap function and LogWrap class description.
+.. Threaded class and threaded function.
 
 API: Decorators: `Threaded` class and `threaded` function.
 ==========================================================

@@ -1,4 +1,4 @@
-.. PrettyFormat, pretty_repr and pretty_str
+.. ThreadPooled, threadpooled.
 
 API: Decorators: `ThreadPooled`, `threadpooled`.
 ================================================
@@ -11,7 +11,7 @@ API: Decorators: `ThreadPooled`, `threadpooled`.
     Post function to ThreadPoolExecutor.
 
     :param func: function to wrap
-    :type func: typing.Optional[typing.Callable[..., typing.Union[typing.Callable, typing.Awaitable]]]
+    :type func: typing.Optional[typing.Callable[..., typing.Union[typing.Any, typing.Awaitable]]]
 
     :param loop_getter: Method to get event loop, if wrap in asyncio task
 
@@ -46,7 +46,7 @@ API: Decorators: `ThreadPooled`, `threadpooled`.
 
     .. py:attribute:: _func
 
-        ``typing.Optional[typing.Callable[..., typing.Union[typing.Callable, typing.Awaitable]]]``
+        ``typing.Optional[typing.Callable[..., typing.Union[typing.Any, typing.Awaitable]]]``
         Wrapped function. Used for inheritance only.
 
     .. py:classmethod:: configure(max_workers=None)
@@ -74,7 +74,7 @@ API: Decorators: `ThreadPooled`, `threadpooled`.
     Post function to ThreadPoolExecutor.
 
     :param func: function to wrap
-    :type func: typing.Optional[typing.Callable]
+    :type func: typing.Optional[typing.Callable[..., typing.Union[typing.Any, typing.Awaitable]]]
 
     .. note:: Next arguments is Python 3 only:
 

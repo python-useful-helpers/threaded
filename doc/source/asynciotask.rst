@@ -1,4 +1,4 @@
-.. PrettyFormat, pretty_repr and pretty_str
+.. AsyncIOTask, asynciotask.
 
 API: Decorators: `AsyncIOTask`, `asynciotask`.
 ================================================

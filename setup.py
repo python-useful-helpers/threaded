@@ -134,6 +134,9 @@ setuptools.setup(
         ':python_version == "3.3"': [
             'asyncio>=3.4',
         ],
+        'gevent': [
+            'gevent >= 1.2'
+        ],
     },
     install_requires=required,
 )

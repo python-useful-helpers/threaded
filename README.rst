@@ -22,6 +22,7 @@ threaded is a set of decorators, which wrap functions in:
   * `concurrent.futures.ThreadPool`
   * `threading.Thread`
   * `asyncio.Task` in Python 3.
+  * `gevent.threadpool.ThreadPool` if gevent is installed.
 
 Why? Because copy-paste of `loop.create_task`, `threading.Thread` and `thread_pool.submit` is boring,
 especially if target functions is used by this way only.
@@ -46,14 +47,19 @@ Pros:
 
 Decorators:
 
-* `ThreadPooled` - native concurrent.futures.ThreadPool usage on Python 3 and it's backport on Python 2.7.
+* `ThreadPooled` - native ``concurrent.futures.ThreadPool`` usage on Python 3 and it's backport on Python 2.7.
 * `threadpooled` is alias for `ThreadPooled`.
 
-* `Threaded` - wrap in threading.Thread.
+* `Threaded` - wrap in ``threading.Thread``.
 * `threaded` is alias for `Threaded`.
 
-* `AsyncIOTask` - wrap in asyncio.Task. Uses the same API, as Python 3 `ThreadPooled`.
+* `AsyncIOTask` - wrap in ``asyncio.Task``. Uses the same API, as Python 3 `ThreadPooled`.
 * `asynciotask` is alias for `AsyncIOTask`.
+
+* `GThreadPooled` - wrap function in ``gevent.threadpool.ThreadPool``.
+* `gthreadpooled` is alias for `GThreadPooled`.
+
+.. note:: gevent is not in default package requirements.
 
 Usage
 =====
@@ -123,7 +129,7 @@ During application shutdown, pool can be stopped (while it will be recreated aut
 
 Threaded
 --------
-Classic threading.Thread. Useful for running until close and self-closing threads without return.
+Classic ``threading.Thread``. Useful for running until close and self-closing threads without return.
 
 Usage example:
 
@@ -168,7 +174,7 @@ it can be started automatically before return:
 
 AsyncIOTask
 -----------
-Wrap in asyncio.Task.
+Wrap in ``asyncio.Task``.
 
 .. note:: Python 3 only.
 
@@ -207,6 +213,28 @@ Usage with loop extraction from call arguments:
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(asyncio.wait_for(func(loop), timeout))
+
+GThreadPooled
+-------------
+Post function to ``gevent.threadpool.ThreadPool``.
+
+.. code-block:: python
+
+    threaded.GThreadPooled.configure(max_workers=3)
+
+.. note:: By if executor is not configured - it configures with default parameters: ``max_workers=(CPU_COUNT or 1) * 5``
+
+.. note:: Instead of standard ThreadPoolExecutor, gevent pool is not re-created during re-configuration.
+
+Basic usage example:
+
+.. code-block:: python
+
+    @threaded.GThreadPooled
+    def func():
+        pass
+
+    func().wait()
 
 Testing
 =======
