@@ -16,10 +16,12 @@
 
 from __future__ import absolute_import
 
-import six
+import sys
+
+PY3 = sys.version_info[:2] > (3, 0)
 
 # pylint: disable=no-name-in-module
-if six.PY3:  # pragma: no cover
+if PY3:  # pragma: no cover
     from ._threaded3 import (
         ThreadPooled,
         Threaded,
@@ -52,7 +54,7 @@ __all__ = (
     'threadpooled', 'threaded'
 )
 
-if six.PY3:  # pragma: no cover
+if PY3:  # pragma: no cover
     __all__ += (
         'AsyncIOTask',
         'asynciotask'
@@ -63,5 +65,5 @@ if GThreadPooled is not None:  # pragma: no cover
         'gthreadpooled'
     )
 
-__version__ = '0.6.0'
+__version__ = '0.7.0'
 __author__ = "Alexey Stepanov <penguinolog@gmail.com>"

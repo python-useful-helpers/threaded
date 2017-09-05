@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+Version 0.7.0
+-------------
+Cythonize python 3, if possible (and gevent present).
+
 Version 0.6.0
 -------------
 Gevent is supported.

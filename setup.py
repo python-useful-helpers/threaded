@@ -14,10 +14,21 @@
 
 """Wrap in ProcessPool/ThreadPool executors or asyncio.Task."""
 
+from __future__ import print_function
+
 import ast
 import collections
+from distutils.command import build_ext
+import distutils.errors
 import os.path
+import shutil
 import sys
+
+try:
+    from Cython.Build import cythonize
+    import gevent
+except ImportError:
+    gevent = cythonize = None
 
 import setuptools
 
@@ -34,6 +45,75 @@ with open(
 
 with open('requirements.txt') as f:
     required = f.read().splitlines()
+
+
+def _extension(modpath):
+    """Make setuptools.Extension."""
+    return setuptools.Extension(modpath, [modpath.replace('.', '/') + '.py'])
+
+
+requires_optimization = [
+    _extension('threaded._class_decorator'),
+    _extension('threaded._base_threaded'),
+    _extension('threaded._py3_helpers'),
+    _extension('threaded._threaded3'),
+    _extension('threaded._base_gthreadpooled'),
+    _extension('threaded._gthreadpooled3'),
+    _extension('threaded.__init__'),
+]
+
+ext_modules = cythonize(
+    requires_optimization,
+    compiler_directives=dict(
+        always_allow_keywords=True,
+        binding=True,
+        embedsignature=True,
+    )
+) if cythonize is not None and PY3 else []
+
+
+class BuildFailed(Exception):
+    """For install clear scripts."""
+    pass
+
+
+class AllowFailRepair(build_ext.build_ext):
+    """This class allows C extension building to fail and repairs init."""
+
+    def run(self):
+        """Run."""
+        try:
+            build_ext.build_ext.run(self)
+
+            # Copy __init__.py back to repair package.
+            build_dir = os.path.abspath(self.build_lib)
+            root_dir = os.path.abspath(os.path.join(__file__, '..'))
+            target_dir = build_dir if not self.inplace else root_dir
+
+            src_file = os.path.join('threaded', '__init__.py')
+
+            src = os.path.join(root_dir, src_file)
+            dst = os.path.join(target_dir, src_file)
+
+            if src != dst:
+                shutil.copyfile(src, dst)
+        except (
+            distutils.errors.DistutilsPlatformError,
+            FileNotFoundError
+        ):
+            raise BuildFailed()
+
+    def build_extension(self, ext):
+        """build_extension."""
+        try:
+            build_ext.build_ext.build_extension(self, ext)
+        except (
+            distutils.errors.CCompilerError,
+            distutils.errors.DistutilsExecError,
+            distutils.errors.DistutilsPlatformError,
+            ValueError
+        ):
+            raise BuildFailed()
 
 
 # noinspection PyUnresolvedReferences
@@ -124,7 +204,7 @@ def get_simple_vars_from_src(src):
 
 variables = get_simple_vars_from_src(source)
 
-setuptools.setup(
+setup_args = dict(
     name='threaded',
     version=variables['__version__'],
     extras_require={
@@ -140,3 +220,20 @@ setuptools.setup(
     },
     install_requires=required,
 )
+
+if PY3 and cythonize is not None:
+    setup_args['ext_modules'] = ext_modules
+    setup_args['cmdclass'] = dict(build_ext=AllowFailRepair)
+
+try:
+    setuptools.setup(**setup_args)
+except BuildFailed:
+    print(
+        '*' * 80 + '\n'
+        '* Build Failed!\n'
+        '* Use clear scripts version.\n'
+        '*' * 80 + '\n'
+    )
+    del setup_args['ext_modules']
+    del setup_args['cmdclass']
+    setuptools.setup(**setup_args)

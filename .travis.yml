@@ -17,7 +17,7 @@ before_deploy:
   - pip install -r requirements.txt
 deploy:
   - provider: pypi
-    distributions: sdist bdist_wheel
+    distributions: sdist
     server: https://testpypi.python.org/pypi
     user: penguinolog
     password:
@@ -28,7 +28,7 @@ deploy:
     skip_upload_docs: true
     # PyPI
   - provider: pypi
-    distributions: sdist bdist_wheel
+    distributions: sdist
     user: penguinolog
     password:
       secure: "h1gXulNJxdjdUtPXDwUf/2MltjjiTy/cSsv+67Bxr9PAXSo9s0ynnhijKavE0QlKPr0NDJcEcl79dEN3gx1rkbAFZ+YRJfx0KHy26ImNAIx+npOFjGko87KhMNkrE3QBn9carWNnjYA4rCuUqbv/Znk9xixleE/sHJbKnkkTrerSI2jkznMa6h0FNVCEPzFesHmll7rBy4CjFkRcWNX8nfKNIV9rHFI7mXm8+jzl0msOnkEcKRqAk+MUwVjcD9XtpF42uA0nQTtqjWFdwSUxxBJKMyrkkI0o8Uk06EewkgJGwjGpvn+EUm1hBpjGrXUQQJyr20SZdC0CqaqXD/axISAtQPzP5I4Ey3VkLDV4mZuQjeNlbRbTH0Q7af+CpnOpFtYobIs1/HjB5wztazegT8uk4ZU/GheYqknXmtg9Ga8NV47sIpLC/hTLXWP+O/k0JKRYP9CgjTml2nLykNjZy4KRnlCUerYH8d4bNz687ElXU2bLtlBxyigUc9oo31DvNG+vB2axOp8wGiRTEpfBVPEF6EYUj+qSbX4ep4o/mWp+ax5YlLVYVoXkXpNecIggICAChIkqEl9MtGzTu31s3sBKpk9WuqoyHG80TDo2Tet6zWYx3itUx9M0SLkrML9Hs5WKsXDZE6jZrVHtx8lWuuZZl5JQkXYtd358lwJmEBM="
