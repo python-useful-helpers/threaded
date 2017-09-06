@@ -1,5 +1,4 @@
 six
 typing >= 3.6
 futures>=3.1; python_version == "2.7"
-asyncio>=3.4; python_version == "3.3"
 gevent >= 1.2

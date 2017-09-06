@@ -626,4 +626,7 @@ crashlytics-build.properties
 fabric.properties
 
 ### Test results
-/*_result.xml
+/*_result_*.xml
+
+### Generated code
+/threaded/*.c

@@ -33,7 +33,6 @@ except ImportError:
 import setuptools
 
 PY3 = sys.version_info[:2] > (2, 7)
-PY34 = sys.version_info[:2] > (3, 3)
 
 with open(
     os.path.join(
@@ -45,6 +44,9 @@ with open(
 
 with open('requirements.txt') as f:
     required = f.read().splitlines()
+
+with open('README.rst',) as f:
+    long_description = f.read()
 
 
 def _extension(modpath):
@@ -168,9 +170,7 @@ def get_simple_vars_from_src(src):
         ast.List, ast.Set, ast.Dict, ast.Tuple
     )
     if PY3:
-        ast_data += (ast.Bytes,)
-    if PY34:
-        ast_data += (ast.NameConstant,)
+        ast_data += (ast.Bytes, ast.NameConstant,)
 
     tree = ast.parse(src)
 
@@ -204,15 +204,48 @@ def get_simple_vars_from_src(src):
 
 variables = get_simple_vars_from_src(source)
 
+classifiers = [
+    'Development Status :: 4 - Beta',
+
+    'Intended Audience :: Developers',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+
+    'License :: OSI Approved :: Apache Software License',
+
+    'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
+
+    'Programming Language :: Python :: Implementation :: CPython',
+    'Programming Language :: Python :: Implementation :: PyPy',
+]
+
+keywords = [
+    'pooling',
+    'multithreading',
+    'threading',
+    'asyncio',
+    'gevent',
+    'development',
+]
+
 setup_args = dict(
     name='threaded',
+    author=variables['__author__'],
+    author_email=variables['__author_email__'],
+    url=variables['__url__'],
     version=variables['__version__'],
+    license=variables['__license__'],
+    description=variables['__description__'],
+    long_description=long_description,
+    classifiers=classifiers,
+    keywords=keywords,
     extras_require={
         ':python_version == "2.7"': [
             'futures>=3.1',
-        ],
-        ':python_version == "3.3"': [
-            'asyncio>=3.4',
         ],
         'gevent': [
             'gevent >= 1.2'

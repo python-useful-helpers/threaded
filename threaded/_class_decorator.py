@@ -22,7 +22,7 @@ import functools
 import sys
 import typing
 
-PY34 = sys.version_info[:2] > (3, 3)
+PY3 = sys.version_info[:2] > (3, 3)
 
 
 class BaseDecorator(typing.Callable):
@@ -76,7 +76,7 @@ class BaseDecorator(typing.Callable):
         self.__func = func
         if self.__func is not None:
             functools.update_wrapper(self, self.__func)
-            if not PY34:  # pragma: no cover
+            if not PY3:  # pragma: no cover
                 self.__wrapped__ = self.__func
         # pylint: enable=assigning-non-slot
         # noinspection PyArgumentList

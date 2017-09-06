@@ -65,5 +65,11 @@ if GThreadPooled is not None:  # pragma: no cover
         'gthreadpooled'
     )
 
-__version__ = '0.7.0'
-__author__ = "Alexey Stepanov <penguinolog@gmail.com>"
+__version__ = '0.8.0'
+__author__ = "Alexey Stepanov"
+__author_email__ = 'penguinolog@gmail.com'
+__url__ = 'https://github.com/penguinolog/threaded'
+__description__ = (
+    "Decorators for running functions in Thread/ThreadPool/IOLoop"
+)
+__license__ = "Apache License, Version 2.0"

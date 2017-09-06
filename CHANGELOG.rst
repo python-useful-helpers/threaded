@@ -1,5 +1,10 @@
 CHANGELOG
 =========
+Version 0.8.0
+-------------
+* Python 3.3 support is ended. EOL is coming, test was run rarely.
+* Move data from setup.cfg to __init__.py and setup.py
+
 Version 0.7.0
 -------------
 Cythonize python 3, if possible (and gevent present).
