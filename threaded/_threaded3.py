@@ -51,7 +51,7 @@ class ThreadPooled(_base_threaded.BasePooled):
 
     def __init__(
         self,
-        func: typing.Optional[typing.Callable]=None,
+        func: typing.Optional[typing.Callable] = None,
         *,
         loop_getter: typing.Union[
             None,
@@ -223,7 +223,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
 
     def __init__(
         self,
-        func: typing.Optional[typing.Callable]=None,
+        func: typing.Optional[typing.Callable] = None,
         *,
         loop_getter: typing.Union[
             typing.Callable[..., asyncio.AbstractEventLoop],
@@ -309,7 +309,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
 
 # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
 def threadpooled(
-    func: typing.Optional[typing.Callable]=None,
+    func: typing.Optional[typing.Callable] = None,
     *,
     loop_getter: typing.Union[
         None,
@@ -340,7 +340,7 @@ def threadpooled(
 
 
 def threaded(
-    name: typing.Union[None, str, typing.Callable]=None,
+    name: typing.Union[None, str, typing.Callable] = None,
     daemon: bool = False,
     started: bool = False
 ) -> Threaded:
@@ -360,7 +360,7 @@ def threaded(
 
 
 def asynciotask(
-    func: typing.Optional[typing.Callable]=None,
+    func: typing.Optional[typing.Callable] = None,
     *,
     loop_getter: typing.Union[
         typing.Callable[..., asyncio.AbstractEventLoop],

@@ -15,42 +15,54 @@ install:
 script: tox
 after_success:
 - coveralls
+
 jobs:
   fast_finish: true
   include:
-  - stage: Test packaged
+  - stage: Static analisys
     python: *mainstream_python
+    services: skip
     install:
     - *upgrade_python_toolset
-    - pip install pytest pytest-sugar
-    - pip install -r build_requirements.txt
+    - pip install tox
     script:
-    - python setup.py bdist_wheel
-    - pip install threaded --no-index -f dist
-    - py.test -vv test
+    - tox -e pylint,bandit
     after_success: skip
+
+  - stage: Code style check
+    python: *mainstream_python
+    services: skip
+    install:
+    - *upgrade_python_toolset
+    - pip install tox
+    script:
+    - tox -e pep8,pep257
+    after_success: skip
+
   - stage: deploy
+    # This prevents job from appearing in test plan unless commit is tagged:
+    if: tag IS present
     python: *mainstream_python
     services:
     - docker
-    install: skip
+    install:
+    - *upgrade_python_toolset
     script:
     - ./tools/run_docker.sh "threaded"
-    after_success: skip
     before_deploy:
     - pip install -r build_requirements.txt
     deploy:
     - provider: pypi
       # `skip_cleanup: true` is required to preserve binary wheels, built
       # inside of manylinux1 docker container during `script` step above.
-      distributions: sdist
+      skip_cleanup: true
       user: penguinolog
       password:
         secure: "h1gXulNJxdjdUtPXDwUf/2MltjjiTy/cSsv+67Bxr9PAXSo9s0ynnhijKavE0QlKPr0NDJcEcl79dEN3gx1rkbAFZ+YRJfx0KHy26ImNAIx+npOFjGko87KhMNkrE3QBn9carWNnjYA4rCuUqbv/Znk9xixleE/sHJbKnkkTrerSI2jkznMa6h0FNVCEPzFesHmll7rBy4CjFkRcWNX8nfKNIV9rHFI7mXm8+jzl0msOnkEcKRqAk+MUwVjcD9XtpF42uA0nQTtqjWFdwSUxxBJKMyrkkI0o8Uk06EewkgJGwjGpvn+EUm1hBpjGrXUQQJyr20SZdC0CqaqXD/axISAtQPzP5I4Ey3VkLDV4mZuQjeNlbRbTH0Q7af+CpnOpFtYobIs1/HjB5wztazegT8uk4ZU/GheYqknXmtg9Ga8NV47sIpLC/hTLXWP+O/k0JKRYP9CgjTml2nLykNjZy4KRnlCUerYH8d4bNz687ElXU2bLtlBxyigUc9oo31DvNG+vB2axOp8wGiRTEpfBVPEF6EYUj+qSbX4ep4o/mWp+ax5YlLVYVoXkXpNecIggICAChIkqEl9MtGzTu31s3sBKpk9WuqoyHG80TDo2Tet6zWYx3itUx9M0SLkrML9Hs5WKsXDZE6jZrVHtx8lWuuZZl5JQkXYtd358lwJmEBM="
       on:
         tags: true
+        distributions: sdist
       skip_upload_docs: true
-      skip_cleanup: true
 
 cache: pip
 before_cache:

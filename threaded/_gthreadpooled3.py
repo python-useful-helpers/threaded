@@ -66,7 +66,7 @@ class GThreadPooled(_base_gthreadpooled.BaseGThreadPooled):
 
 # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
 def gthreadpooled(
-    func: typing.Optional[typing.Callable]=None
+    func: typing.Optional[typing.Callable] = None
 ) -> GThreadPooled:
     """Post function to gevent.threadpool.ThreadPool.
 
