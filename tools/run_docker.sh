@@ -30,3 +30,8 @@ do
 
     dock_ext_args=""  # Reset docker args, just in case
 done
+
+find /io/dist/ -type f -not -name "*$package_name*" -exec rm {} +
+
+chmod -v a+rwx /io/dist
+chmod -v a+rw /io/dist/*
