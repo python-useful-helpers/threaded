@@ -41,5 +41,7 @@ def gthreadpooled(func=None):
     :type func: typing.Optional[typing.Callable]
     :rtype: GThreadPooled
     """
-    return GThreadPooled(func=func)
+    if func is None:
+        return GThreadPooled(func=func)
+    return GThreadPooled(func=None)(func)
 # pylint: enable=unexpected-keyword-arg, no-value-for-parameter

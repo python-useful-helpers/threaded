@@ -65,7 +65,7 @@ if GThreadPooled is not None:  # pragma: no cover
         'gthreadpooled'
     )
 
-__version__ = '0.8.0'
+__version__ = '0.9.0'
 __author__ = "Alexey Stepanov"
 __author_email__ = 'penguinolog@gmail.com'
 __url__ = 'https://github.com/penguinolog/threaded'

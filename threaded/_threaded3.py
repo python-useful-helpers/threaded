@@ -332,11 +332,17 @@ def threadpooled(
     :type loop_getter_need_context: bool
     :rtype: ThreadPooled
     """
+    if func is None:
+        return ThreadPooled(
+            func=func,
+            loop_getter=loop_getter,
+            loop_getter_need_context=loop_getter_need_context
+        )
     return ThreadPooled(
-        func=func,
+        func=None,
         loop_getter=loop_getter,
         loop_getter_need_context=loop_getter_need_context
-    )
+    )(func)
 
 
 def threaded(
@@ -356,6 +362,12 @@ def threaded(
     :type started: bool
     :rtype: Threaded
     """
+    if callable(name):
+        func, name = (
+            name,
+            'Threaded: ' + getattr(name, '__name__', str(hash(name)))
+        )
+        return Threaded(name=name, daemon=daemon, started=started)(func)
     return Threaded(name=name, daemon=daemon, started=started)
 
 
@@ -380,9 +392,15 @@ def asynciotask(
     :param loop_getter_need_context: Loop getter requires function context
     :type loop_getter_need_context: bool
     """
+    if func is None:
+        return AsyncIOTask(
+            func=func,
+            loop_getter=loop_getter,
+            loop_getter_need_context=loop_getter_need_context
+        )
     return AsyncIOTask(
-        func=func,
+        func=None,
         loop_getter=loop_getter,
         loop_getter_need_context=loop_getter_need_context
-    )
+    )(func)
 # pylint: enable=unexpected-keyword-arg, no-value-for-parameter

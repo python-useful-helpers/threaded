@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+Version 0.9.0
+-------------
+* Changed function wrappers for correct processing of methods in non-argumented mode.
+
 Version 0.8.0
 -------------
 * Python 3.3 support is ended. EOL is coming, test was run rarely.
