@@ -61,8 +61,12 @@ requires_optimization = [
     _extension('threaded._threaded3'),
     _extension('threaded._base_gthreadpooled'),
     _extension('threaded._gthreadpooled3'),
-    _extension('threaded.__init__'),
 ]
+
+if 'win32' != sys.platform:
+    requires_optimization.append(
+        _extension('threaded.__init__')
+    )
 
 ext_modules = cythonize(
     requires_optimization,
@@ -103,7 +107,7 @@ class AllowFailRepair(build_ext.build_ext):
                 shutil.copyfile(src, dst)
         except (
             distutils.errors.DistutilsPlatformError,
-            FileNotFoundError
+            globals()['__builtins__'].get('FileNotFoundError', OSError)
         ):
             raise BuildFailed()
 

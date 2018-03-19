@@ -17,8 +17,11 @@ echo
 echo
 echo "Compile wheels"
 for PYTHON in ${PYTHON_VERSIONS}; do
+    /opt/python/${PYTHON}/bin/pip install -U pip setuptools wheel
     /opt/python/${PYTHON}/bin/pip install -r /io/build_requirements.txt
     /opt/python/${PYTHON}/bin/pip wheel /io/ -w /io/dist/
+    cd /io
+    /opt/python/${PYTHON}/bin/python setup.py bdist_wheel
 done
 
 echo
@@ -40,9 +43,14 @@ ls /io/dist
 
 for PYTHON in ${PYTHON_VERSIONS}; do
     echo
-    echo -n "Test $PYTHON: "
+    echo -n "Test $PYTHON: $package_name "
     /opt/python/${PYTHON}/bin/python -c "import platform;print(platform.platform())"
     /opt/python/${PYTHON}/bin/pip install "$package_name" --no-index -f file:///io/dist
     /opt/python/${PYTHON}/bin/pip install pytest
     /opt/python/${PYTHON}/bin/py.test -vv /io/test
 done
+
+find /io/dist/ -type f -not -name "*$package_name*" -delete
+rm -rf /io/build
+chmod -v a+rwx /io/dist
+chmod -v a+rw /io/dist/*
