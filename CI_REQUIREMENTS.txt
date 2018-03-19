@@ -1,4 +1,5 @@
 six
 typing >= 3.6
+mock; python_version == "2.7"
 futures>=3.1; python_version == "2.7"
 gevent >= 1.2
