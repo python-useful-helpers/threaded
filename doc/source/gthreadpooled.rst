@@ -6,12 +6,14 @@ API: Decorators: `GThreadPooled`, `gthreadpooled`.
 .. py:module:: pooled
 .. py:currentmodule:: pooled
 
-.. py:class:: GThreadPooled(func, )
+.. py:class:: GThreadPooled(object)
 
     Post function to gevent.threadpool.ThreadPool.
 
-    :param func: function to wrap
-    :type func: typing.Optional[typing.Callable[..., typing.Union[typing.Any, typing.Awaitable]]]
+    .. py:method:: __init__(func, )
+
+        :param func: function to wrap
+        :type func: typing.Optional[typing.Callable[..., typing.Union[typing.Any, typing.Awaitable]]]
 
     .. note:: Attributes is read-only
 

@@ -6,18 +6,20 @@ API: Decorators: `Threaded` class and `threaded` function.
 .. py:module:: threaded
 .. py:currentmodule:: threaded
 
-.. py:class:: Threaded(name=None, daemon=False, started=False, )
+.. py:class:: Threaded(object)
 
     Run function in separate thread.
 
-    :param name: New thread name.
-                 If callable: use as wrapped function.
-                 If none: use wrapped function name.
-    :type name: typing.Union[None, str, typing.Callable[.., typing.Union[typing.Any, typing.Awaitable]]]
-    :param daemon: Daemonize thread.
-    :type daemon: bool
-    :param started: Return started thread
-    :type started: bool
+    .. py:method:: __init__(name=None, daemon=False, started=False, )
+
+        :param name: New thread name.
+                     If callable: use as wrapped function.
+                     If none: use wrapped function name.
+        :type name: typing.Union[None, str, typing.Callable[.., typing.Union[typing.Any, typing.Awaitable]]]
+        :param daemon: Daemonize thread.
+        :type daemon: bool
+        :param started: Return started thread
+        :type started: bool
 
     .. note:: Attributes is read-only.
 

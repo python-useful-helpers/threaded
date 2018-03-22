@@ -6,24 +6,26 @@ API: Decorators: `ThreadPooled`, `threadpooled`.
 .. py:module:: pooled
 .. py:currentmodule:: pooled
 
-.. py:class:: ThreadPooled(func, *, loop_getter, loop_getter_need_context, )
+.. py:class:: ThreadPooled(object)
 
     Post function to ThreadPoolExecutor.
 
-    :param func: function to wrap
-    :type func: typing.Optional[typing.Callable[..., typing.Union[typing.Any, typing.Awaitable]]]
+    .. py:method:: __init__(func, *, loop_getter, loop_getter_need_context, )
 
-    :param loop_getter: Method to get event loop, if wrap in asyncio task
+        :param func: function to wrap
+        :type func: typing.Optional[typing.Callable[..., typing.Union[typing.Any, typing.Awaitable]]]
 
-        .. note:: Python 3 Only.
+        :param loop_getter: Method to get event loop, if wrap in asyncio task
 
-    :type loop_getter: typing.Union[None, typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
+            .. note:: Python 3 Only.
 
-    :param loop_getter_need_context: Loop getter requires function context
+        :type loop_getter: typing.Union[None, typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
 
-        .. note:: Python 3 Only.
+        :param loop_getter_need_context: Loop getter requires function context
 
-    :type loop_getter_need_context: bool
+            .. note:: Python 3 Only.
+
+        :type loop_getter_need_context: bool
 
     .. note:: Attributes is read-only
 

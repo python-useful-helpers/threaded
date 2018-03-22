@@ -8,16 +8,18 @@ API: Decorators: `AsyncIOTask`, `asynciotask`.
 
 .. note:: Python 3 only.
 
-.. py:class:: AsyncIOTask(func, *, loop_getter, loop_getter_need_context, )
+.. py:class:: AsyncIOTask(object)
 
     Wrap to asyncio.Task.
 
-    :param func: function to wrap
-    :type func: typing.Optional[typing.Callable[..., typing.Awaitable]]
-    :param loop_getter: Method to get event loop, if wrap in asyncio task
-    :type loop_getter: typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
-    :param loop_getter_need_context: Loop getter requires function context
-    :type loop_getter_need_context: bool
+    .. py:method:: __init__(func, *, loop_getter, loop_getter_need_context, )
+
+        :param func: function to wrap
+        :type func: typing.Optional[typing.Callable[..., typing.Awaitable]]
+        :param loop_getter: Method to get event loop, if wrap in asyncio task
+        :type loop_getter: typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
+        :param loop_getter_need_context: Loop getter requires function context
+        :type loop_getter_need_context: bool
 
     .. note:: Attributes is read-only
 
