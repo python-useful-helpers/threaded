@@ -16,6 +16,8 @@
 
 from __future__ import absolute_import
 
+import typing  # noqa  # pylint: disable=unused-import
+
 import gevent.threadpool
 import six
 
@@ -31,15 +33,15 @@ class BaseGThreadPooled(_base_threaded.APIPooled):
 
     __slots__ = ()
 
-    __executor = None
+    __executor = None  # type: typing.Optional[gevent.threadpool.ThreadPool]
 
     # pylint: disable=arguments-differ
     @classmethod
     def configure(
         cls,
-        max_workers=None,
-        hub=None
-    ):
+        max_workers=None,  # type: typing.Optional[int]
+        hub=None  # type: typing.Optional[gevent.hub.Hub]
+    ):  # type: (...) -> None
         """Pool executor create and configure.
 
         :param max_workers: Maximum workers
@@ -67,7 +69,7 @@ class BaseGThreadPooled(_base_threaded.APIPooled):
     # pylint: enable=arguments-differ
 
     @classmethod
-    def shutdown(cls):
+    def shutdown(cls):  # type: () -> None
         """Shutdown executor.
 
         Due to not implemented method, set maxsize to 0 (do not accept new).
@@ -76,7 +78,7 @@ class BaseGThreadPooled(_base_threaded.APIPooled):
             cls.__executor.kill()
 
     @property
-    def executor(self):
+    def executor(self):  # type: () -> gevent.threadpool.ThreadPool
         """Executor instance.
 
         :rtype: gevent.threadpool.ThreadPool
@@ -85,7 +87,10 @@ class BaseGThreadPooled(_base_threaded.APIPooled):
             self.configure()
         return self.__executor
 
-    def _get_function_wrapper(self, func):
+    def _get_function_wrapper(
+        self,
+        func  # type: typing.Callable
+    ):  # type: (...) -> typing.Callable[..., gevent.event.AsyncResult]
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
@@ -96,7 +101,10 @@ class BaseGThreadPooled(_base_threaded.APIPooled):
         # pylint: disable=missing-docstring
         # noinspection PyMissingOrEmptyDocstring
         @six.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(
+            *args,
+            **kwargs
+        ):  # type: (...) -> gevent.event.AsyncResult
             return self.executor.spawn(func, *args, **kwargs)
         # pylint: enable=missing-docstring
         return wrapper

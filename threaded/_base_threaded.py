@@ -20,6 +20,7 @@ import abc
 # noinspection PyCompatibility
 import concurrent.futures
 import threading
+import typing  # noqa  # pylint: disable=unused-import
 
 import six
 
@@ -31,7 +32,7 @@ else:  # pragma: no cover
     try:
         from multiprocessing import cpu_count
     except ImportError:
-        def cpu_count():
+        def cpu_count():  # type: () -> int
             """Fake CPU count."""
             return 1
 
@@ -48,14 +49,14 @@ class APIPooled(_class_decorator.BaseDecorator):
 
     __slots__ = ()
 
-    __executor = None
+    __executor = None  # type: typing.Optional[typing.Any]
 
     @classmethod
     @abc.abstractmethod
     def configure(
         cls,
-        max_workers=None,
-    ):
+        max_workers=None,  # type: typing.Optional[int]
+    ):  # type: (...) -> None
         """Pool executor create and configure.
 
         :param max_workers: Maximum workers
@@ -65,13 +66,13 @@ class APIPooled(_class_decorator.BaseDecorator):
 
     @classmethod
     @abc.abstractmethod
-    def shutdown(cls):
+    def shutdown(cls):  # type: () -> None
         """Shutdown executor."""
         raise NotImplementedError()  # pragma: no cover
 
     @property
     @abc.abstractmethod
-    def executor(self):
+    def executor(self):  # type: () -> typing.Any
         """Executor instance."""
         raise NotImplementedError()  # pragma: no cover
 
@@ -81,13 +82,13 @@ class BasePooled(APIPooled):
 
     __slots__ = ()
 
-    __executor = None
+    __executor = None  # type: typing.Optional[ThreadPoolExecutor]
 
     @classmethod
     def configure(
         cls,
-        max_workers=None,
-    ):
+        max_workers=None,  # type: int
+    ):  # type: (...) -> None
         """Pool executor create and configure.
 
         :param max_workers: Maximum workers
@@ -103,13 +104,13 @@ class BasePooled(APIPooled):
         )
 
     @classmethod
-    def shutdown(cls):
+    def shutdown(cls):  # type: () -> None
         """Shutdown executor."""
         if cls.__executor is not None:
             cls.__executor.shutdown()
 
     @property
-    def executor(self):
+    def executor(self):  # type: () -> ThreadPoolExecutor
         """Executor instance.
 
         :rtype: ThreadPoolExecutor
@@ -121,7 +122,10 @@ class BasePooled(APIPooled):
             self.configure()
         return self.__executor
 
-    def _get_function_wrapper(self, func):
+    def _get_function_wrapper(
+        self,
+        func  # type: typing.Callable
+    ):  # type: (...) -> typing.Callable[..., concurrent.futures.Future]
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
@@ -132,7 +136,10 @@ class BasePooled(APIPooled):
         # pylint: disable=missing-docstring
         # noinspection PyMissingOrEmptyDocstring
         @six.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(
+            *args,
+            **kwargs
+        ):  # type: (...) -> concurrent.futures.Future
             return self.executor.submit(func, *args, **kwargs)
         # pylint: enable=missing-docstring
         return wrapper
@@ -149,16 +156,16 @@ class BaseThreaded(_class_decorator.BaseDecorator):
 
     def __init__(
         self,
-        name=None,
-        daemon=False,
-        started=False,
-    ):
+        name=None,  # type: typing.Optional[typing.Union[str, typing.Callable]]
+        daemon=False,  # type: bool
+        started=False,  # type: bool
+    ):  # type: (...) -> None
         """Run function in separate thread.
 
         :param name: New thread name.
                      If callable: use as wrapped function.
                      If none: use wrapped function name.
-        :type name: typing.Union[None, str, typing.Callable]
+        :type name: typing.Optional[typing.Union[str, typing.Callable]]
         :param daemon: Daemonize thread.
         :type daemon: bool
         :param started: Return started thread
@@ -173,14 +180,14 @@ class BaseThreaded(_class_decorator.BaseDecorator):
                 name,
                 '__name__',
                 str(hash(name))
-            )
+            )  # type: str
         else:
-            func, self.__name = None, name
+            func, self.__name = None, name  # type: None, typing.Optional[str]
         super(BaseThreaded, self).__init__(func=func)
         # pylint: enable=assigning-non-slot
 
     @property
-    def name(self):
+    def name(self):  # type: () -> typing.Optional[str]
         """Thread name.
 
         :rtype: typing.Optional[str]
@@ -188,7 +195,7 @@ class BaseThreaded(_class_decorator.BaseDecorator):
         return self.__name
 
     @property
-    def daemon(self):
+    def daemon(self):  # type: () -> bool
         """Start thread as daemon.
 
         :rtype: bool
@@ -196,14 +203,17 @@ class BaseThreaded(_class_decorator.BaseDecorator):
         return self.__daemon
 
     @property
-    def started(self):
+    def started(self):  # type: () -> bool
         """Return started thread.
 
         :rtype: bool
         """
         return self.__started
 
-    def _get_function_wrapper(self, func):
+    def _get_function_wrapper(
+        self,
+        func  # type: typing.Callable
+    ):  # type: (...) -> typing.Callable[..., threading.Thread]
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
@@ -222,7 +232,10 @@ class BaseThreaded(_class_decorator.BaseDecorator):
         # pylint: disable=missing-docstring
         # noinspection PyMissingOrEmptyDocstring
         @six.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(
+            *args,
+            **kwargs
+        ):  # type: (...) -> threading.Thread
             thread = threading.Thread(
                 target=func,
                 name=name,
@@ -259,7 +272,10 @@ class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
 
     __slots__ = ()
 
-    def __init__(self, max_workers=None):
+    def __init__(
+        self,
+        max_workers=None  # type: typing.Optional[int]
+    ):  # type: (...) -> None
         """Override init due to difference between Python <3.5 and 3.5+.
 
         :param max_workers: Maximum workers allowed.
@@ -276,7 +292,7 @@ class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
         )
 
     @property
-    def max_workers(self):
+    def max_workers(self):  # type: () -> int
         """MaxWorkers.
 
         :rtype: int
@@ -284,7 +300,7 @@ class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
         return self._max_workers
 
     @property
-    def is_shutdown(self):
+    def is_shutdown(self):  # type: () -> bool
         """Executor shutdown state.
 
         :rtype: bool

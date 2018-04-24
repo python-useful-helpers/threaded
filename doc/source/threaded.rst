@@ -15,7 +15,7 @@ API: Decorators: `Threaded` class and `threaded` function.
         :param name: New thread name.
                      If callable: use as wrapped function.
                      If none: use wrapped function name.
-        :type name: typing.Union[None, str, typing.Callable[.., typing.Union[typing.Any, typing.Awaitable]]]
+        :type name: typing.Optional[typing.Union[str, typing.Callable[.., typing.Union[typing.Any, typing.Awaitable]]]]
         :param daemon: Daemonize thread.
         :type daemon: bool
         :param started: Return started thread
@@ -28,7 +28,13 @@ API: Decorators: `Threaded` class and `threaded` function.
         ``typing.Optional[str]`` - New thread name. If none: use wrapped function name.
 
     .. py:attribute:: started
+
+        ``bool``
+
     .. py:attribute:: daemon
+
+        ``bool``
+
     .. py:attribute:: _func
 
         Wrapped function. Used for inheritance only.
@@ -47,9 +53,9 @@ API: Decorators: `Threaded` class and `threaded` function.
     :param name: New thread name.
                  If callable: use as wrapped function.
                  If none: use wrapped function name.
-    :type name: typing.Union[None, str, typing.Callable[.., typing.Union[typing.Any, typing.Awaitable]]]
+    :type name: typing.Optional[typing.Union[str, typing.Callable[.., typing.Union[typing.Any, typing.Awaitable]]]]
     :param daemon: Daemonize thread.
     :type daemon: bool
     :param started: Return started thread
     :type started: bool
-    :rtype: Threaded
+    :rtype: typing.Union[Threaded, threading.Thread]
