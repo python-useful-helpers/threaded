@@ -17,6 +17,7 @@
 from __future__ import absolute_import
 
 import sys
+import typing  # noqa  # pylint: disable=unused-import
 
 PY3 = sys.version_info[:2] > (3, 0)  # type: bool
 
@@ -52,7 +53,7 @@ else:  # pragma: no cover
 __all__ = (
     'ThreadPooled', 'Threaded',
     'threadpooled', 'threaded'
-)
+)  # type: typing.Tuple[str, ...]
 
 if PY3:  # pragma: no cover
     __all__ += (
@@ -68,6 +69,11 @@ if GThreadPooled is not None:  # pragma: no cover
 __version__ = '1.0.0'
 __author__ = "Alexey Stepanov"
 __author_email__ = 'penguinolog@gmail.com'
+__maintainers__ = {
+    'Alexey Stepanov': 'penguinolog@gmail.com',
+    'Antonio Esposito': 'esposito.cloud@gmail.com',
+    'Dennis Dmitriev': 'dis-xcom@gmail.com',
+}
 __url__ = 'https://github.com/python-useful-helpers/threaded'
 __description__ = (
     "Decorators for running functions in Thread/ThreadPool/IOLoop"

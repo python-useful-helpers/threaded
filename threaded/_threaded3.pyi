@@ -19,7 +19,10 @@ class ThreadPooled(_base_threaded.BasePooled):
     @property
     def loop_getter_need_context(self) -> bool: ...
 
-class Threaded(_base_threaded.BaseThreaded): ...
+    def _get_function_wrapper(self, func: typing.Callable) -> typing.Callable[..., typing.Union[concurrent.futures.Future, asyncio.Task]]: ...
+
+class Threaded(_base_threaded.BaseThreaded):
+    def _get_function_wrapper(self, func: typing.Callable) -> typing.Callable[..., threading.Thread]: ...
 
 class AsyncIOTask(_class_decorator.BaseDecorator):
     def __init__(
@@ -35,6 +38,8 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
 
     @property
     def loop_getter_need_context(self) -> bool: ...
+
+    def _get_function_wrapper(self, func: typing.Callable) -> typing.Callable[..., asyncio.Task]: ...
 
 def threadpooled(
     func: typing.Optional[typing.Callable]=...,
