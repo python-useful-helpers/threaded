@@ -19,6 +19,10 @@ Uses backport of concurrent.futures.
 
 from __future__ import absolute_import
 
+import concurrent.futures  # noqa  # pylint: disable=unused-import
+import threading  # noqa  # pylint: disable=unused-import
+import typing  # noqa  # pylint: disable=unused-import
+
 from . import _base_threaded
 
 __all__ = (
@@ -42,12 +46,14 @@ class Threaded(_base_threaded.BaseThreaded):
 
 
 # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
-def threadpooled(func=None):
+def threadpooled(
+    func=None  # type: typing.Optional[typing.Callable]
+):  # type: (...) -> typing.Union[ThreadPooled, concurrent.futures.Future]
     """Post function to ThreadPoolExecutor.
 
     :param func: function to wrap
     :type func: typing.Optional[typing.Callable]
-    :rtype: ThreadPooled
+    :rtype: typing.Union[ThreadPooled, concurrent.futures.Future]
     """
     if func is None:
         return ThreadPooled(func=func)
@@ -55,10 +61,10 @@ def threadpooled(func=None):
 
 
 def threaded(
-    name=None,
-    daemon=False,
-    started=False
-):
+    name=None,  # type: typing.Optional[typing.Union[str, typing.Callable]]
+    daemon=False,  # type: bool
+    started=False  # type: bool
+):  # type: (...) -> typing.Union[Threaded, threading.Thread]
     """Run function in separate thread.
 
     :param name: New thread name.
@@ -69,7 +75,7 @@ def threaded(
     :type daemon: bool
     :param started: Return started thread
     :type started: bool
-    :rtype: Threaded
+    :rtype: typing.Union[Threaded, threading.Thread]
     """
     if callable(name):
         func, name = (

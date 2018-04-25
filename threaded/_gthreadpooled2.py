@@ -19,6 +19,10 @@ Uses backport of concurrent.futures.
 
 from __future__ import absolute_import
 
+import typing  # noqa  # pylint: disable=unused-import
+
+import gevent.event  # noqa  # pylint: disable=unused-import
+
 from . import _base_gthreadpooled
 
 __all__ = (
@@ -34,12 +38,14 @@ class GThreadPooled(_base_gthreadpooled.BaseGThreadPooled):
 
 
 # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
-def gthreadpooled(func=None):
+def gthreadpooled(
+    func=None  # type: typing.Optional[typing.Callable]
+):  # type: (...) -> typing.Union[GThreadPooled, gevent.event.AsyncResult]
     """Post function to gevent.threadpool.ThreadPool.
 
     :param func: function to wrap
     :type func: typing.Optional[typing.Callable]
-    :rtype: GThreadPooled
+    :rtype: typing.Union[GThreadPooled, gevent.event.AsyncResult]
     """
     if func is None:
         return GThreadPooled(func=func)

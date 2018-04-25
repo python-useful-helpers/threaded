@@ -20,6 +20,7 @@ import ast
 import collections
 from distutils.command import build_ext
 import distutils.errors
+import glob
 import os.path
 import shutil
 import sys
@@ -32,7 +33,7 @@ except ImportError:
 
 import setuptools
 
-PY3 = sys.version_info[:2] > (2, 7)
+PY3 = sys.version_info[:2] > (2, 7)  # type: bool
 
 with open(
     os.path.join(
@@ -258,6 +259,12 @@ setup_args = dict(
         ],
     },
     install_requires=required,
+    package_data={
+        'threaded': [
+            os.path.basename(filename)
+            for filename in glob.glob(os.path.join('threaded', '*.pyi'))
+        ],
+    },
 )
 if PY3 and cythonize is not None:
     setup_args['ext_modules'] = ext_modules

@@ -1,0 +1,7 @@
+[build-system]
+# Minimum requirements for the build system to execute.
+# PEP 508 specifications for PEP 518.
+requires = [
+    "setuptools > 20.2 ",
+    "wheel",
+]

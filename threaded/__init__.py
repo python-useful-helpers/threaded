@@ -18,7 +18,7 @@ from __future__ import absolute_import
 
 import sys
 
-PY3 = sys.version_info[:2] > (3, 0)
+PY3 = sys.version_info[:2] > (3, 0)  # type: bool
 
 # pylint: disable=no-name-in-module
 if PY3:  # pragma: no cover

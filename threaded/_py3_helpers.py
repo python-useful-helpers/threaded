@@ -36,10 +36,10 @@ def get_loop(
     return self.loop_getter
 
 
-def await_if_required(target: typing.Callable) -> typing.Callable:
+def await_if_required(target: typing.Callable) -> typing.Callable[..., typing.Any]:
     """Await result if coroutine was returned."""
     @functools.wraps(target)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs):  # type: (...) -> typing.Any
         """Decorator/wrapper."""
         result = target(*args, **kwargs)
         if asyncio.iscoroutine(result):
