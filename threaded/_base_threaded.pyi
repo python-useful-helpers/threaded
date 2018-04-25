@@ -1,7 +1,9 @@
 import concurrent.futures
+import threading
 import typing
 from . import _class_decorator
-from multiprocessing import cpu_count as cpu_count
+
+def cpu_count() -> int: ...
 
 class APIPooled(_class_decorator.BaseDecorator):
     @classmethod
@@ -23,6 +25,8 @@ class BasePooled(APIPooled):
     @property
     def executor(self) -> ThreadPoolExecutor: ...
 
+    def _get_function_wrapper(self, func: typing.Callable) -> typing.Callable[..., concurrent.futures.Future]: ...
+
 class BaseThreaded(_class_decorator.BaseDecorator):
     def __init__(
         self,
@@ -39,6 +43,8 @@ class BaseThreaded(_class_decorator.BaseDecorator):
 
     @property
     def started(self) -> bool: ...
+
+    def _get_function_wrapper(self, func: typing.Callable) -> typing.Callable[..., threading.Thread]: ...
 
 class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
     def __init__(self, max_workers: typing.Optional[int]=...) -> None: ...

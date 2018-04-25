@@ -1,3 +1,4 @@
+import gevent.event
 import gevent.threadpool
 import typing
 from . import _base_threaded
@@ -15,3 +16,5 @@ class BaseGThreadPooled(_base_threaded.APIPooled):
 
     @property
     def executor(self) -> gevent.threadpool.ThreadPool: ...
+
+    def _get_function_wrapper(self, func: typing.Callable) -> typing.Callable[..., gevent.event.AsyncResult]: ...

@@ -18,6 +18,7 @@ from __future__ import absolute_import
 
 import typing  # noqa  # pylint: disable=unused-import
 
+import gevent.event  # noqa  # pylint: disable=unused-import
 import gevent.threadpool
 import six
 
