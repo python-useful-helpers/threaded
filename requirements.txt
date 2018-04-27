@@ -1,2 +1,2 @@
-six
-typing >= 3.6
+six >=1.9
+typing >= 3.6 ; python_version < "3.7"
