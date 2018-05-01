@@ -41,6 +41,7 @@ Pros:
     Python 3.4
     Python 3.5
     Python 3.6
+    Python 3.7
     PyPy
     PyPy3 3.5+
     Jyton 2.7
@@ -257,18 +258,7 @@ Basic usage example:
 Testing
 =======
 The main test mechanism for the package `threaded` is using `tox`.
-Test environments available:
-
-::
-
-    pep8
-    py27
-    py34
-    py35
-    py36
-    pypy
-    pypy3
-    pylint
+Available environments can be collected via `tox -l`
 
 CI systems
 ==========
