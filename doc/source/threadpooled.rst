@@ -86,7 +86,7 @@ API: Decorators: `ThreadPooled`, `threadpooled`.
     :type loop_getter: typing.Union[None, typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
     :param loop_getter_need_context: Loop getter requires function context
     :type loop_getter_need_context: bool
-    :rtype: typing.Union[ThreadPooled, concurrent.futures.Future, asyncio.Task]
+    :rtype: typing.Union[ThreadPooled, typing.Callable[..., typing.Union[concurrent.futures.Future, asyncio.Task]]]
 
 Not exported, but public accessed data type:
 

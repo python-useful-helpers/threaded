@@ -54,4 +54,4 @@ API: Decorators: `GThreadPooled`, `gthreadpooled`.
 
     :param func: function to wrap
     :type func: typing.Optional[typing.Callable]
-    :rtype: typing.Union[GThreadPooled, gevent.event.AsyncResult]
+    :rtype: typing.Union[GThreadPooled, typing.Callable[..., gevent.event.AsyncResult]]

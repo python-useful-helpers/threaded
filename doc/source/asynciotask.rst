@@ -54,4 +54,4 @@ API: Decorators: `AsyncIOTask`, `asynciotask`.
     :type loop_getter: typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
     :param loop_getter_need_context: Loop getter requires function context
     :type loop_getter_need_context: bool
-    :rtype: typing.Union[AsyncIOTask, asyncio.Task]
+    :rtype: typing.Union[AsyncIOTask, typing.Callable[..., asyncio.Task]]

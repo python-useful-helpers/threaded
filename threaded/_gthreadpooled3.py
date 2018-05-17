@@ -64,17 +64,33 @@ class GThreadPooled(_base_gthreadpooled.BaseGThreadPooled):
         return wrapper
 
 
-# pylint: disable=unexpected-keyword-arg, no-value-for-parameter
+# pylint: disable=unused-argument, function-redefined
+@typing.overload
 def gthreadpooled(
+    func=None  # type: None
+):  # type: (...) -> GThreadPooled
+    """Post function to gevent.threadpool.ThreadPool."""
+
+
+@typing.overload  # noqa: F811
+def gthreadpooled(
+    func  # type: typing.Callable
+):  # type: (...) -> typing.Callable[..., gevent.event.AsyncResult]
+    """Post function to gevent.threadpool.ThreadPool."""
+# pylint: enable=unused-argument
+
+
+# pylint: disable=unexpected-keyword-arg, no-value-for-parameter
+def gthreadpooled(  # noqa: F811
     func: typing.Optional[typing.Callable] = None
-) -> typing.Union[GThreadPooled, gevent.event.AsyncResult]:
+) -> typing.Union[GThreadPooled, typing.Callable[..., gevent.event.AsyncResult]]:
     """Post function to gevent.threadpool.ThreadPool.
 
     :param func: function to wrap
     :type func: typing.Optional[typing.Callable]
-    :rtype: typing.Union[GThreadPooled, gevent.event.AsyncResult]
+    :rtype: typing.Union[GThreadPooled, typing.Callable[..., gevent.event.AsyncResult]]
     """
     if func is None:
         return GThreadPooled(func=func)
     return GThreadPooled(func=None)(func)
-# pylint: enable=unexpected-keyword-arg, no-value-for-parameter
+# pylint: enable=unexpected-keyword-arg, no-value-for-parameter, function-redefined
