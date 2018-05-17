@@ -268,6 +268,8 @@ setup_args = dict(
         'threaded': [
             os.path.basename(filename)
             for filename in glob.glob(os.path.join('threaded', '*.pyi'))
+        ] + [
+            'py.typed'
         ],
     },
 )

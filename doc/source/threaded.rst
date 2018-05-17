@@ -58,4 +58,4 @@ API: Decorators: `Threaded` class and `threaded` function.
     :type daemon: bool
     :param started: Return started thread
     :type started: bool
-    :rtype: typing.Union[Threaded, threading.Thread]
+    :rtype: typing.Union[Threaded, typing.Callable[..., threading.Thread]]

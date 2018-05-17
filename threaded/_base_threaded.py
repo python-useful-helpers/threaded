@@ -16,7 +16,6 @@
 
 from __future__ import absolute_import
 
-import abc
 # noinspection PyCompatibility
 import concurrent.futures
 import threading
@@ -52,7 +51,6 @@ class APIPooled(_class_decorator.BaseDecorator):
     __executor = None  # type: typing.Optional[typing.Any]
 
     @classmethod
-    @abc.abstractmethod
     def configure(
         cls,
         max_workers=None,  # type: typing.Optional[int]
@@ -65,13 +63,11 @@ class APIPooled(_class_decorator.BaseDecorator):
         raise NotImplementedError()  # pragma: no cover
 
     @classmethod
-    @abc.abstractmethod
     def shutdown(cls):  # type: () -> None
         """Shutdown executor."""
         raise NotImplementedError()  # pragma: no cover
 
     @property
-    @abc.abstractmethod
     def executor(self):  # type: () -> typing.Any
         """Executor instance."""
         raise NotImplementedError()  # pragma: no cover
@@ -87,7 +83,7 @@ class BasePooled(APIPooled):
     @classmethod
     def configure(
         cls,
-        max_workers=None,  # type: int
+        max_workers=None,  # type: typing.Optional[int]
     ):  # type: (...) -> None
         """Pool executor create and configure.
 

@@ -21,7 +21,7 @@ from __future__ import absolute_import
 
 import concurrent.futures  # noqa  # pylint: disable=unused-import
 import threading  # noqa  # pylint: disable=unused-import
-import typing  # noqa  # pylint: disable=unused-import
+import typing
 
 from . import _base_threaded
 
@@ -45,26 +45,62 @@ class Threaded(_base_threaded.BaseThreaded):
     __slots__ = ()
 
 
-# pylint: disable=unexpected-keyword-arg, no-value-for-parameter
+# pylint: disable=unused-argument, function-redefined
+@typing.overload
 def threadpooled(
+    func=None  # type: None
+):  # type: (...) -> ThreadPooled
+    """Post function to ThreadPoolExecutor."""
+
+
+@typing.overload  # noqa: F811
+def threadpooled(
+    func  # type: typing.Callable
+):  # type: (...) -> typing.Callable[..., concurrent.futures.Future]
+    """Post function to ThreadPoolExecutor."""
+# pylint: enable=unused-argument
+
+
+# pylint: disable=unexpected-keyword-arg, no-value-for-parameter
+def threadpooled(  # noqa: F811
     func=None  # type: typing.Optional[typing.Callable]
-):  # type: (...) -> typing.Union[ThreadPooled, concurrent.futures.Future]
+):  # type: (...) -> typing.Union[ThreadPooled, typing.Callable[..., concurrent.futures.Future]]
     """Post function to ThreadPoolExecutor.
 
     :param func: function to wrap
     :type func: typing.Optional[typing.Callable]
-    :rtype: typing.Union[ThreadPooled, concurrent.futures.Future]
+    :rtype: typing.Union[ThreadPooled, typing.Callable[..., concurrent.futures.Future]]
     """
     if func is None:
         return ThreadPooled(func=func)
     return ThreadPooled(func=None)(func)
 
 
+# pylint: disable=unused-argument
+@typing.overload
 def threaded(
+    name=None,  # type: typing.Optional[str]
+    daemon=False,  # type: bool
+    started=False  # type: bool
+):  # type: (...) -> Threaded
+    """Run function in separate thread."""
+
+
+@typing.overload  # noqa: F811
+def threaded(
+    name,  # type: typing.Callable
+    daemon=False,  # type: bool
+    started=False  # type: bool
+):  # type: (...) -> typing.Callable[..., threading.Thread]
+    """Run function in separate thread."""
+# pylint: enable=unused-argument
+
+
+def threaded(  # noqa: F811
     name=None,  # type: typing.Optional[typing.Union[str, typing.Callable]]
     daemon=False,  # type: bool
     started=False  # type: bool
-):  # type: (...) -> typing.Union[Threaded, threading.Thread]
+):  # type: (...) -> typing.Union[Threaded, typing.Callable[..., threading.Thread]]
     """Run function in separate thread.
 
     :param name: New thread name.
@@ -75,7 +111,7 @@ def threaded(
     :type daemon: bool
     :param started: Return started thread
     :type started: bool
-    :rtype: typing.Union[Threaded, threading.Thread]
+    :rtype: typing.Union[Threaded, typing.Callable[..., threading.Thread]]
     """
     if callable(name):
         func, name = (
@@ -84,4 +120,4 @@ def threaded(
         )
         return Threaded(name=name, daemon=daemon, started=started)(func)
     return Threaded(name=name, daemon=daemon, started=started)
-# pylint: enable=unexpected-keyword-arg, no-value-for-parameter
+# pylint: enable=unexpected-keyword-arg, no-value-for-parameter, function-redefined

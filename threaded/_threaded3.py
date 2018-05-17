@@ -309,8 +309,49 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
         )  # pragma: no cover
 
 
-# pylint: disable=unexpected-keyword-arg, no-value-for-parameter
+# pylint: disable=unused-argument, function-redefined
+@typing.overload
 def threadpooled(
+    func: None = None,
+    *,
+    loop_getter: typing.Union[
+        None,
+        typing.Callable[..., asyncio.AbstractEventLoop],
+        asyncio.AbstractEventLoop
+    ]=None,
+    loop_getter_need_context: bool = False
+) -> ThreadPooled:
+    """Post function to ThreadPoolExecutor."""
+
+
+@typing.overload  # noqa: F811
+def threadpooled(
+    func: typing.Callable,
+    *,
+    loop_getter: None = None,
+    loop_getter_need_context: bool = False
+
+) -> typing.Callable[..., concurrent.futures.Future]:
+    """Post function to ThreadPoolExecutor."""
+
+
+@typing.overload  # noqa: F811
+def threadpooled(
+    func: typing.Callable,
+    *,
+    loop_getter: typing.Union[
+        typing.Callable[..., asyncio.AbstractEventLoop],
+        asyncio.AbstractEventLoop
+    ],
+    loop_getter_need_context: bool = False
+
+) -> typing.Callable[..., asyncio.Task]:
+    """Post function to ThreadPoolExecutor."""
+# pylint: enable=unused-argument
+
+
+# pylint: disable=unexpected-keyword-arg, no-value-for-parameter
+def threadpooled(  # noqa: F811
     func: typing.Optional[typing.Callable] = None,
     *,
     loop_getter: typing.Union[
@@ -319,7 +360,7 @@ def threadpooled(
         asyncio.AbstractEventLoop
     ]=None,
     loop_getter_need_context: bool = False
-) -> typing.Union[ThreadPooled, concurrent.futures.Future, asyncio.Task]:
+) -> typing.Union[ThreadPooled, typing.Callable[..., typing.Union[concurrent.futures.Future, asyncio.Task]]]:
     """Post function to ThreadPoolExecutor.
 
     :param func: function to wrap
@@ -332,7 +373,7 @@ def threadpooled(
                        ]
     :param loop_getter_need_context: Loop getter requires function context
     :type loop_getter_need_context: bool
-    :rtype: typing.Union[ThreadPooled, concurrent.futures.Future, asyncio.Task]
+    :rtype: typing.Union[ThreadPooled, typing.Callable[..., typing.Union[concurrent.futures.Future, asyncio.Task]]]
     """
     if func is None:
         return ThreadPooled(
@@ -347,11 +388,31 @@ def threadpooled(
     )(func)
 
 
+# pylint: disable=unused-argument
+@typing.overload
 def threaded(
+    name: typing.Optional[str] = None,
+    daemon: bool = False,
+    started: bool = False
+):  # type: (...) -> Threaded
+    """Run function in separate thread."""
+
+
+@typing.overload  # noqa: F811
+def threaded(
+    name: typing.Callable,
+    daemon: bool = False,
+    started: bool = False
+) -> typing.Callable[..., threading.Thread]:
+    """Run function in separate thread."""
+# pylint: enable=unused-argument
+
+
+def threaded(  # noqa: F811
     name: typing.Optional[typing.Union[str, typing.Callable]] = None,
     daemon: bool = False,
     started: bool = False
-) -> typing.Union[Threaded, threading.Thread]:
+) -> typing.Union[Threaded, typing.Callable[..., threading.Thread]]:
     """Run function in separate thread.
 
     :param name: New thread name.
@@ -362,7 +423,7 @@ def threaded(
     :type daemon: bool
     :param started: Return started thread
     :type started: bool
-    :rtype: typing.Union[Threaded, threading.Thread]
+    :rtype: typing.Union[Threaded, typing.Callable[..., threading.Thread]]
     """
     if callable(name):
         func, name = (
@@ -373,7 +434,35 @@ def threaded(
     return Threaded(name=name, daemon=daemon, started=started)
 
 
+# pylint: disable=unused-argument
+@typing.overload
 def asynciotask(
+    func=None,
+    *,
+    loop_getter: typing.Union[
+        typing.Callable[..., asyncio.AbstractEventLoop],
+        asyncio.AbstractEventLoop
+    ]=asyncio.get_event_loop,
+    loop_getter_need_context: bool = False
+) -> AsyncIOTask:
+    """Wrap function in future and return."""
+
+
+@typing.overload  # noqa: F811
+def asynciotask(
+    func: typing.Callable,
+    *,
+    loop_getter: typing.Union[
+        typing.Callable[..., asyncio.AbstractEventLoop],
+        asyncio.AbstractEventLoop
+    ]=asyncio.get_event_loop,
+    loop_getter_need_context: bool = False
+) -> typing.Callable[..., asyncio.Task]:
+    """Wrap function in future and return."""
+# pylint: enable=unused-argument
+
+
+def asynciotask(  # noqa: F811
     func: typing.Optional[typing.Callable] = None,
     *,
     loop_getter: typing.Union[
@@ -381,7 +470,7 @@ def asynciotask(
         asyncio.AbstractEventLoop
     ]=asyncio.get_event_loop,
     loop_getter_need_context: bool = False
-) -> typing.Union[AsyncIOTask, asyncio.Task]:
+) -> typing.Union[AsyncIOTask, typing.Callable[..., asyncio.Task]]:
     """Wrap function in future and return.
 
     :param func: Function to wrap
@@ -393,7 +482,7 @@ def asynciotask(
                        ]
     :param loop_getter_need_context: Loop getter requires function context
     :type loop_getter_need_context: bool
-    :rtype: typing.Union[AsyncIOTask, asyncio.Task]
+    :rtype: typing.Union[AsyncIOTask, typing.Callable[..., asyncio.Task]]
     """
     if func is None:
         return AsyncIOTask(
@@ -406,4 +495,4 @@ def asynciotask(
         loop_getter=loop_getter,
         loop_getter_need_context=loop_getter_need_context
     )(func)
-# pylint: enable=unexpected-keyword-arg, no-value-for-parameter
+# pylint: enable=unexpected-keyword-arg, no-value-for-parameter, function-redefined
