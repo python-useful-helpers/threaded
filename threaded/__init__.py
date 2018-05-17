@@ -35,7 +35,7 @@ if PY3:  # pragma: no cover
     try:  # pragma: no cover
         from ._gthreadpooled3 import GThreadPooled, gthreadpooled
     except ImportError:  # pragma: no cover
-        GThreadPooled = gthreadpooled = None
+        GThreadPooled = gthreadpooled = None  # type: ignore
 else:  # pragma: no cover
     from ._threaded2 import (
         ThreadPooled,
@@ -46,7 +46,7 @@ else:  # pragma: no cover
     try:  # pragma: no cover
         from ._gthreadpooled2 import GThreadPooled, gthreadpooled
     except ImportError:  # pragma: no cover
-        GThreadPooled = gthreadpooled = None
+        GThreadPooled = gthreadpooled = None  # type: ignore
 # pylint: enable=no-name-in-module
 
 
