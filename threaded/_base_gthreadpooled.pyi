@@ -1,5 +1,5 @@
-import gevent.event
-import gevent.threadpool
+import gevent.event  # type: ignore
+import gevent.threadpool  # type: ignore
 import typing
 from . import _base_threaded
 
