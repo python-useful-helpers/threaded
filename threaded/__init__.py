@@ -75,7 +75,5 @@ __maintainers__ = {
     'Dennis Dmitriev': 'dis-xcom@gmail.com',
 }
 __url__ = 'https://github.com/python-useful-helpers/threaded'
-__description__ = (
-    "Decorators for running functions in Thread/ThreadPool/IOLoop"
-)
+__description__ = "Decorators for running functions in Thread/ThreadPool/IOLoop"
 __license__ = "Apache License, Version 2.0"

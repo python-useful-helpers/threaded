@@ -1,4 +1,4 @@
-import gevent.event
+import gevent.event  # type: ignore
 import typing
 from . import _base_gthreadpooled
 
