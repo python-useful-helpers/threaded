@@ -260,7 +260,7 @@ setup_args = dict(
             'futures>=3.1',
         ],
         'gevent': [
-            'gevent >= 1.2'
+            'gevent >= 1.2.2'
         ],
     },
     install_requires=required,
