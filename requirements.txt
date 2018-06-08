@@ -1,2 +1,2 @@
 six >=1.10.0
-typing >= 3.6 ; python_version < "3.7"
+typing >= 3.6 ; python_version < "3.8"
