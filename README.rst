@@ -6,7 +6,7 @@ threaded
 .. image:: https://coveralls.io/repos/github/python-useful-helpers/threaded/badge.svg?branch=master
     :target: https://coveralls.io/github/python-useful-helpers/threaded?branch=master
 .. image:: https://readthedocs.org/projects/threaded/badge/?version=latest
-    :target: http://threaded.readthedocs.io/
+    :target: https://threaded.readthedocs.io/
     :alt: Documentation Status
 .. image:: https://img.shields.io/pypi/v/threaded.svg
     :target: https://pypi.python.org/pypi/threaded

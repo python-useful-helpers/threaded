@@ -249,12 +249,26 @@ setup_args = dict(
         for name, email in variables['__maintainers__'].items()
     ),
     url=variables['__url__'],
+    project_urls={
+        "Bug Tracker": "https://github.com/python-useful-helpers/threaded/issues",
+        "Documentation": "https://threaded.readthedocs.io/",
+    },
     version=variables['__version__'],
     license=variables['__license__'],
     description=variables['__description__'],
     long_description=long_description,
     classifiers=classifiers,
     keywords=keywords,
+    python_requires='>=2.7.5,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
+    # While setuptools cannot deal with pre-installed incompatible versions,
+    # setting a lower bound is not harmful - it makes error messages cleaner. DO
+    # NOT set an upper bound on setuptools, as that will lead to uninstallable
+    # situations as progressive releases of projects are done.
+    # Blacklist setuptools 34.0.0-34.3.2 due to https://github.com/pypa/setuptools/issues/951
+    # Blacklist setuptools 36.2.0 due to https://github.com/pypa/setuptools/issues/1086
+    setup_requires="setuptools >= 21.0.0,!=24.0.0,"
+                   "!=34.0.0,!=34.0.1,!=34.0.2,!=34.0.3,!=34.1.0,!=34.1.1,!=34.2.0,!=34.3.0,!=34.3.1,!=34.3.2,"
+                   "!=36.2.0",
     extras_require={
         ':python_version == "2.7"': [
             'futures>=3.1',
