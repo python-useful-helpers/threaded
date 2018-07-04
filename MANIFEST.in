@@ -1,1 +1,9 @@
 include *.rst LICENSE requirements.txt
+global-exclude *.c
+exclude Makefile
+prune tools
+exclude .travis.yml appveyor.yml
+exclude tox.ini pytest.ini .coveragerc
+prune test
+prune .github
+exclude CODEOWNERS CODE_OF_CONDUCT.md
