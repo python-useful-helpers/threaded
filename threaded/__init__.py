@@ -46,7 +46,7 @@ else:  # pragma: no cover
     try:  # pragma: no cover
         from ._gthreadpooled2 import GThreadPooled, gthreadpooled
     except ImportError:  # pragma: no cover
-        GThreadPooled = gthreadpooled = None  # type: ignore
+        GThreadPooled = gthreadpooled = None
 # pylint: enable=no-name-in-module
 
 

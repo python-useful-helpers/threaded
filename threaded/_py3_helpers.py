@@ -25,8 +25,8 @@ __all__ = (
 
 
 def get_loop(
-        self,
-        *args, **kwargs
+        self: typing.Any,
+        *args: typing.Tuple, **kwargs: typing.Dict
 ) -> typing.Optional[asyncio.AbstractEventLoop]:
     """Get event loop in decorator class."""
     if callable(self.loop_getter):

@@ -6,7 +6,7 @@ from . import _base_threaded
 class BaseGThreadPooled(_base_threaded.APIPooled):
     @classmethod
     def configure(
-        cls,
+        cls: typing.Type[BaseGThreadPooled],
         max_workers: typing.Optional[int]=...,
         hub: typing.Optional[gevent.hub.Hub]=...
     ) -> None: ...

@@ -39,7 +39,7 @@ class BaseGThreadPooled(_base_threaded.APIPooled):
     # pylint: disable=arguments-differ
     @classmethod
     def configure(
-        cls,
+        cls,  # type: typing.Type[BaseGThreadPooled]
         max_workers=None,  # type: typing.Optional[int]
         hub=None  # type: typing.Optional[gevent.hub.Hub]
     ):  # type: (...) -> None

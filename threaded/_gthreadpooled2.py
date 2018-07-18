@@ -19,7 +19,7 @@ Uses backport of concurrent.futures.
 
 from __future__ import absolute_import
 
-import typing
+import typing  # noqa  # pylint: disable=unused-import
 
 import gevent.event  # noqa  # pylint: disable=unused-import
 
@@ -37,24 +37,8 @@ class GThreadPooled(_base_gthreadpooled.BaseGThreadPooled):
     __slots__ = ()
 
 
-# pylint: disable=unused-argument, function-redefined
-@typing.overload
-def gthreadpooled(
-    func=None  # type: None
-):  # type: (...) -> GThreadPooled
-    """Post function to gevent.threadpool.ThreadPool."""
-
-
-@typing.overload  # noqa: F811
-def gthreadpooled(
-    func  # type: typing.Callable
-):  # type: (...) -> typing.Callable[..., gevent.event.AsyncResult]
-    """Post function to gevent.threadpool.ThreadPool."""
-# pylint: enable=unused-argument
-
-
 # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
-def gthreadpooled(  # noqa: F811
+def gthreadpooled(
     func=None  # type: typing.Optional[typing.Callable]
 ):  # type: (...) -> typing.Union[GThreadPooled, typing.Callable[..., gevent.event.AsyncResult]]
     """Post function to gevent.threadpool.ThreadPool.
@@ -66,4 +50,4 @@ def gthreadpooled(  # noqa: F811
     if func is None:
         return GThreadPooled(func=func)
     return GThreadPooled(func=None)(func)
-# pylint: enable=unexpected-keyword-arg, no-value-for-parameter, function-redefined
+# pylint: enable=unexpected-keyword-arg, no-value-for-parameter

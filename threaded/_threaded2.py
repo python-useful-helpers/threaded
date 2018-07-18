@@ -21,7 +21,7 @@ from __future__ import absolute_import
 
 import concurrent.futures  # noqa  # pylint: disable=unused-import
 import threading  # noqa  # pylint: disable=unused-import
-import typing
+import typing  # noqa  # pylint: disable=unused-import
 
 from . import _base_threaded
 
@@ -45,24 +45,8 @@ class Threaded(_base_threaded.BaseThreaded):
     __slots__ = ()
 
 
-# pylint: disable=unused-argument, function-redefined
-@typing.overload
-def threadpooled(
-    func=None  # type: None
-):  # type: (...) -> ThreadPooled
-    """Post function to ThreadPoolExecutor."""
-
-
-@typing.overload  # noqa: F811
-def threadpooled(
-    func  # type: typing.Callable
-):  # type: (...) -> typing.Callable[..., concurrent.futures.Future]
-    """Post function to ThreadPoolExecutor."""
-# pylint: enable=unused-argument
-
-
 # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
-def threadpooled(  # noqa: F811
+def threadpooled(
     func=None  # type: typing.Optional[typing.Callable]
 ):  # type: (...) -> typing.Union[ThreadPooled, typing.Callable[..., concurrent.futures.Future]]
     """Post function to ThreadPoolExecutor.
@@ -76,27 +60,7 @@ def threadpooled(  # noqa: F811
     return ThreadPooled(func=None)(func)
 
 
-# pylint: disable=unused-argument
-@typing.overload
 def threaded(
-    name=None,  # type: typing.Optional[str]
-    daemon=False,  # type: bool
-    started=False  # type: bool
-):  # type: (...) -> Threaded
-    """Run function in separate thread."""
-
-
-@typing.overload  # noqa: F811
-def threaded(
-    name,  # type: typing.Callable
-    daemon=False,  # type: bool
-    started=False  # type: bool
-):  # type: (...) -> typing.Callable[..., threading.Thread]
-    """Run function in separate thread."""
-# pylint: enable=unused-argument
-
-
-def threaded(  # noqa: F811
     name=None,  # type: typing.Optional[typing.Union[str, typing.Callable]]
     daemon=False,  # type: bool
     started=False  # type: bool
@@ -120,4 +84,4 @@ def threaded(  # noqa: F811
         )
         return Threaded(name=name, daemon=daemon, started=started)(func)
     return Threaded(name=name, daemon=daemon, started=started)
-# pylint: enable=unexpected-keyword-arg, no-value-for-parameter, function-redefined
+# pylint: enable=unexpected-keyword-arg, no-value-for-parameter
