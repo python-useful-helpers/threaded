@@ -41,22 +41,66 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
 
     def _get_function_wrapper(self, func: typing.Callable) -> typing.Callable[..., asyncio.Task]: ...
 
+
+@typing.overload
 def threadpooled(
-    func: typing.Optional[typing.Callable]=...,
+    func: typing.Callable,
     *,
-    loop_getter: typing.Union[None, typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]=...,
-    loop_getter_need_context: bool=...
-) -> typing.Union[ThreadPooled, typing.Callable[..., typing.Union[concurrent.futures.Future, asyncio.Task]]]: ...
+    loop_getter: None = ...,
+    loop_getter_need_context: bool = ...
 
-def threaded(
-    name: typing.Optional[typing.Union[str, typing.Callable]]=...,
-    daemon: bool=...,
-    started: bool=...
-) -> typing.Union[Threaded, typing.Callable[..., threading.Thread]]: ...
+) -> typing.Callable[..., concurrent.futures.Future]: ...
 
+@typing.overload
+def threadpooled(
+    func: typing.Callable,
+    *,
+    loop_getter: typing.Union[
+        typing.Callable[..., asyncio.AbstractEventLoop],
+        asyncio.AbstractEventLoop
+    ],
+    loop_getter_need_context: bool = ...
+
+) -> typing.Callable[..., asyncio.Task]: ...
+
+@typing.overload
+def threadpooled(
+    func: None = ...,
+    *,
+    loop_getter: typing.Union[
+        None,
+        typing.Callable[..., asyncio.AbstractEventLoop],
+        asyncio.AbstractEventLoop
+    ]=...,
+    loop_getter_need_context: bool = ...
+) -> ThreadPooled: ...
+
+
+@typing.overload
+def threaded(name: typing.Callable, daemon: bool = ..., started: bool = ...) -> typing.Callable[..., threading.Thread]: ...
+
+@typing.overload
+def threaded(name: typing.Optional[str] = ..., daemon: bool = ..., started: bool = ...) -> Threaded: ...
+
+
+@typing.overload
 def asynciotask(
-    func: typing.Optional[typing.Callable]=...,
+    func: None= ...,
     *,
-    loop_getter: typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]=...,
-    loop_getter_need_context: bool=...
-) -> typing.Union[AsyncIOTask, typing.Callable[..., asyncio.Task]]: ...
+    loop_getter: typing.Union[
+        typing.Callable[..., asyncio.AbstractEventLoop],
+        asyncio.AbstractEventLoop
+    ]=asyncio.get_event_loop,
+    loop_getter_need_context: bool = ...
+) -> AsyncIOTask: ...
+
+@typing.overload
+def asynciotask(
+    func: typing.Callable,
+    *,
+    loop_getter: typing.Union[
+        typing.Callable[..., asyncio.AbstractEventLoop],
+        asyncio.AbstractEventLoop
+    ]=asyncio.get_event_loop,
+    loop_getter_need_context: bool = ...
+) -> typing.Callable[..., asyncio.Task]: ...

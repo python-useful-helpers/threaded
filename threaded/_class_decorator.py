@@ -21,13 +21,12 @@ from __future__ import print_function
 
 import abc
 import functools
-import sys
 import typing  # noqa  # pylint: disable=unused-import
 
-PY3 = sys.version_info[:2] > (3, 0)  # type: bool
+import six
 
 
-class BaseDecorator(object):
+class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
     """Base class for decorators.
 
     Implements wrapping and __call__, wrapper getter is abstract.
@@ -81,7 +80,7 @@ class BaseDecorator(object):
         self.__func = func  # type: typing.Optional[typing.Callable]
         if self.__func is not None:
             functools.update_wrapper(self, self.__func)
-            if not PY3:  # pragma: no cover
+            if not six.PY3:  # pragma: no cover
                 self.__wrapped__ = self.__func  # type: typing.Callable
         # pylint: enable=assigning-non-slot
         # noinspection PyArgumentList

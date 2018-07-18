@@ -16,6 +16,7 @@
 
 from __future__ import absolute_import
 
+import abc
 # noinspection PyCompatibility
 import concurrent.futures
 import threading
@@ -43,7 +44,7 @@ __all__ = (
 )
 
 
-class APIPooled(_class_decorator.BaseDecorator):
+class APIPooled(six.with_metaclass(abc.ABCMeta, _class_decorator.BaseDecorator)):
     """API description for pooled."""
 
     __slots__ = ()
@@ -52,7 +53,7 @@ class APIPooled(_class_decorator.BaseDecorator):
 
     @classmethod
     def configure(
-        cls,
+        cls,  # type: typing.Type[APIPooled]
         max_workers=None,  # type: typing.Optional[int]
     ):  # type: (...) -> None
         """Pool executor create and configure.
@@ -63,7 +64,7 @@ class APIPooled(_class_decorator.BaseDecorator):
         raise NotImplementedError()  # pragma: no cover
 
     @classmethod
-    def shutdown(cls):  # type: () -> None
+    def shutdown(cls):  # type: (typing.Type[APIPooled]) -> None
         """Shutdown executor."""
         raise NotImplementedError()  # pragma: no cover
 
@@ -82,7 +83,7 @@ class BasePooled(APIPooled):
 
     @classmethod
     def configure(
-        cls,
+        cls,  # type: typing.Type[BasePooled]
         max_workers=None,  # type: typing.Optional[int]
     ):  # type: (...) -> None
         """Pool executor create and configure.
@@ -100,7 +101,7 @@ class BasePooled(APIPooled):
         )
 
     @classmethod
-    def shutdown(cls):  # type: () -> None
+    def shutdown(cls):  # type: (typing.Type[BasePooled]) -> None
         """Shutdown executor."""
         if cls.__executor is not None:
             cls.__executor.shutdown()
