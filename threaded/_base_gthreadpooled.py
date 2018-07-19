@@ -70,7 +70,7 @@ class BaseGThreadPooled(_base_threaded.APIPooled):
     # pylint: enable=arguments-differ
 
     @classmethod
-    def shutdown(cls):  # type: () -> None
+    def shutdown(cls):  # type: (typing.Type[BaseGThreadPooled]) -> None
         """Shutdown executor.
 
         Due to not implemented method, set maxsize to 0 (do not accept new).
