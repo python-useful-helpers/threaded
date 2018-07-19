@@ -22,17 +22,17 @@ jobs:
   include:
   - stage: Static analisys
     python: 3.6
-    services: skip
+    services: []
     install:
     - *upgrade_python_toolset
     - pip install tox
     script:
-    - tox -e pylint,bandit
+    - tox -e pylint,bandit,mypy
     after_success: skip
 
   - stage: Code style check
     python: *mainstream_python
-    services: skip
+    services: []
     install:
     - *upgrade_python_toolset
     - pip install tox
