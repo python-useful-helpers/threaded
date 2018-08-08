@@ -8,7 +8,7 @@ API: Decorators: `AsyncIOTask`, `asynciotask`.
 
 .. note:: Python 3 only.
 
-.. py:class:: AsyncIOTask(object)
+.. py:class:: AsyncIOTask
 
     Wrap to asyncio.Task.
 

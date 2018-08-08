@@ -6,7 +6,7 @@ API: Decorators: `ThreadPooled`, `threadpooled`.
 .. py:module:: pooled
 .. py:currentmodule:: pooled
 
-.. py:class:: ThreadPooled(object)
+.. py:class:: ThreadPooled
 
     Post function to ThreadPoolExecutor.
 
