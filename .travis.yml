@@ -2,13 +2,10 @@ sudo: false
 language: python
 os: linux
 python:
-- 2.7
-- 3.4
 - 3.5
 - 3.6
 - &mainstream_python 3.7-dev
-- &pypy pypy
-- pypy3.5
+- &pypy pypy3.5
 install:
 - &upgrade_python_toolset pip install --upgrade pip setuptools wheel
 - pip install tox-travis

@@ -13,17 +13,9 @@
 #    under the License.
 
 import unittest
-
-import six
+from unittest import mock
 
 import threaded
-
-# pylint: disable=import-error
-if six.PY2:
-    # noinspection PyUnresolvedReferences
-    import mock
-else:
-    from unittest import mock
 
 
 class ThreadedTest(unittest.TestCase):

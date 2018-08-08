@@ -12,9 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
+from os import cpu_count
 import threading
 import unittest
 
@@ -24,19 +22,7 @@ try:
 except ImportError:
     gevent = None
 
-import six
-
 import threaded
-
-if six.PY3:
-    from os import cpu_count
-else:
-    try:
-        from multiprocessing import cpu_count
-    except ImportError:
-        def cpu_count():
-            """Fake CPU count."""
-            return 1
 
 
 @unittest.skipIf(gevent is None, 'No gevent')
@@ -47,6 +33,14 @@ class TestThreadPooled(unittest.TestCase):
     def test_thread_pooled_default(self):
         @threaded.gthreadpooled
         def test():
+            return threading.current_thread().name
+
+        pooled_name = test().wait()
+        self.assertNotEqual(pooled_name, threading.current_thread().name)
+
+    def test_thread_pooled_default_async(self):
+        @threaded.gthreadpooled
+        async def test():
             return threading.current_thread().name
 
         pooled_name = test().wait()

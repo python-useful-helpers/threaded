@@ -12,26 +12,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 import concurrent.futures
+from os import cpu_count
 import threading
 import unittest
 
-import six
-
 import threaded
-
-if six.PY3:
-    from os import cpu_count
-else:
-    try:
-        from multiprocessing import cpu_count
-    except ImportError:
-        def cpu_count():
-            """Fake CPU count."""
-            return 1
 
 
 class TestThreadPooled(unittest.TestCase):

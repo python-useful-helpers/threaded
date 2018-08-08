@@ -6,7 +6,7 @@ API: Decorators: `GThreadPooled`, `gthreadpooled`.
 .. py:module:: pooled
 .. py:currentmodule:: pooled
 
-.. py:class:: GThreadPooled(object)
+.. py:class:: GThreadPooled
 
     Post function to gevent.threadpool.ThreadPool.
 
@@ -35,7 +35,7 @@ API: Decorators: `GThreadPooled`, `gthreadpooled`.
         :param hub: Event-loop hub
         :type hub: typing.Optional[gevent.hub.Hub]
 
-        .. note:: max_workers=None means `(CPU_COUNT or 1) * 5`, it's default value.
+        .. note:: max_workers=None means `CPU_COUNT * 5`, it's default value.
 
     .. py:classmethod:: shutdown
 
@@ -45,7 +45,7 @@ API: Decorators: `GThreadPooled`, `gthreadpooled`.
 
         Decorator entry point.
 
-        :rtype: typing.Union[typing.Callable[..., gevent.event.AsyncResult], gevent.event.AsyncResult]
+        :rtype: typing.Union[gevent.event.AsyncResult, typing.Callable[..., gevent.event.AsyncResult]]
 
 
 .. py:function:: gthreadpooled(func, )
