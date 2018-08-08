@@ -14,59 +14,38 @@
 
 """threaded module."""
 
-from __future__ import absolute_import
-
-import sys
 import typing  # noqa  # pylint: disable=unused-import
 
-PY3 = sys.version_info[:2] > (3, 0)  # type: bool
-
 # pylint: disable=no-name-in-module
-if PY3:  # pragma: no cover
-    from ._threaded3 import (
-        ThreadPooled,
-        Threaded,
-        AsyncIOTask,
-        threadpooled,
-        threaded,
-        asynciotask
-    )
+from ._threaded import (
+    ThreadPooled,
+    Threaded,
+    AsyncIOTask,
+    threadpooled,
+    threaded,
+    asynciotask
+)
 
-    try:  # pragma: no cover
-        from ._gthreadpooled3 import GThreadPooled, gthreadpooled
-    except ImportError:  # pragma: no cover
-        GThreadPooled = gthreadpooled = None  # type: ignore
-else:  # pragma: no cover
-    from ._threaded2 import (
-        ThreadPooled,
-        Threaded,
-        threadpooled,
-        threaded,
-    )
-    try:  # pragma: no cover
-        from ._gthreadpooled2 import GThreadPooled, gthreadpooled
-    except ImportError:  # pragma: no cover
-        GThreadPooled = gthreadpooled = None
+try:  # pragma: no cover
+    from ._gthreadpooled import GThreadPooled, gthreadpooled
+except ImportError:  # pragma: no cover
+    GThreadPooled = gthreadpooled = None  # type: ignore
 # pylint: enable=no-name-in-module
 
 
 __all__ = (
     'ThreadPooled', 'Threaded',
-    'threadpooled', 'threaded'
+    'threadpooled', 'threaded',
+    'AsyncIOTask', 'asynciotask'
 )  # type: typing.Tuple[str, ...]
 
-if PY3:  # pragma: no cover
-    __all__ += (
-        'AsyncIOTask',
-        'asynciotask'
-    )
 if GThreadPooled is not None:  # pragma: no cover
     __all__ += (
         'GThreadPooled',
         'gthreadpooled'
     )
 
-__version__ = '1.0.6'
+__version__ = '2.0.0'
 __author__ = "Alexey Stepanov"
 __author_email__ = 'penguinolog@gmail.com'
 __maintainers__ = {

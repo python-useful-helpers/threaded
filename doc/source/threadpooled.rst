@@ -16,29 +16,19 @@ API: Decorators: `ThreadPooled`, `threadpooled`.
         :type func: typing.Optional[typing.Callable[..., typing.Union[typing.Any, typing.Awaitable]]]
 
         :param loop_getter: Method to get event loop, if wrap in asyncio task
-
-            .. note:: Python 3 Only.
-
         :type loop_getter: typing.Union[None, typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
 
         :param loop_getter_need_context: Loop getter requires function context
-
-            .. note:: Python 3 Only.
-
         :type loop_getter_need_context: bool
 
     .. note:: Attributes is read-only
 
     .. py:attribute:: loop_getter
 
-        .. note:: Python 3 Only.
-
         ``typing.Union[None, typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]``
         Loop getter. If None: use ``concurent.futures.Future``, else use ``EventLoop`` for wrapped function.
 
     .. py:attribute:: loop_getter_need_context
-
-        .. note:: Python 3 Only.
 
         ``bool`` - Loop getter will use function call arguments.
 
@@ -60,7 +50,7 @@ API: Decorators: `ThreadPooled`, `threadpooled`.
         :param max_workers: Maximum workers
         :type max_workers: typing.Optional[int]
 
-        .. note:: max_workers=None means `(CPU_COUNT or 1) * 5`, it's default value.
+        .. note:: max_workers=None means `CPU_COUNT * 5`, it's default value.
 
     .. py:classmethod:: shutdown
 
@@ -70,7 +60,7 @@ API: Decorators: `ThreadPooled`, `threadpooled`.
 
         Decorator entry point.
 
-        :rtype: typing.Union[typing.Callable[..., typing.Union[concurrent.futures.Future, asyncio.Task]], typing.Union[concurrent.futures.Future, asyncio.Task]]
+        :rtype: typing.Union[concurrent.futures.Future, typing.Awaitable, typing.Callable[..., typing.Union[typing.Awaitable, concurrent.futures.Future]]]
 
 
 .. py:function:: threadpooled(func, *, loop_getter, loop_getter_need_context, )
@@ -80,13 +70,11 @@ API: Decorators: `ThreadPooled`, `threadpooled`.
     :param func: function to wrap
     :type func: typing.Optional[typing.Callable[..., typing.Union[typing.Any, typing.Awaitable]]]
 
-    .. note:: Next arguments is Python 3 only:
-
     :param loop_getter: Method to get event loop, if wrap in asyncio task
     :type loop_getter: typing.Union[None, typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
     :param loop_getter_need_context: Loop getter requires function context
     :type loop_getter_need_context: bool
-    :rtype: typing.Union[ThreadPooled, typing.Callable[..., typing.Union[concurrent.futures.Future, asyncio.Task]]]
+    :rtype: typing.Union[ThreadPooled, typing.Callable[..., typing.Union[concurrent.futures.Future, typing.Awaitable]]]
 
 Not exported, but public accessed data type:
 
@@ -96,7 +84,7 @@ Not exported, but public accessed data type:
 
     Simply extend concurrent.futures.ThreadPoolExecutor.
 
-    :param max_workers: Maximum workers allowed. If none: cpu_count() or 1) * 5
+    :param max_workers: Maximum workers allowed. If none: cpu_count() * 5
     :type max_workers: typing.Optional[int]
 
     .. py:attribute:: max_workers

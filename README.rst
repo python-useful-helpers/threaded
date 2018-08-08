@@ -37,24 +37,20 @@ Pros:
 
 ::
 
-    Python 2.7
-    Python 3.4
     Python 3.5
     Python 3.6
     Python 3.7
-    PyPy
     PyPy3 3.5+
-    Jyton 2.7
 
 Decorators:
 
-* `ThreadPooled` - native ``concurrent.futures.ThreadPool`` usage on Python 3 and it's backport on Python 2.7.
+* `ThreadPooled` - native ``concurrent.futures.ThreadPool``.
 * `threadpooled` is alias for `ThreadPooled`.
 
 * `Threaded` - wrap in ``threading.Thread``.
 * `threaded` is alias for `Threaded`.
 
-* `AsyncIOTask` - wrap in ``asyncio.Task``. Uses the same API, as Python 3 `ThreadPooled`.
+* `AsyncIOTask` - wrap in ``asyncio.Task``. Uses the same API, as `ThreadPooled`.
 * `asynciotask` is alias for `AsyncIOTask`.
 
 * `GThreadPooled` - wrap function in ``gevent.threadpool.ThreadPool``.
@@ -83,8 +79,6 @@ Mostly it is required decorator: submit function to ThreadPoolExecutor on call.
 
     By default, if executor is not configured - it configures with default parameters: ``max_workers=(CPU_COUNT or 1) * 5``
 
-Python 2.7 usage:
-
 .. code-block:: python
 
     @threaded.ThreadPooled
@@ -93,17 +87,7 @@ Python 2.7 usage:
 
     concurrent.futures.wait([func()])
 
-Python 3.3+ usage:
-
-.. code-block:: python
-
-    @threaded.ThreadPooled
-    def func():
-        pass
-
-    concurrent.futures.wait([func()])
-
-Python 3.3+ usage with asyncio:
+Python 3.5+ usage with asyncio:
 
 .. note::
 
@@ -118,7 +102,7 @@ Python 3.3+ usage with asyncio:
 
     loop.run_until_complete(asyncio.wait_for(func(), timeout))
 
-Python 3.3+ usage with asyncio and loop extraction from call arguments:
+Python 3.5+ usage with asyncio and loop extraction from call arguments:
 
 .. code-block:: python
 
@@ -186,10 +170,6 @@ it can be started automatically before return:
 AsyncIOTask
 -----------
 Wrap in ``asyncio.Task``.
-
-.. note::
-
-    Python 3 only.
 
 usage with asyncio:
 

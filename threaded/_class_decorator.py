@@ -16,17 +16,12 @@
 
 """Base class for decorators."""
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import abc
 import functools
-import typing  # noqa  # pylint: disable=unused-import
-
-import six
+import typing
 
 
-class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
+class BaseDecorator(metaclass=abc.ABCMeta):
     """Base class for decorators.
 
     Implements wrapping and __call__, wrapper getter is abstract.
@@ -69,27 +64,25 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
 
     def __init__(
         self,
-        func=None  # type: typing.Optional[typing.Callable]
-    ):  # type: (...) -> None
+        func: typing.Optional[typing.Callable] = None
+    ) -> None:
         """Decorator.
 
         :param func: function to wrap
         :type func: typing.Optional[typing.Callable]
         """
+        # noinspection PyArgumentList
+        super(BaseDecorator, self).__init__()
         # pylint: disable=assigning-non-slot
         self.__func = func  # type: typing.Optional[typing.Callable]
         if self.__func is not None:
             functools.update_wrapper(self, self.__func)
-            if not six.PY3:  # pragma: no cover
-                self.__wrapped__ = self.__func  # type: typing.Callable
         # pylint: enable=assigning-non-slot
-        # noinspection PyArgumentList
-        super(BaseDecorator, self).__init__()
 
     @property
     def _func(
         self
-    ):  # type: () -> typing.Optional[typing.Callable]
+    ) -> typing.Optional[typing.Callable]:
         """Get wrapped function.
 
         :rtype: typing.Optional[typing.Callable]
@@ -99,8 +92,8 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
     @abc.abstractmethod
     def _get_function_wrapper(
         self,
-        func  # type: typing.Callable
-    ):  # type: (...) -> typing.Callable
+        func: typing.Callable
+    ) -> typing.Callable:
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
@@ -111,18 +104,23 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
 
     def __call__(
         self,
-        *args,  # type: typing.Any
-        **kwargs  # type: typing.Any
-    ):  # type: (...) -> typing.Any
+        *args: typing.Union[typing.Tuple, typing.Callable],
+        **kwargs: typing.Dict
+    ) -> typing.Any:
         """Main decorator getter."""
-        args = list(args)
-        wrapped = self.__func or args.pop(0)
+        l_args = list(args)
+
+        if self._func:
+            wrapped = self._func  # type: typing.Callable
+        else:
+            wrapped = l_args.pop(0)  # type: ignore
+
         wrapper = self._get_function_wrapper(wrapped)
         if self.__func:
-            return wrapper(*args, **kwargs)
+            return wrapper(*l_args, **kwargs)
         return wrapper
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """For debug purposes."""
         return "<{cls}({func!r}) at 0x{id:X}>".format(
             cls=self.__class__.__name__,

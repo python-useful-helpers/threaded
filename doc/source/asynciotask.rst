@@ -41,7 +41,7 @@ API: Decorators: `AsyncIOTask`, `asynciotask`.
 
         Decorator entry point.
 
-        :rtype: typing.Union[typing.Callable[..., asyncio.Task], asyncio.Task]
+        :rtype: typing.Union[AsyncIOTask, typing.Callable[..., asyncio.Task]]
 
 
 .. py:function:: asynciotask(func, *, loop_getter, loop_getter_need_context, )
