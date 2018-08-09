@@ -42,6 +42,8 @@ Pros:
     Python 3.7
     PyPy3 3.5+
 
+.. note:: For python 2.7/3.4/PyPy you can use versions 1.x.x
+
 Decorators:
 
 * `ThreadPooled` - native ``concurrent.futures.ThreadPool``.
@@ -77,7 +79,7 @@ Mostly it is required decorator: submit function to ThreadPoolExecutor on call.
 
 .. note::
 
-    By default, if executor is not configured - it configures with default parameters: ``max_workers=(CPU_COUNT or 1) * 5``
+    By default, if executor is not configured - it configures with default parameters: ``max_workers=CPU_COUNT * 5``
 
 .. code-block:: python
 
@@ -219,7 +221,7 @@ Post function to ``gevent.threadpool.ThreadPool``.
 
 .. note::
 
-    By default, if executor is not configured - it configures with default parameters: ``max_workers=(CPU_COUNT or 1) * 5``
+    By default, if executor is not configured - it configures with default parameters: ``max_workers=CPU_COUNT * 5``
 
 .. note::
 

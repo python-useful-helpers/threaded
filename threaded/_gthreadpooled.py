@@ -17,7 +17,6 @@
 Asyncio is supported
 """
 
-import asyncio
 import functools
 import os
 import typing
@@ -103,28 +102,16 @@ class GThreadPooled(_base_threaded.APIPooled):
         :return: wrapped coroutine or function
         :rtype: typing.Callable[..., gevent.event.AsyncResult]
         """
+        prepared = self._await_if_required(func)
+
         # pylint: disable=missing-docstring
         # noinspection PyMissingOrEmptyDocstring
-        @functools.wraps(func)
-        def await_if_required(
-            *args,  # type: typing.Tuple
-            **kwargs  # type: typing.Dict
-        ) -> typing.Any:
-            """Decorator/wrapper."""
-            result = func(*args, **kwargs)
-            if asyncio.iscoroutine(result):
-                loop = asyncio.new_event_loop()
-                result = loop.run_until_complete(result)
-                loop.close()
-            return result
-
-        # noinspection PyMissingOrEmptyDocstring
-        @functools.wraps(await_if_required)
+        @functools.wraps(prepared)
         def wrapper(
             *args,  # type: typing.Tuple
             **kwargs  # type: typing.Dict
         ) -> gevent.event.AsyncResult:
-            return self.executor.spawn(await_if_required, *args, **kwargs)
+            return self.executor.spawn(prepared, *args, **kwargs)
 
         # pylint: enable=missing-docstring
         return wrapper

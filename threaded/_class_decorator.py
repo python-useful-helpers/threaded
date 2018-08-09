@@ -17,6 +17,7 @@
 """Base class for decorators."""
 
 import abc
+import asyncio
 import functools
 import typing
 
@@ -118,6 +119,24 @@ class BaseDecorator(metaclass=abc.ABCMeta):
         wrapper = self._get_function_wrapper(wrapped)
         if self.__func:
             return wrapper(*l_args, **kwargs)
+        return wrapper
+
+    @staticmethod
+    def _await_if_required(target: typing.Callable) -> typing.Callable[..., typing.Any]:
+        """Await result if coroutine was returned."""
+        @functools.wraps(target)
+        def wrapper(
+            *args,  # type: typing.Tuple
+            **kwargs  # type: typing.Dict
+        ) -> typing.Any:
+            """Decorator/wrapper."""
+            result = target(*args, **kwargs)
+            if asyncio.iscoroutine(result):
+                loop = asyncio.new_event_loop()
+                result = loop.run_until_complete(result)
+                loop.close()
+            return result
+
         return wrapper
 
     def __repr__(self) -> str:

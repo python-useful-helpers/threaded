@@ -6,8 +6,6 @@ API: Decorators: `AsyncIOTask`, `asynciotask`.
 .. py:module:: pooled
 .. py:currentmodule:: pooled
 
-.. note:: Python 3 only.
-
 .. py:class:: AsyncIOTask
 
     Wrap to asyncio.Task.
