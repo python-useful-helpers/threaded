@@ -17,14 +17,10 @@
 import typing  # noqa  # pylint: disable=unused-import
 
 # pylint: disable=no-name-in-module
-from ._threaded import (
-    ThreadPooled,
-    Threaded,
-    AsyncIOTask,
-    threadpooled,
-    threaded,
-    asynciotask
-)
+from ._asynciotask import AsyncIOTask, asynciotask
+from ._threaded import Threaded, threaded
+from ._threadpooled import ThreadPooled, threadpooled
+
 
 try:  # pragma: no cover
     from ._gthreadpooled import GThreadPooled, gthreadpooled
@@ -45,7 +41,7 @@ if GThreadPooled is not None:  # pragma: no cover
         'gthreadpooled'
     )
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 __author__ = "Alexey Stepanov"
 __author_email__ = 'penguinolog@gmail.com'
 __maintainers__ = {

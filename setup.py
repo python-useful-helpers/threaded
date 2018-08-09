@@ -54,7 +54,9 @@ def _extension(modpath):
 requires_optimization = [
     _extension('threaded._class_decorator'),
     _extension('threaded._base_threaded'),
+    _extension('threaded._asynciotask'),
     _extension('threaded._threaded'),
+    _extension('threaded._threadpooled'),
     _extension('threaded._gthreadpooled'),
 ]
 
