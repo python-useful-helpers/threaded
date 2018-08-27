@@ -108,8 +108,8 @@ class GThreadPooled(_base_threaded.APIPooled):
         # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(prepared)
         def wrapper(
-            *args,  # type: typing.Tuple
-            **kwargs  # type: typing.Dict
+            *args,  # type: typing.Any
+            **kwargs  # type: typing.Any
         ) -> gevent.event.AsyncResult:
             return self.executor.spawn(prepared, *args, **kwargs)
 
@@ -118,11 +118,11 @@ class GThreadPooled(_base_threaded.APIPooled):
 
     def __call__(  # pylint: disable=useless-super-delegation
         self,
-        *args: typing.Union[typing.Tuple, typing.Callable],
-        **kwargs: typing.Dict
+        *args: typing.Union[typing.Callable, typing.Any],
+        **kwargs: typing.Any
     ) -> typing.Union[gevent.event.AsyncResult, typing.Callable[..., gevent.event.AsyncResult]]:
         """Callable instance."""
-        return super(GThreadPooled, self).__call__(*args, **kwargs)  # type: ignore
+        return super(GThreadPooled, self).__call__(*args, **kwargs)
 
 
 # pylint: disable=function-redefined, unused-argument
