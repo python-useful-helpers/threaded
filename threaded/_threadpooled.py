@@ -133,8 +133,8 @@ class ThreadPooled(_base_threaded.APIPooled):
 
     def _get_loop(
         self,
-        *args: typing.Tuple,
-        **kwargs: typing.Dict
+        *args: typing.Any,
+        **kwargs: typing.Any
     ) -> typing.Optional[asyncio.AbstractEventLoop]:
         """Get event loop in decorator class."""
         if callable(self.loop_getter):
@@ -160,13 +160,13 @@ class ThreadPooled(_base_threaded.APIPooled):
         # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(prepared)
         def wrapper(
-            *args: typing.Tuple,
-            **kwargs: typing.Dict
+            *args: typing.Any,
+            **kwargs: typing.Any
         ) -> typing.Union[
             typing.Awaitable, concurrent.futures.Future,
             typing.Callable[..., typing.Union[typing.Awaitable, concurrent.futures.Future]]
         ]:
-            loop = self._get_loop(*args, **kwargs)  # type: ignore
+            loop = self._get_loop(*args, **kwargs)
 
             if loop is None:
                 return self.executor.submit(prepared, *args, **kwargs)
@@ -184,8 +184,8 @@ class ThreadPooled(_base_threaded.APIPooled):
 
     def __call__(  # pylint: disable=useless-super-delegation
         self,
-        *args: typing.Union[typing.Tuple, typing.Callable],
-        **kwargs: typing.Dict
+        *args: typing.Union[typing.Callable, typing.Any],
+        **kwargs: typing.Any
     ) -> typing.Union[
         concurrent.futures.Future, typing.Awaitable,
         typing.Callable[..., typing.Union[typing.Awaitable, concurrent.futures.Future]]

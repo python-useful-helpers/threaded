@@ -127,8 +127,8 @@ class Threaded(_class_decorator.BaseDecorator):
         # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(prepared)
         def wrapper(
-            *args,  # type: typing.Tuple
-            **kwargs  # type: typing.Dict
+            *args,  # type: typing.Any
+            **kwargs  # type: typing.Any
         ) -> threading.Thread:
             thread = threading.Thread(
                 target=prepared,
@@ -146,8 +146,8 @@ class Threaded(_class_decorator.BaseDecorator):
 
     def __call__(  # pylint: disable=useless-super-delegation
         self,
-        *args: typing.Union[typing.Tuple, typing.Callable],
-        **kwargs: typing.Dict
+        *args: typing.Union[typing.Callable, typing.Any],
+        **kwargs: typing.Any
     ) -> typing.Union[threading.Thread, typing.Callable[..., threading.Thread]]:
         """Executable instance."""
         return super(Threaded, self).__call__(*args, **kwargs)  # type: ignore

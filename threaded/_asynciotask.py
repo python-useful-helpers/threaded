@@ -86,8 +86,8 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
 
     def get_loop(
         self,
-        *args,  # type: typing.Tuple
-        **kwargs  # type: typing.Dict
+        *args,  # type: typing.Any
+        **kwargs  # type: typing.Any
     ) -> asyncio.AbstractEventLoop:
         """Get event loop in decorator class."""
         if callable(self.loop_getter):
@@ -110,10 +110,10 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
         # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(func)
         def wrapper(
-            *args,  # type: typing.Tuple
-            **kwargs  # type: typing.Dict
+            *args,  # type: typing.Any
+            **kwargs  # type: typing.Any
         ) -> asyncio.Task:
-            loop = self.get_loop(*args, **kwargs)  # type: ignore
+            loop = self.get_loop(*args, **kwargs)
             return loop.create_task(func(*args, **kwargs))
 
         # pylint: enable=missing-docstring
@@ -121,8 +121,8 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
 
     def __call__(  # pylint: disable=useless-super-delegation
         self,
-        *args: typing.Union[typing.Tuple, typing.Callable],
-        **kwargs: typing.Dict
+        *args: typing.Union[typing.Callable, typing.Any],
+        **kwargs: typing.Any
     ) -> typing.Union[asyncio.Task, typing.Callable[..., asyncio.Task]]:
         """Callable instance."""
         return super(AsyncIOTask, self).__call__(*args, **kwargs)  # type: ignore

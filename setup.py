@@ -18,7 +18,6 @@ import ast
 import collections
 from distutils.command import build_ext
 import distutils.errors
-import glob
 import os.path
 import shutil
 import sys
@@ -263,12 +262,7 @@ setup_args = dict(
     },
     install_requires=required,
     package_data={
-        'threaded': [
-            os.path.basename(filename)
-            for filename in glob.glob(os.path.join('threaded', '*.pyi'))
-        ] + [
-            'py.typed'
-        ],
+        'threaded': ['py.typed'],
     },
 )
 if cythonize is not None:
