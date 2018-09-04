@@ -304,8 +304,8 @@ class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
 
     def __init__(
         self,
-        max_workers=None  # type: typing.Optional[int]
-    ):  # type: (...) -> None
+        max_workers: typing.Optional[int]=None
+    ) -> None:
         """Override init due to difference between Python <3.5 and 3.5+.
 
         :param max_workers: Maximum workers allowed. If none: cpu_count() or 1) * 5
