@@ -38,14 +38,6 @@ class TestThreadPooled(unittest.TestCase):
         pooled_name = test().wait()
         self.assertNotEqual(pooled_name, threading.current_thread().name)
 
-    def test_thread_pooled_default_async(self):
-        @threaded.gthreadpooled
-        async def test():
-            return threading.current_thread().name
-
-        pooled_name = test().wait()
-        self.assertNotEqual(pooled_name, threading.current_thread().name)
-
     def test_thread_pooled_construct(self):
         @threaded.gthreadpooled()
         def test():

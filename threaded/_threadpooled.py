@@ -19,6 +19,7 @@ Asyncio is supported
 
 import asyncio
 import concurrent.futures
+import os
 import functools
 import typing
 
@@ -146,13 +147,13 @@ class ThreadPooled(_base_threaded.APIPooled):
     def _get_function_wrapper(
         self,
         func: typing.Callable
-    ) -> typing.Callable[..., typing.Union[typing.Awaitable, concurrent.futures.Future]]:
+    ) -> typing.Callable[..., concurrent.futures.Future]:
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
         :type func: typing.Callable
         :return: wrapped coroutine or function
-        :rtype: typing.Callable[..., typing.Union[typing.Awaitable, concurrent.futures.Future]]
+        :rtype: typing.Callable[..., concurrent.futures.Future]
         """
         prepared = self._await_if_required(func)
 
@@ -162,10 +163,7 @@ class ThreadPooled(_base_threaded.APIPooled):
         def wrapper(
             *args: typing.Any,
             **kwargs: typing.Any
-        ) -> typing.Union[
-            typing.Awaitable, concurrent.futures.Future,
-            typing.Callable[..., typing.Union[typing.Awaitable, concurrent.futures.Future]]
-        ]:
+        ) -> typing.Union[concurrent.futures.Future, typing.Callable[..., concurrent.futures.Future]]:
             loop = self._get_loop(*args, **kwargs)
 
             if loop is None:
@@ -186,10 +184,7 @@ class ThreadPooled(_base_threaded.APIPooled):
         self,
         *args: typing.Union[typing.Callable, typing.Any],
         **kwargs: typing.Any
-    ) -> typing.Union[
-        concurrent.futures.Future, typing.Awaitable,
-        typing.Callable[..., typing.Union[typing.Awaitable, concurrent.futures.Future]]
-    ]:
+    ) -> typing.Union[concurrent.futures.Future, typing.Callable[..., concurrent.futures.Future]]:
         """Callable instance."""
         return super(ThreadPooled, self).__call__(*args, **kwargs)  # type: ignore
 
@@ -261,10 +256,7 @@ def threadpooled(  # noqa: F811
         asyncio.AbstractEventLoop
     ] = None,
     loop_getter_need_context: bool = False
-) -> typing.Union[
-    ThreadPooled,
-    typing.Callable[..., typing.Union[concurrent.futures.Future, typing.Awaitable]]
-]:
+) -> typing.Union[ThreadPooled, typing.Callable[..., concurrent.futures.Future]]:
     """Post function to ThreadPoolExecutor.
 
     :param func: function to wrap
@@ -300,6 +292,24 @@ class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
     """
 
     __slots__ = ()
+
+    def __init__(
+        self,
+        max_workers=None  # type: typing.Optional[int]
+    ):  # type: (...) -> None
+        """Override init due to difference between Python <3.5 and 3.5+.
+
+        :param max_workers: Maximum workers allowed. If none: cpu_count() or 1) * 5
+        :type max_workers: typing.Optional[int]
+        """
+        if max_workers is None:  # Use 3.5+ behavior
+            max_workers = (os.cpu_count() or 1) * 5
+        super(
+            ThreadPoolExecutor,
+            self
+        ).__init__(
+            max_workers=max_workers,
+        )
 
     @property
     def max_workers(self) -> int:
