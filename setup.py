@@ -20,20 +20,10 @@ import ast
 import collections
 from distutils.command import build_ext
 import distutils.errors
-import glob
 import os.path
 import shutil
-import sys
-
-try:
-    from Cython.Build import cythonize
-    import gevent
-except ImportError:
-    gevent = cythonize = None
 
 import setuptools
-
-PY3 = sys.version_info[:2] > (2, 7)  # type: bool
 
 with open(
     os.path.join(
@@ -50,35 +40,7 @@ with open('README.rst',) as f:
     long_description = f.read()
 
 
-def _extension(modpath):
-    """Make setuptools.Extension."""
-    return setuptools.Extension(modpath, [modpath.replace('.', '/') + '.py'])
-
-
-requires_optimization = [
-    _extension('threaded._class_decorator'),
-    _extension('threaded._base_threaded'),
-    _extension('threaded._py3_helpers'),
-    _extension('threaded._threaded3'),
-    _extension('threaded._base_gthreadpooled'),
-    _extension('threaded._gthreadpooled3'),
-]
-
-if 'win32' != sys.platform:
-    requires_optimization.append(
-        _extension('threaded.__init__')
-    )
-
-ext_modules = cythonize(
-    requires_optimization,
-    compiler_directives=dict(
-        always_allow_keywords=True,
-        binding=True,
-        embedsignature=True,
-        overflowcheck=True,
-        language_level=3,
-    )
-) if cythonize is not None and PY3 else []
+ext_modules = []
 
 
 class BuildFailed(Exception):
@@ -176,8 +138,6 @@ def get_simple_vars_from_src(src):
         ast.Str, ast.Num,
         ast.List, ast.Set, ast.Dict, ast.Tuple
     )
-    if PY3:
-        ast_data += (ast.Bytes, ast.NameConstant,)
 
     tree = ast.parse(src)
 
@@ -221,11 +181,6 @@ classifiers = [
 
     'Programming Language :: Python :: 2',
     'Programming Language :: Python :: 2.7',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.4',
-    'Programming Language :: Python :: 3.5',
-    'Programming Language :: Python :: 3.6',
-    'Programming Language :: Python :: 3.7',
 
     'Programming Language :: Python :: Implementation :: CPython',
     'Programming Language :: Python :: Implementation :: PyPy',
@@ -255,7 +210,7 @@ setup_args = dict(
     long_description=long_description,
     classifiers=classifiers,
     keywords=keywords,
-    python_requires='>=2.7.5,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
+    python_requires='>=2.7.5,<3.0',
     # While setuptools cannot deal with pre-installed incompatible versions,
     # setting a lower bound is not harmful - it makes error messages cleaner. DO
     # NOT set an upper bound on setuptools, as that will lead to uninstallable
@@ -266,26 +221,15 @@ setup_args = dict(
                    "!=34.0.0,!=34.0.1,!=34.0.2,!=34.0.3,!=34.1.0,!=34.1.1,!=34.2.0,!=34.3.0,!=34.3.1,!=34.3.2,"
                    "!=36.2.0",
     extras_require={
-        ':python_version == "2.7"': [
-            'futures>=3.1',
-        ],
         'gevent': [
             'gevent >= 1.2.2'
         ],
     },
     install_requires=required,
     package_data={
-        'threaded': [
-            os.path.basename(filename)
-            for filename in glob.glob(os.path.join('threaded', '*.pyi'))
-        ] + [
-            'py.typed'
-        ],
+        'threaded': ['py.typed'],
     },
 )
-if PY3 and cythonize is not None:
-    setup_args['ext_modules'] = ext_modules
-    setup_args['cmdclass'] = dict(build_ext=AllowFailRepair)
 
 try:
     setuptools.setup(**setup_args)

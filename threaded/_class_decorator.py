@@ -76,15 +76,14 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
         :param func: function to wrap
         :type func: typing.Optional[typing.Callable]
         """
+        # noinspection PyArgumentList
+        super(BaseDecorator, self).__init__()
         # pylint: disable=assigning-non-slot
         self.__func = func  # type: typing.Optional[typing.Callable]
         if self.__func is not None:
             functools.update_wrapper(self, self.__func)
-            if not six.PY3:  # pragma: no cover
-                self.__wrapped__ = self.__func  # type: typing.Callable
+            self.__wrapped__ = self.__func  # type: typing.Callable
         # pylint: enable=assigning-non-slot
-        # noinspection PyArgumentList
-        super(BaseDecorator, self).__init__()
 
     @property
     def _func(
@@ -115,14 +114,19 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
         **kwargs  # type: typing.Any
     ):  # type: (...) -> typing.Any
         """Main decorator getter."""
-        args = list(args)
-        wrapped = self.__func or args.pop(0)
+        l_args = list(args)
+
+        if self._func:
+            wrapped = self._func  # type: typing.Callable
+        else:
+            wrapped = l_args.pop(0)
+
         wrapper = self._get_function_wrapper(wrapped)
         if self.__func:
-            return wrapper(*args, **kwargs)
+            return wrapper(*l_args, **kwargs)
         return wrapper
 
-    def __repr__(self):
+    def __repr__(self):  # type: () -> str
         """For debug purposes."""
         return "<{cls}({func!r}) at 0x{id:X}>".format(
             cls=self.__class__.__name__,
