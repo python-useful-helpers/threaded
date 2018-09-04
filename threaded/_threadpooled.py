@@ -304,7 +304,7 @@ class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
 
     def __init__(
         self,
-        max_workers: typing.Optional[int]=None
+        max_workers: typing.Optional[int] = None
     ) -> None:
         """Override init due to difference between Python <3.5 and 3.5+.
 
