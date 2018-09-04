@@ -18,10 +18,7 @@ from __future__ import print_function
 
 import ast
 import collections
-from distutils.command import build_ext
-import distutils.errors
 import os.path
-import shutil
 
 import setuptools
 
@@ -38,53 +35,6 @@ with open('requirements.txt') as f:
 
 with open('README.rst',) as f:
     long_description = f.read()
-
-
-ext_modules = []
-
-
-class BuildFailed(Exception):
-    """For install clear scripts."""
-    pass
-
-
-class AllowFailRepair(build_ext.build_ext):
-    """This class allows C extension building to fail and repairs init."""
-
-    def run(self):
-        """Run."""
-        try:
-            build_ext.build_ext.run(self)
-
-            # Copy __init__.py back to repair package.
-            build_dir = os.path.abspath(self.build_lib)
-            root_dir = os.path.abspath(os.path.join(__file__, '..'))
-            target_dir = build_dir if not self.inplace else root_dir
-
-            src_file = os.path.join('threaded', '__init__.py')
-
-            src = os.path.join(root_dir, src_file)
-            dst = os.path.join(target_dir, src_file)
-
-            if src != dst:
-                shutil.copyfile(src, dst)
-        except (
-            distutils.errors.DistutilsPlatformError,
-            getattr(globals()['__builtins__'], 'FileNotFoundError', OSError)
-        ):
-            raise BuildFailed()
-
-    def build_extension(self, ext):
-        """build_extension."""
-        try:
-            build_ext.build_ext.build_extension(self, ext)
-        except (
-            distutils.errors.CCompilerError,
-            distutils.errors.DistutilsExecError,
-            distutils.errors.DistutilsPlatformError,
-            ValueError
-        ):
-            raise BuildFailed()
 
 
 # noinspection PyUnresolvedReferences
@@ -190,7 +140,6 @@ keywords = [
     'pooling',
     'multithreading',
     'threading',
-    'asyncio',
     'gevent',
     'development',
 ]
@@ -231,15 +180,4 @@ setup_args = dict(
     },
 )
 
-try:
-    setuptools.setup(**setup_args)
-except BuildFailed:
-    print(
-        '*' * 80 + '\n'
-        '* Build Failed!\n'
-        '* Use clear scripts version.\n'
-        '*' * 80 + '\n'
-    )
-    del setup_args['ext_modules']
-    del setup_args['cmdclass']
-    setuptools.setup(**setup_args)
+setuptools.setup(**setup_args)
