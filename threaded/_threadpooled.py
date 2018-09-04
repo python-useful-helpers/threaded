@@ -147,13 +147,13 @@ class ThreadPooled(_base_threaded.APIPooled):
     def _get_function_wrapper(
         self,
         func: typing.Callable
-    ) -> typing.Callable[..., concurrent.futures.Future]:
+    ) -> typing.Callable[..., typing.Union[concurrent.futures.Future, 'typing.Awaitable']]:
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
         :type func: typing.Callable
         :return: wrapped coroutine or function
-        :rtype: typing.Callable[..., concurrent.futures.Future]
+        :rtype: typing.Callable[..., typing.Union[typing.Awaitable, concurrent.futures.Future]]
         """
         prepared = self._await_if_required(func)
 
@@ -163,7 +163,10 @@ class ThreadPooled(_base_threaded.APIPooled):
         def wrapper(
             *args: typing.Any,
             **kwargs: typing.Any
-        ) -> typing.Union[concurrent.futures.Future, typing.Callable[..., concurrent.futures.Future]]:
+        ) -> typing.Union[
+            concurrent.futures.Future, 'typing.Awaitable',
+            typing.Callable[..., typing.Union[concurrent.futures.Future, 'typing.Awaitable']]
+        ]:
             loop = self._get_loop(*args, **kwargs)
 
             if loop is None:
@@ -184,7 +187,10 @@ class ThreadPooled(_base_threaded.APIPooled):
         self,
         *args: typing.Union[typing.Callable, typing.Any],
         **kwargs: typing.Any
-    ) -> typing.Union[concurrent.futures.Future, typing.Callable[..., concurrent.futures.Future]]:
+    ) -> typing.Union[
+        concurrent.futures.Future, 'typing.Awaitable',
+        typing.Callable[..., typing.Union[concurrent.futures.Future, 'typing.Awaitable']]
+    ]:
         """Callable instance."""
         return super(ThreadPooled, self).__call__(*args, **kwargs)  # type: ignore
 
@@ -256,7 +262,10 @@ def threadpooled(  # noqa: F811
         asyncio.AbstractEventLoop
     ] = None,
     loop_getter_need_context: bool = False
-) -> typing.Union[ThreadPooled, typing.Callable[..., concurrent.futures.Future]]:
+) -> typing.Union[
+    ThreadPooled,
+    typing.Callable[..., typing.Union[concurrent.futures.Future, 'typing.Awaitable']]
+]:
     """Post function to ThreadPoolExecutor.
 
     :param func: function to wrap

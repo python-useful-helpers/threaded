@@ -26,8 +26,7 @@ class TestThreadPooled(unittest.TestCase):
 
     def test_thread_pooled_default(self):
         @threaded.threadpooled
-        @asyncio.coroutine
-        def test():
+        async def test():
             return threading.current_thread().name
 
         pooled_name = concurrent.futures.wait([test()])
@@ -35,8 +34,7 @@ class TestThreadPooled(unittest.TestCase):
 
     def test_thread_pooled_construct(self):
         @threaded.threadpooled()
-        @asyncio.coroutine
-        def test():
+        async def test():
             return threading.current_thread().name
 
         pooled_name = concurrent.futures.wait([test()])
@@ -46,8 +44,7 @@ class TestThreadPooled(unittest.TestCase):
         loop = asyncio.get_event_loop()
 
         @threaded.threadpooled(loop_getter=loop)
-        @asyncio.coroutine
-        def test():
+        async def test():
             return threading.current_thread().name
 
         pooled_name = loop.run_until_complete(asyncio.wait_for(test(), 1))
@@ -57,8 +54,7 @@ class TestThreadPooled(unittest.TestCase):
         loop = asyncio.get_event_loop()
 
         @threaded.threadpooled(loop_getter=asyncio.get_event_loop)
-        @asyncio.coroutine
-        def test():
+        async def test():
             return threading.current_thread().name
 
         pooled_name = loop.run_until_complete(asyncio.wait_for(test(), 1))
@@ -74,8 +70,7 @@ class TestThreadPooled(unittest.TestCase):
             loop_getter=loop_getter,
             loop_getter_need_context=True
         )
-        @asyncio.coroutine
-        def test(*args, **kwargs):
+        async def test(*args, **kwargs):
             return threading.current_thread().name
 
         pooled_name = loop.run_until_complete(
@@ -87,8 +82,7 @@ class TestThreadPooled(unittest.TestCase):
 class TestAsyncIOTask(unittest.TestCase):
     def test_default(self):
         @threaded.asynciotask
-        @asyncio.coroutine
-        def test():
+        async def test():
             return 'test'
 
         loop = asyncio.get_event_loop()
@@ -97,8 +91,7 @@ class TestAsyncIOTask(unittest.TestCase):
 
     def test_construct(self):
         @threaded.asynciotask()
-        @asyncio.coroutine
-        def test():
+        async def test():
             return 'test'
 
         loop = asyncio.get_event_loop()

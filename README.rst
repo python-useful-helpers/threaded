@@ -37,12 +37,13 @@ Pros:
 
 ::
 
+    Python 3.4
     Python 3.5
     Python 3.6
     Python 3.7
     PyPy3 3.5+
 
-.. note:: For python 2.7/3.4/PyPy you can use versions 1.x.x
+.. note:: For python 2.7/PyPy you can use versions 1.x.x
 
 Decorators:
 

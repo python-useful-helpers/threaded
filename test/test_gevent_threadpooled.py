@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from os import cpu_count
+import os
 import threading
 import unittest
 
@@ -52,7 +52,7 @@ class TestThreadPooled(unittest.TestCase):
 
         self.assertEqual(
             thread_pooled.executor.maxsize,
-            (cpu_count() or 1) * 5
+            (os.cpu_count() or 1) * 5
         )
 
         thread_pooled.configure(max_workers=2)
