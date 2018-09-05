@@ -12,24 +12,28 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-"""gevent.threadpool.ThreadPool usage."""
+"""Python 2 threaded implementation.
+
+Uses backport of concurrent.futures.
+"""
 
 from __future__ import absolute_import
 
 import typing  # noqa  # pylint: disable=unused-import
 
-import gevent.event  # noqa  # pylint: disable=unused-import
-import gevent.threadpool
+import gevent.event  # type: ignore  # noqa  # pylint: disable=unused-import
+import gevent.threadpool  # type: ignore  # noqa  # pylint: disable=unused-import
 import six
 
 from . import _base_threaded
 
 __all__ = (
-    'BaseGThreadPooled',
+    'GThreadPooled',
+    'gthreadpooled',
 )
 
 
-class BaseGThreadPooled(_base_threaded.APIPooled):
+class GThreadPooled(_base_threaded.APIPooled):
     """Post function to gevent.threadpool.ThreadPool."""
 
     __slots__ = ()
@@ -39,7 +43,7 @@ class BaseGThreadPooled(_base_threaded.APIPooled):
     # pylint: disable=arguments-differ
     @classmethod
     def configure(
-        cls,  # type: typing.Type[BaseGThreadPooled]
+        cls,  # type: typing.Type[GThreadPooled]
         max_workers=None,  # type: typing.Optional[int]
         hub=None  # type: typing.Optional[gevent.hub.Hub]
     ):  # type: (...) -> None
@@ -70,7 +74,7 @@ class BaseGThreadPooled(_base_threaded.APIPooled):
     # pylint: enable=arguments-differ
 
     @classmethod
-    def shutdown(cls):  # type: (typing.Type[BaseGThreadPooled]) -> None
+    def shutdown(cls):  # type: (typing.Type[GThreadPooled]) -> None
         """Shutdown executor.
 
         Due to not implemented method, set maxsize to 0 (do not accept new).
@@ -103,9 +107,34 @@ class BaseGThreadPooled(_base_threaded.APIPooled):
         # noinspection PyMissingOrEmptyDocstring
         @six.wraps(func)
         def wrapper(
-            *args,
-            **kwargs
+            *args,  # type: typing.Any
+            **kwargs  # type: typing.Any
         ):  # type: (...) -> gevent.event.AsyncResult
             return self.executor.spawn(func, *args, **kwargs)
+
         # pylint: enable=missing-docstring
         return wrapper
+
+    def __call__(  # pylint: disable=useless-super-delegation
+        self,
+        *args,  # type: typing.Union[typing.Callable, typing.Any]
+        **kwargs  # type: typing.Any
+    ):  # type: (...) -> typing.Union[gevent.event.AsyncResult, typing.Callable[..., gevent.event.AsyncResult]]
+        """Callable instance."""
+        return super(GThreadPooled, self).__call__(*args, **kwargs)
+
+
+# pylint: disable=unexpected-keyword-arg, no-value-for-parameter
+def gthreadpooled(
+    func=None  # type: typing.Optional[typing.Callable]
+):  # type: (...) -> typing.Union[GThreadPooled, typing.Callable[..., gevent.event.AsyncResult]]
+    """Post function to gevent.threadpool.ThreadPool.
+
+    :param func: function to wrap
+    :type func: typing.Optional[typing.Callable]
+    :rtype: typing.Union[GThreadPooled, typing.Callable[..., gevent.event.AsyncResult]]
+    """
+    if func is None:
+        return GThreadPooled(func=func)
+    return GThreadPooled(func=None)(func)
+# pylint: enable=unexpected-keyword-arg, no-value-for-parameter

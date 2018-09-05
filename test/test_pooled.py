@@ -19,19 +19,14 @@ import concurrent.futures
 import threading
 import unittest
 
-import six
-
 import threaded
 
-if six.PY3:
-    from os import cpu_count
-else:
-    try:
-        from multiprocessing import cpu_count
-    except ImportError:
-        def cpu_count():
-            """Fake CPU count."""
-            return 1
+try:
+    from multiprocessing import cpu_count
+except ImportError:
+    def cpu_count():
+        """Fake CPU count."""
+        return 1
 
 
 class TestThreadPooled(unittest.TestCase):

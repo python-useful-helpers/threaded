@@ -14,16 +14,11 @@
 
 import unittest
 
-import six
-
 import threaded
 
-# pylint: disable=import-error
-if six.PY2:
-    # noinspection PyUnresolvedReferences
-    import mock
-else:
-    from unittest import mock
+
+# noinspection PyUnresolvedReferences
+import mock
 
 
 class ThreadedTest(unittest.TestCase):
