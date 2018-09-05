@@ -1,47 +1,86 @@
 sudo: false
 language: python
 os: linux
-python:
-- &mainstream_python 2.7
-- &pypy pypy
 install:
 - &upgrade_python_toolset pip install --upgrade pip setuptools wheel
-- pip install tox-travis
+- pip install tox
 - pip install coveralls
-script: tox
+script: []
 after_success:
 - coveralls
 
 jobs:
   fast_finish: true
   include:
+  - stage: test
+    name: "Python 2.7"
+    python: 2.7
+    script:
+    - tox -e py27
+  - stage: test
+    name: "PyPy"
+    python: pypy
+    script:
+    - tox -e pypy
+
   - stage: Static analisys
-    python: 3.6
+    name: "PyLint"
+    python: 2.7
     services: []
     install:
     - *upgrade_python_toolset
     - pip install tox
     script:
-    - tox -e pylint,bandit,mypy
+    - tox -e pylint
+    after_success: skip
+  - stage: Static analisys
+    name: "Bandit"
+    python: 2.7
+    services: []
+    install:
+    - *upgrade_python_toolset
+    - pip install tox
+    script:
+    - tox -e bandit
+    after_success: skip
+  - stage: Static analisys
+    name: "MyPy"
+    python: 3.7
+    dist: xenial
+    sudo: true
+    services: []
+    install:
+    - *upgrade_python_toolset
+    - pip install tox
+    script:
+    - tox -e mypy
     after_success: skip
 
   - stage: Code style check
-    python: *mainstream_python
-    services: []
+    name: "PEP8"
+    python: 2.7
     install:
     - *upgrade_python_toolset
     - pip install tox
     script:
-    - tox -e pep8,pep257
+    - tox -e pep8
+    after_success: skip
+  - stage: Code style check
+    name: "PEP257"
+    python: 2.7
+    install:
+    - *upgrade_python_toolset
+    - pip install tox
+    script:
+    - tox -e pep257
     after_success: skip
 
   - stage: deploy
     # This prevents job from appearing in test plan unless commit is tagged:
     if: tag IS present
     # Run on pypy to build not cythonized wheel
-    python: *pypy
-    services:
-    - docker
+    python: pypy
+    services: []
     install:
     - *upgrade_python_toolset
     script: []
