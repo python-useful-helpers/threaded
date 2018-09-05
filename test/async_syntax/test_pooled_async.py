@@ -26,15 +26,6 @@ class TestThreadPooled(unittest.TestCase):
 
     def test_thread_pooled_default(self):
         @threaded.threadpooled
-        @asyncio.coroutine
-        def test():
-            return threading.current_thread().name
-
-        pooled_name = concurrent.futures.wait([test()])
-        self.assertNotEqual(pooled_name, threading.current_thread().name)
-
-    def test_thread_pooled_default_a(self):
-        @threaded.threadpooled
         async def test():
             return threading.current_thread().name
 
@@ -43,15 +34,6 @@ class TestThreadPooled(unittest.TestCase):
 
     def test_thread_pooled_construct(self):
         @threaded.threadpooled()
-        @asyncio.coroutine
-        def test():
-            return threading.current_thread().name
-
-        pooled_name = concurrent.futures.wait([test()])
-        self.assertNotEqual(pooled_name, threading.current_thread().name)
-
-    def test_thread_pooled_construct_a(self):
-        @threaded.threadpooled()
         async def test():
             return threading.current_thread().name
 
@@ -59,17 +41,6 @@ class TestThreadPooled(unittest.TestCase):
         self.assertNotEqual(pooled_name, threading.current_thread().name)
 
     def test_thread_pooled_loop(self):
-        loop = asyncio.get_event_loop()
-
-        @threaded.threadpooled(loop_getter=loop)
-        @asyncio.coroutine
-        def test():
-            return threading.current_thread().name
-
-        pooled_name = loop.run_until_complete(asyncio.wait_for(test(), 1))
-        self.assertNotEqual(pooled_name, threading.current_thread().name)
-
-    def test_thread_pooled_loop_a(self):
         loop = asyncio.get_event_loop()
 
         @threaded.threadpooled(loop_getter=loop)
@@ -83,17 +54,6 @@ class TestThreadPooled(unittest.TestCase):
         loop = asyncio.get_event_loop()
 
         @threaded.threadpooled(loop_getter=asyncio.get_event_loop)
-        @asyncio.coroutine
-        def test():
-            return threading.current_thread().name
-
-        pooled_name = loop.run_until_complete(asyncio.wait_for(test(), 1))
-        self.assertNotEqual(pooled_name, threading.current_thread().name)
-
-    def test_thread_pooled_loop_getter_a(self):
-        loop = asyncio.get_event_loop()
-
-        @threaded.threadpooled(loop_getter=asyncio.get_event_loop)
         async def test():
             return threading.current_thread().name
 
@@ -101,25 +61,6 @@ class TestThreadPooled(unittest.TestCase):
         self.assertNotEqual(pooled_name, threading.current_thread().name)
 
     def test_thread_pooled_loop_getter_context(self):
-        loop = asyncio.get_event_loop()
-
-        def loop_getter(target):
-            return target
-
-        @threaded.threadpooled(
-            loop_getter=loop_getter,
-            loop_getter_need_context=True
-        )
-        @asyncio.coroutine
-        def test(*args, **kwargs):
-            return threading.current_thread().name
-
-        pooled_name = loop.run_until_complete(
-            asyncio.wait_for(test(loop), 1)
-        )
-        self.assertNotEqual(pooled_name, threading.current_thread().name)
-
-    def test_thread_pooled_loop_getter_context_a(self):
         loop = asyncio.get_event_loop()
 
         def loop_getter(target):
@@ -141,16 +82,6 @@ class TestThreadPooled(unittest.TestCase):
 class TestAsyncIOTask(unittest.TestCase):
     def test_default(self):
         @threaded.asynciotask
-        @asyncio.coroutine
-        def test():
-            return 'test'
-
-        loop = asyncio.get_event_loop()
-        res = loop.run_until_complete(asyncio.wait_for(test(), 1))
-        self.assertEqual(res, 'test')
-
-    def test_default_a(self):
-        @threaded.asynciotask
         async def test():
             return 'test'
 
@@ -159,12 +90,6 @@ class TestAsyncIOTask(unittest.TestCase):
         self.assertEqual(res, 'test')
 
     def test_construct(self):
-        @threaded.asynciotask()
-        @asyncio.coroutine
-        def test():
-            return 'test'
-
-    def test_construct_a(self):
         @threaded.asynciotask()
         async def test():
             return 'test'

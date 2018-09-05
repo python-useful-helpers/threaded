@@ -19,6 +19,7 @@ Asyncio is supported
 
 import asyncio
 import concurrent.futures
+import os
 import functools
 import typing
 
@@ -146,7 +147,7 @@ class ThreadPooled(_base_threaded.APIPooled):
     def _get_function_wrapper(
         self,
         func: typing.Callable
-    ) -> typing.Callable[..., typing.Union[typing.Awaitable, concurrent.futures.Future]]:
+    ) -> typing.Callable[..., typing.Union[concurrent.futures.Future, 'typing.Awaitable']]:
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
@@ -163,8 +164,8 @@ class ThreadPooled(_base_threaded.APIPooled):
             *args: typing.Any,
             **kwargs: typing.Any
         ) -> typing.Union[
-            typing.Awaitable, concurrent.futures.Future,
-            typing.Callable[..., typing.Union[typing.Awaitable, concurrent.futures.Future]]
+            concurrent.futures.Future, 'typing.Awaitable',
+            typing.Callable[..., typing.Union[concurrent.futures.Future, 'typing.Awaitable']]
         ]:
             loop = self._get_loop(*args, **kwargs)
 
@@ -187,8 +188,8 @@ class ThreadPooled(_base_threaded.APIPooled):
         *args: typing.Union[typing.Callable, typing.Any],
         **kwargs: typing.Any
     ) -> typing.Union[
-        concurrent.futures.Future, typing.Awaitable,
-        typing.Callable[..., typing.Union[typing.Awaitable, concurrent.futures.Future]]
+        concurrent.futures.Future, 'typing.Awaitable',
+        typing.Callable[..., typing.Union[concurrent.futures.Future, 'typing.Awaitable']]
     ]:
         """Callable instance."""
         return super(ThreadPooled, self).__call__(*args, **kwargs)  # type: ignore
@@ -263,7 +264,7 @@ def threadpooled(  # noqa: F811
     loop_getter_need_context: bool = False
 ) -> typing.Union[
     ThreadPooled,
-    typing.Callable[..., typing.Union[concurrent.futures.Future, typing.Awaitable]]
+    typing.Callable[..., typing.Union[concurrent.futures.Future, 'typing.Awaitable']]
 ]:
     """Post function to ThreadPoolExecutor.
 
@@ -300,6 +301,24 @@ class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
     """
 
     __slots__ = ()
+
+    def __init__(
+        self,
+        max_workers: typing.Optional[int] = None
+    ) -> None:
+        """Override init due to difference between Python <3.5 and 3.5+.
+
+        :param max_workers: Maximum workers allowed. If none: cpu_count() or 1) * 5
+        :type max_workers: typing.Optional[int]
+        """
+        if max_workers is None:  # Use 3.5+ behavior
+            max_workers = (os.cpu_count() or 1) * 5
+        super(
+            ThreadPoolExecutor,
+            self
+        ).__init__(
+            max_workers=max_workers,
+        )
 
     @property
     def max_workers(self) -> int:

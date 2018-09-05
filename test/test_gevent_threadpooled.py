@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from os import cpu_count
+import os
 import threading
 import unittest
 
@@ -38,14 +38,6 @@ class TestThreadPooled(unittest.TestCase):
         pooled_name = test().wait()
         self.assertNotEqual(pooled_name, threading.current_thread().name)
 
-    def test_thread_pooled_default_async(self):
-        @threaded.gthreadpooled
-        async def test():
-            return threading.current_thread().name
-
-        pooled_name = test().wait()
-        self.assertNotEqual(pooled_name, threading.current_thread().name)
-
     def test_thread_pooled_construct(self):
         @threaded.gthreadpooled()
         def test():
@@ -60,7 +52,7 @@ class TestThreadPooled(unittest.TestCase):
 
         self.assertEqual(
             thread_pooled.executor.maxsize,
-            (cpu_count() or 1) * 5
+            (os.cpu_count() or 1) * 5
         )
 
         thread_pooled.configure(max_workers=2)

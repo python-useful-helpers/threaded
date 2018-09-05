@@ -14,7 +14,7 @@
 
 """threaded module."""
 
-import typing  # noqa  # pylint: disable=unused-import
+import typing
 
 # pylint: disable=no-name-in-module
 from ._asynciotask import AsyncIOTask, asynciotask
