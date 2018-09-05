@@ -83,9 +83,8 @@ jobs:
     services: []
     install:
     - *upgrade_python_toolset
-    script: []
-    before_deploy:
     - pip install -r build_requirements.txt
+    script:
     - python setup.py bdist_wheel
     deploy:
     - provider: pypi
