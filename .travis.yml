@@ -1,48 +1,129 @@
 sudo: false
 language: python
 os: linux
-python:
-- 3.4
-- 3.5
-- 3.6
-- &mainstream_python 3.7-dev
-- &pypy pypy3.5
 install:
 - &upgrade_python_toolset pip install --upgrade pip setuptools wheel
 - pip install tox-travis
 - pip install coveralls
-script: tox
+script: []
 after_success:
 - coveralls
 
 jobs:
   fast_finish: true
   include:
+  - stage: test
+    name: "Python 3.4"
+    python: 3.4
+    script:
+    - tox -e py34
+  - stage: test
+    name: "Python 3.5"
+    python: 3.5
+    script:
+    - tox -e py35
+  - stage: test
+    name: "Python 3.6"
+    python: 3.6
+    script:
+    - tox -e py36
+  - stage: test
+    name: "Python 3.7"
+    python: 3.7
+    dist: xenial
+    sudo: true
+    script:
+    - tox -e py37
+  - stage: test
+    name: "PyPy3"
+    python: pypy3.5
+    script:
+    - tox -e pypy3
+
   - stage: Static analisys
+    name: "PyLint"
     python: 3.6
     services: []
     install:
     - *upgrade_python_toolset
     - pip install tox
     script:
-    - tox -e pylint,bandit,mypy
+    - tox -e pylint
     after_success: skip
-
-  - stage: Code style check
-    python: *mainstream_python
+  - stage: Static analisys
+    name: "Bandit"
+    python: 3.6
     services: []
     install:
     - *upgrade_python_toolset
     - pip install tox
     script:
-    - tox -e pep8,pep257
+    - tox -e bandit
+    after_success: skip
+  - stage: Static analisys
+    name: "MyPy"
+    python: 3.7
+    dist: xenial
+    sudo: true
+    services: []
+    install:
+    - *upgrade_python_toolset
+    - pip install tox
+    script:
+    - tox -e mypy
+    after_success: skip
+
+  - stage: Test cythonized
+    name: "Python 3.4"
+    python: 3.4
+    script:
+    - tox -e py34-nocov
+    after_success: skip
+  - stage: Test cythonized
+    name: "Python 3.5"
+    python: 3.5
+    script:
+    - tox -e py35-nocov
+    after_success: skip
+  - stage: Test cythonized
+    name: "Python 3.6"
+    python: 3.6
+    script:
+    - tox -e py36-nocov
+    after_success: skip
+  - stage: Test cythonized
+    name: "Python 3.7"
+    python: 3.7
+    dist: xenial
+    sudo: true
+    script:
+    - tox -e py37-nocov
+    after_success: skip
+
+  - stage: Code style check
+    name: "PEP8"
+    python: 3.6
+    install:
+    - *upgrade_python_toolset
+    - pip install tox
+    script:
+    - tox -e pep8
+    after_success: skip
+  - stage: Code style check
+    name: "PEP257"
+    python: 3.6
+    install:
+    - *upgrade_python_toolset
+    - pip install tox
+    script:
+    - tox -e pep257
     after_success: skip
 
   - stage: deploy
     # This prevents job from appearing in test plan unless commit is tagged:
     if: tag IS present
     # Run on pypy to build not cythonized wheel
-    python: *pypy
+    python: pypy3.5
     services:
     - docker
     install:
