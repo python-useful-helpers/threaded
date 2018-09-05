@@ -41,7 +41,7 @@ if GThreadPooled is not None:  # pragma: no cover
         'gthreadpooled'
     )
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 __author__ = "Alexey Stepanov"
 __author_email__ = 'penguinolog@gmail.com'
 __maintainers__ = {
