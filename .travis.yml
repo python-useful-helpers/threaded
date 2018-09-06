@@ -3,9 +3,31 @@ language: python
 os: linux
 install:
 - &upgrade_python_toolset pip install --upgrade pip setuptools wheel
-- pip install tox-travis
-- pip install coveralls
-script: []
+- &install_test_deps pip install --upgrade pytest pytest-sugar
+- &install_deps pip install -r CI_REQUIREMENTS.txt
+- pip install --upgrade pytest-cov coveralls
+
+_helpers:
+- &install_cython pip install --upgrade Cython
+- &build_package python setup.py bdist_wheel
+- &install_built pip install threaded --no-index -f dist
+- &test_no_cov  py.test -vv test
+- &test_cythonized
+  install:
+  - *upgrade_python_toolset
+  - *install_test_deps
+  - *install_deps
+  - *install_cython
+  script:
+  - *build_package
+  - *install_built
+  - *test_no_cov
+  after_success: skip
+
+script:
+- pip install -e .
+- py.test -vv --cov-config .coveragerc --cov-report= --cov=threaded test
+- coverage report -m --fail-under 90
 after_success:
 - coveralls
 
@@ -15,30 +37,20 @@ jobs:
   - stage: test
     name: "Python 3.4"
     python: 3.4
-    script:
-    - tox -e py34
   - stage: test
     name: "Python 3.5"
     python: 3.5
-    script:
-    - tox -e py35
   - stage: test
     name: "Python 3.6"
     python: 3.6
-    script:
-    - tox -e py36
   - stage: test
     name: "Python 3.7"
     python: 3.7
     dist: xenial
     sudo: true
-    script:
-    - tox -e py37
   - stage: test
     name: "PyPy3"
     python: pypy3.5
-    script:
-    - tox -e pypy3
 
   - stage: Static analisys
     name: "PyLint"
@@ -46,9 +58,10 @@ jobs:
     services: []
     install:
     - *upgrade_python_toolset
-    - pip install tox
+    - *install_deps
+    - pip install --upgrade "pylint >= 2.0"
     script:
-    - tox -e pylint
+    - pylint threaded
     after_success: skip
   - stage: Static analisys
     name: "Bandit"
@@ -56,9 +69,9 @@ jobs:
     services: []
     install:
     - *upgrade_python_toolset
-    - pip install tox
+    - pip install --upgrade bandit
     script:
-    - tox -e bandit
+    - bandit -r threaded
     after_success: skip
   - stage: Static analisys
     name: "MyPy"
@@ -68,55 +81,48 @@ jobs:
     services: []
     install:
     - *upgrade_python_toolset
-    - pip install tox
+    - *install_deps
+    - pip install --upgrade "mypy >= 0.620"
     script:
-    - tox -e mypy
+    - mypy --strict threaded
     after_success: skip
 
   - stage: Test cythonized
     name: "Python 3.4"
     python: 3.4
-    script:
-    - tox -e py34-nocov
-    after_success: skip
+    <<: *test_cythonized
   - stage: Test cythonized
     name: "Python 3.5"
     python: 3.5
-    script:
-    - tox -e py35-nocov
-    after_success: skip
+    <<: *test_cythonized
   - stage: Test cythonized
     name: "Python 3.6"
     python: 3.6
-    script:
-    - tox -e py36-nocov
-    after_success: skip
+    <<: *test_cythonized
   - stage: Test cythonized
     name: "Python 3.7"
     python: 3.7
     dist: xenial
     sudo: true
-    script:
-    - tox -e py37-nocov
-    after_success: skip
+    <<: *test_cythonized
 
   - stage: Code style check
     name: "PEP8"
     python: 3.6
     install:
     - *upgrade_python_toolset
-    - pip install tox
+    - pip install --upgrade flake8
     script:
-    - tox -e pep8
+    - flake8
     after_success: skip
   - stage: Code style check
     name: "PEP257"
     python: 3.6
     install:
     - *upgrade_python_toolset
-    - pip install tox
+    - pip install --upgrade pydocstyle
     script:
-    - tox -e pep257
+    - pydocstyle threaded
     after_success: skip
 
   - stage: deploy
@@ -132,7 +138,7 @@ jobs:
     - ./tools/run_docker.sh "threaded"
     before_deploy:
     - pip install -r build_requirements.txt
-    - python setup.py bdist_wheel
+    - *build_package
     deploy:
     - provider: pypi
       # `skip_cleanup: true` is required to preserve binary wheels, built
