@@ -147,6 +147,7 @@ def gthreadpooled(  # noqa: F811
 
     :param func: function to wrap
     :type func: typing.Optional[typing.Callable]
+    :return: GThreadPooled instance, if called as function or argumented decorator, else callable wrapper
     :rtype: typing.Union[GThreadPooled, typing.Callable[..., gevent.event.AsyncResult]]
     """
     if func is None:

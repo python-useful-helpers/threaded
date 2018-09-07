@@ -104,6 +104,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
 
         :param func: Wrapped function
         :type func: typing.Callable
+        :return: wrapper, which will produce asyncio.Task on call with function called inside it
         :rtype: typing.Callable[..., asyncio.Task]
         """
         # pylint: disable=missing-docstring
@@ -193,6 +194,7 @@ def asynciotask(  # noqa: F811
                        ]
     :param loop_getter_need_context: Loop getter requires function context
     :type loop_getter_need_context: bool
+    :return: AsyncIOTask instance, if called as function or argumented decorator, else callable wrapper
     :rtype: typing.Union[AsyncIOTask, typing.Callable[..., asyncio.Task]]
     """
     if func is None:

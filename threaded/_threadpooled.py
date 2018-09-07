@@ -278,6 +278,7 @@ def threadpooled(  # noqa: F811
                        ]
     :param loop_getter_need_context: Loop getter requires function context
     :type loop_getter_need_context: bool
+    :return: ThreadPooled instance, if called as function or argumented decorator, else callable wrapper
     :rtype: typing.Union[ThreadPooled, typing.Callable[..., typing.Union[concurrent.futures.Future, typing.Awaitable]]]
     """
     if func is None:

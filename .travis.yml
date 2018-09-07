@@ -7,12 +7,32 @@ install:
 - &install_deps pip install -r CI_REQUIREMENTS.txt
 - pip install --upgrade pytest-cov coveralls
 
+_python:
+- &python34
+  name: "Python 3.4"
+  python: 3.4
+- &python35
+  name: "Python 3.5"
+  python: 3.5
+- &python36
+  name: "Python 3.6"
+  python: 3.6
+- &python37
+  name: "Python 3.7"
+  python: 3.7
+  dist: xenial
+  sudo: true
+- &pypy3
+  name: "PyPy3"
+  python: pypy3.5
+
 _helpers:
 - &install_cython pip install --upgrade Cython
 - &build_package python setup.py bdist_wheel
 - &install_built pip install threaded --no-index -f dist
 - &test_no_cov  py.test -vv test
 - &test_cythonized
+  stage: Test cythonized
   install:
   - *upgrade_python_toolset
   - *install_test_deps
@@ -24,10 +44,20 @@ _helpers:
   - *test_no_cov
   after_success: skip
 
+- &static_analysis
+  stage: Static analysis
+  <<: *python36
+  after_success: skip
+
+- &code_style_check
+  stage: Code style check
+  <<: *python36
+  after_success: skip
+
 script:
 - pip install -e .
 - py.test -vv --cov-config .coveragerc --cov-report= --cov=threaded test
-- coverage report -m --fail-under 90
+- coverage report -m --fail-under 87
 after_success:
 - coveralls
 
@@ -35,101 +65,71 @@ jobs:
   fast_finish: true
   include:
   - stage: test
-    name: "Python 3.4"
-    python: 3.4
+    <<: *python34
   - stage: test
-    name: "Python 3.5"
-    python: 3.5
+    <<: *python35
   - stage: test
-    name: "Python 3.6"
-    python: 3.6
+    <<: *python36
   - stage: test
-    name: "Python 3.7"
-    python: 3.7
-    dist: xenial
-    sudo: true
+    <<: *python37
   - stage: test
-    name: "PyPy3"
-    python: pypy3.5
+    <<: *pypy3
 
-  - stage: Static analisys
+  - <<: *static_analysis
     name: "PyLint"
-    python: 3.6
-    services: []
     install:
     - *upgrade_python_toolset
     - *install_deps
-    - pip install --upgrade "pylint >= 2.0"
+    - pip install --upgrade "pylint >= 2.1"
     script:
     - pylint threaded
-    after_success: skip
-  - stage: Static analisys
+  - <<: *static_analysis
     name: "Bandit"
-    python: 3.6
-    services: []
     install:
     - *upgrade_python_toolset
     - pip install --upgrade bandit
     script:
     - bandit -r threaded
-    after_success: skip
-  - stage: Static analisys
+  - <<: *static_analysis
+    <<: *python37
     name: "MyPy"
-    python: 3.7
-    dist: xenial
-    sudo: true
-    services: []
     install:
     - *upgrade_python_toolset
     - *install_deps
     - pip install --upgrade "mypy >= 0.620"
     script:
     - mypy --strict threaded
-    after_success: skip
 
-  - stage: Test cythonized
-    name: "Python 3.4"
-    python: 3.4
-    <<: *test_cythonized
-  - stage: Test cythonized
-    name: "Python 3.5"
-    python: 3.5
-    <<: *test_cythonized
-  - stage: Test cythonized
-    name: "Python 3.6"
-    python: 3.6
-    <<: *test_cythonized
-  - stage: Test cythonized
-    name: "Python 3.7"
-    python: 3.7
-    dist: xenial
-    sudo: true
-    <<: *test_cythonized
+  - <<: *test_cythonized
+    <<: *python34
+  - <<: *test_cythonized
+    <<: *python35
+  - <<: *test_cythonized
+    <<: *python36
+  - <<: *test_cythonized
+    <<: *python37
 
-  - stage: Code style check
+  - <<: *code_style_check
     name: "PEP8"
-    python: 3.6
     install:
     - *upgrade_python_toolset
     - pip install --upgrade flake8
     script:
     - flake8
-    after_success: skip
-  - stage: Code style check
+  - <<: *code_style_check
     name: "PEP257"
-    python: 3.6
     install:
     - *upgrade_python_toolset
     - pip install --upgrade pydocstyle
     script:
     - pydocstyle threaded
-    after_success: skip
 
   - stage: deploy
     # This prevents job from appearing in test plan unless commit is tagged:
     if: tag IS present
     # Run on pypy to build not cythonized wheel
-    python: pypy3.5
+    <<: *pypy3
+    name: Build universal and cythonized bdist_wheel. Deploy bdist and sdist.
     services:
     - docker
     install:
