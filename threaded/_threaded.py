@@ -190,6 +190,7 @@ def threaded(  # noqa: F811
     :type daemon: bool
     :param started: Return started thread
     :type started: bool
+    :return: Threaded instance, if called as function or argumented decorator, else callable wraper
     :rtype: typing.Union[Threaded, typing.Callable[..., threading.Thread]]
     """
     if callable(name):
