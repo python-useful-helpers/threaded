@@ -44,8 +44,9 @@ _helpers:
   - *test_no_cov
   after_success: skip
 
-- &static_analisys
-  stage: Static analisys
+- &static_analysis
+  stage: Static analysis
+  <<: *python36
   after_success: skip
 
 - &code_style_check
@@ -74,8 +75,7 @@ jobs:
   - stage: test
     <<: *pypy3
 
-  - <<: *static_analisys
-    <<: *python36
+  - <<: *static_analysis
     name: "PyLint"
     install:
     - *upgrade_python_toolset
@@ -83,15 +83,14 @@ jobs:
     - pip install --upgrade "pylint >= 2.1"
     script:
     - pylint threaded
-  - <<: *static_analisys
-    <<: *python36
+  - <<: *static_analysis
     name: "Bandit"
     install:
     - *upgrade_python_toolset
     - pip install --upgrade bandit
     script:
     - bandit -r threaded
-  - <<: *static_analisys
+  - <<: *static_analysis
     <<: *python37
     name: "MyPy"
     install:
