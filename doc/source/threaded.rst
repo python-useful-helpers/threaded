@@ -15,7 +15,7 @@ API: Decorators: `Threaded` class and `threaded` function.
         :param name: New thread name.
                      If callable: use as wrapped function.
                      If none: use wrapped function name.
-        :type name: typing.Optional[typing.Union[str, typing.Callable[.., typing.Union[typing.Any, typing.Awaitable]]]]
+        :type name: typing.Optional[typing.Union[str, typing.Callable[..., typing.Union[typing.Any, typing.Awaitable]]]]
         :param daemon: Daemonize thread.
         :type daemon: bool
         :param started: Return started thread
@@ -53,7 +53,7 @@ API: Decorators: `Threaded` class and `threaded` function.
     :param name: New thread name.
                  If callable: use as wrapped function.
                  If none: use wrapped function name.
-    :type name: typing.Optional[typing.Union[str, typing.Callable]]
+    :type name: typing.Optional[typing.Union[str, typing.Callable[..., typing.Union[typing.Any, typing.Awaitable]]]]
     :param daemon: Daemonize thread.
     :type daemon: bool
     :param started: Return started thread

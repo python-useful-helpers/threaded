@@ -36,7 +36,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
 
     def __init__(
         self,
-        func: typing.Optional[typing.Callable] = None,
+        func: typing.Optional[typing.Callable[..., typing.Awaitable]] = None,
         *,
         loop_getter: typing.Union[
             typing.Callable[..., asyncio.AbstractEventLoop],
@@ -47,7 +47,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
         """Wrap function in future and return.
 
         :param func: Function to wrap
-        :type func: typing.Optional[typing.Callable]
+        :type func: typing.Optional[typing.Callable[..., typing.Awaitable]]
         :param loop_getter: Method to get event loop, if wrap in asyncio task
         :type loop_getter: typing.Union[
                                typing.Callable[..., asyncio.AbstractEventLoop],
@@ -69,10 +69,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
     ]:
         """Loop getter.
 
-        :rtype: typing.Union[
-                    typing.Callable[..., asyncio.AbstractEventLoop],
-                    asyncio.AbstractEventLoop
-                ]
+        :rtype: typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
         """
         return self.__loop_getter
 
@@ -98,18 +95,17 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
 
     def _get_function_wrapper(
         self,
-        func: typing.Callable
+        func: typing.Callable[..., typing.Awaitable]
     ) -> typing.Callable[..., asyncio.Task]:
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
-        :type func: typing.Callable
+        :type func: typing.Callable[..., typing.Awaitable]
         :return: wrapper, which will produce asyncio.Task on call with function called inside it
         :rtype: typing.Callable[..., asyncio.Task]
         """
-        # pylint: disable=missing-docstring
         # noinspection PyMissingOrEmptyDocstring
-        @functools.wraps(func)
+        @functools.wraps(func)  # pylint: disable=missing-docstring
         def wrapper(
             *args,  # type: typing.Any
             **kwargs  # type: typing.Any
@@ -117,12 +113,11 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
             loop = self.get_loop(*args, **kwargs)
             return loop.create_task(func(*args, **kwargs))
 
-        # pylint: enable=missing-docstring
         return wrapper
 
     def __call__(  # pylint: disable=useless-super-delegation
         self,
-        *args: typing.Union[typing.Callable, typing.Any],
+        *args: typing.Union[typing.Callable[..., typing.Awaitable], typing.Any],
         **kwargs: typing.Any
     ) -> typing.Union[asyncio.Task, typing.Callable[..., asyncio.Task]]:
         """Callable instance."""
@@ -161,7 +156,7 @@ def asynciotask(
 
 @typing.overload  # noqa: F811
 def asynciotask(
-    func: typing.Callable,
+    func: typing.Callable[..., typing.Awaitable],
     *,
     loop_getter: typing.Union[
         typing.Callable[..., asyncio.AbstractEventLoop],
@@ -175,7 +170,7 @@ def asynciotask(
 
 # pylint: enable=unused-argument
 def asynciotask(  # noqa: F811
-    func: typing.Optional[typing.Callable] = None,
+    func: typing.Optional[typing.Callable[..., typing.Awaitable]] = None,
     *,
     loop_getter: typing.Union[
         typing.Callable[..., asyncio.AbstractEventLoop],
@@ -186,7 +181,7 @@ def asynciotask(  # noqa: F811
     """Wrap function in future and return.
 
     :param func: Function to wrap
-    :type func: typing.Optional[typing.Callable]
+    :type func: typing.Optional[typing.Callable[..., typing.Awaitable]]
     :param loop_getter: Method to get event loop, if wrap in asyncio task
     :type loop_getter: typing.Union[
                            typing.Callable[..., asyncio.AbstractEventLoop],
@@ -208,4 +203,4 @@ def asynciotask(  # noqa: F811
         loop_getter=loop_getter,
         loop_getter_need_context=loop_getter_need_context
     )(func)
-# pylint: enable=unexpected-keyword-arg, no-value-for-parameter, function-redefined
+# pylint: enable=function-redefined

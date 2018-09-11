@@ -46,12 +46,12 @@ _helpers:
 
 - &static_analysis
   stage: Static analysis
-  <<: *python36
+  <<: *python37
   after_success: skip
 
 - &code_style_check
   stage: Code style check
-  <<: *python36
+  <<: *python37
   after_success: skip
 
 script:
@@ -91,7 +91,6 @@ jobs:
     script:
     - bandit -r threaded
   - <<: *static_analysis
-    <<: *python37
     name: "MyPy"
     install:
     - *upgrade_python_toolset
