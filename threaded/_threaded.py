@@ -40,7 +40,12 @@ class Threaded(_class_decorator.BaseDecorator):
 
     def __init__(
         self,
-        name: typing.Optional[typing.Union[str, typing.Callable]] = None,
+        name: typing.Optional[
+            typing.Union[
+                str,
+                typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
+            ]
+        ] = None,
         daemon: bool = False,
         started: bool = False,
     ) -> None:
@@ -49,7 +54,7 @@ class Threaded(_class_decorator.BaseDecorator):
         :param name: New thread name.
                      If callable: use as wrapped function.
                      If none: use wrapped function name.
-        :type name: typing.Optional[typing.Union[str, typing.Callable]]
+        :type name: typing.Optional[typing.Union[str, typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]]]
         :param daemon: Daemonize thread.
         :type daemon: bool
         :param started: Return started thread
@@ -105,12 +110,12 @@ class Threaded(_class_decorator.BaseDecorator):
 
     def _get_function_wrapper(
         self,
-        func: typing.Callable
+        func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
     ) -> typing.Callable[..., threading.Thread]:
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
-        :type func: typing.Callable
+        :type func: typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]
         :return: wrapped function
         :rtype: typing.Callable[..., threading.Thread]
         """
@@ -123,9 +128,8 @@ class Threaded(_class_decorator.BaseDecorator):
                 str(hash(func))
             )
 
-        # pylint: disable=missing-docstring
         # noinspection PyMissingOrEmptyDocstring
-        @functools.wraps(prepared)
+        @functools.wraps(prepared)  # pylint: disable=missing-docstring
         def wrapper(
             *args,  # type: typing.Any
             **kwargs  # type: typing.Any
@@ -141,12 +145,14 @@ class Threaded(_class_decorator.BaseDecorator):
                 thread.start()
             return thread
 
-        # pylint: enable=missing-docstring
         return wrapper
 
     def __call__(  # pylint: disable=useless-super-delegation
         self,
-        *args: typing.Union[typing.Callable, typing.Any],
+        *args: typing.Union[
+            typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]],
+            typing.Any
+        ],
         **kwargs: typing.Any
     ) -> typing.Union[threading.Thread, typing.Callable[..., threading.Thread]]:
         """Executable instance."""
@@ -200,4 +206,4 @@ def threaded(  # noqa: F811
         )
         return Threaded(name=name, daemon=daemon, started=started)(func)  # type: ignore
     return Threaded(name=name, daemon=daemon, started=started)
-# pylint: enable=unexpected-keyword-arg, no-value-for-parameter, function-redefined
+# pylint: enable=function-redefined
