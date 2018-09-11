@@ -36,7 +36,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
 
     def __init__(
         self,
-        func: typing.Optional[typing.Callable[..., typing.Awaitable]] = None,
+        func: typing.Optional[typing.Callable[..., 'typing.Awaitable']] = None,
         *,
         loop_getter: typing.Union[
             typing.Callable[..., asyncio.AbstractEventLoop],
@@ -95,7 +95,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
 
     def _get_function_wrapper(
         self,
-        func: typing.Callable[..., typing.Awaitable]
+        func: typing.Callable[..., 'typing.Awaitable']
     ) -> typing.Callable[..., asyncio.Task]:
         """Here should be constructed and returned real decorator.
 
@@ -117,7 +117,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
 
     def __call__(  # pylint: disable=useless-super-delegation
         self,
-        *args: typing.Union[typing.Callable[..., typing.Awaitable], typing.Any],
+        *args: typing.Union[typing.Callable[..., 'typing.Awaitable'], typing.Any],
         **kwargs: typing.Any
     ) -> typing.Union[asyncio.Task, typing.Callable[..., asyncio.Task]]:
         """Callable instance."""
@@ -156,7 +156,7 @@ def asynciotask(
 
 @typing.overload  # noqa: F811
 def asynciotask(
-    func: typing.Callable[..., typing.Awaitable],
+    func: typing.Callable[..., 'typing.Awaitable'],
     *,
     loop_getter: typing.Union[
         typing.Callable[..., asyncio.AbstractEventLoop],
@@ -170,7 +170,7 @@ def asynciotask(
 
 # pylint: enable=unused-argument
 def asynciotask(  # noqa: F811
-    func: typing.Optional[typing.Callable[..., typing.Awaitable]] = None,
+    func: typing.Optional[typing.Callable[..., 'typing.Awaitable']] = None,
     *,
     loop_getter: typing.Union[
         typing.Callable[..., asyncio.AbstractEventLoop],

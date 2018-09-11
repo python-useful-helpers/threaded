@@ -78,7 +78,7 @@ class ThreadPooled(_base_threaded.APIPooled):
 
     def __init__(
         self,
-        func: typing.Optional[typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]] = None,
+        func: typing.Optional[typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]] = None,
         *,
         loop_getter: typing.Optional[
             typing.Union[
@@ -142,7 +142,7 @@ class ThreadPooled(_base_threaded.APIPooled):
 
     def _get_function_wrapper(
         self,
-        func: typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]
+        func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
     ) -> typing.Callable[..., typing.Union[concurrent.futures.Future, 'typing.Awaitable']]:
         """Here should be constructed and returned real decorator.
 
@@ -180,7 +180,7 @@ class ThreadPooled(_base_threaded.APIPooled):
     def __call__(  # pylint: disable=useless-super-delegation
         self,
         *args: typing.Union[
-            typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]],
+            typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]],
             typing.Any
         ],
         **kwargs: typing.Any
@@ -210,7 +210,7 @@ class ThreadPooled(_base_threaded.APIPooled):
 # pylint: disable=function-redefined, unused-argument
 @typing.overload
 def threadpooled(
-    func: typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]],
+    func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]],
     *,
     loop_getter: None = None,
     loop_getter_need_context: bool = False
@@ -221,7 +221,7 @@ def threadpooled(
 
 @typing.overload  # noqa: F811
 def threadpooled(
-    func: typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]],
+    func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]],
     *,
     loop_getter: typing.Union[
         typing.Callable[..., asyncio.AbstractEventLoop],
@@ -250,7 +250,7 @@ def threadpooled(
 
 # pylint: enable=unused-argument
 def threadpooled(  # noqa: F811
-    func: typing.Optional[typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]] = None,
+    func: typing.Optional[typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]] = None,
     *,
     loop_getter: typing.Union[
         None,

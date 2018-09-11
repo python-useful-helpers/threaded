@@ -90,7 +90,7 @@ class GThreadPooled(_base_threaded.APIPooled):
 
     def _get_function_wrapper(
         self,
-        func: typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]
+        func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
     ) -> typing.Callable[..., gevent.event.AsyncResult]:
         """Here should be constructed and returned real decorator.
 
@@ -114,7 +114,7 @@ class GThreadPooled(_base_threaded.APIPooled):
     def __call__(  # pylint: disable=useless-super-delegation
         self,
         *args: typing.Union[
-            typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]],
+            typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]],
             typing.Any
         ],
         **kwargs: typing.Any
@@ -126,7 +126,7 @@ class GThreadPooled(_base_threaded.APIPooled):
 # pylint: disable=function-redefined, unused-argument
 @typing.overload
 def gthreadpooled(
-    func: typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]
+    func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
 ) -> typing.Callable[..., gevent.event.AsyncResult]:
     """Overloaded: func provided."""
     pass  # pragma: no cover
@@ -140,7 +140,7 @@ def gthreadpooled(func: None = None) -> GThreadPooled:
 
 # pylint: enable=unused-argument
 def gthreadpooled(  # noqa: F811
-    func: typing.Optional[typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]] = None
+    func: typing.Optional[typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]] = None
 ) -> typing.Union[GThreadPooled, typing.Callable[..., gevent.event.AsyncResult]]:
     """Post function to gevent.threadpool.ThreadPool.
 

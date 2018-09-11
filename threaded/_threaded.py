@@ -43,7 +43,7 @@ class Threaded(_class_decorator.BaseDecorator):
         name: typing.Optional[
             typing.Union[
                 str,
-                typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]
+                typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
             ]
         ] = None,
         daemon: bool = False,
@@ -110,7 +110,7 @@ class Threaded(_class_decorator.BaseDecorator):
 
     def _get_function_wrapper(
         self,
-        func: typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]
+        func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
     ) -> typing.Callable[..., threading.Thread]:
         """Here should be constructed and returned real decorator.
 
@@ -150,7 +150,7 @@ class Threaded(_class_decorator.BaseDecorator):
     def __call__(  # pylint: disable=useless-super-delegation
         self,
         *args: typing.Union[
-            typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]],
+            typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]],
             typing.Any
         ],
         **kwargs: typing.Any
