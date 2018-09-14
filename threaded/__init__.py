@@ -33,7 +33,7 @@ except ImportError:  # pragma: no cover
 
 __all__ = (
     'ThreadPooled', 'Threaded',
-    'threadpooled', 'threaded'
+    'threadpooled', 'threaded',
 )  # type: typing.Tuple[str, ...]
 
 if GThreadPooled is not None:  # pragma: no cover

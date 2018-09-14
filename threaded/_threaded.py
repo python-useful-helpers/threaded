@@ -125,10 +125,9 @@ class Threaded(_class_decorator.BaseDecorator):
                 str(hash(func))
             )
 
-        # pylint: disable=missing-docstring
         # noinspection PyMissingOrEmptyDocstring
         @six.wraps(func)
-        def wrapper(
+        def wrapper(  # pylint: disable=missing-docstring
             *args,  # type: typing.Any
             **kwargs  # type: typing.Any
         ):  # type: (...) -> threading.Thread
@@ -143,7 +142,6 @@ class Threaded(_class_decorator.BaseDecorator):
                 thread.start()
             return thread
 
-        # pylint: enable=missing-docstring
         return wrapper
 
     def __call__(  # pylint: disable=useless-super-delegation
@@ -171,6 +169,7 @@ def threaded(
     :type daemon: bool
     :param started: Return started thread
     :type started: bool
+    :return: Threaded instance, if called as function or argumented decorator, else callable wraper
     :rtype: typing.Union[Threaded, typing.Callable[..., threading.Thread]]
     """
     if callable(name):

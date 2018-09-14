@@ -3,9 +3,40 @@ language: python
 os: linux
 install:
 - &upgrade_python_toolset pip install --upgrade pip setuptools wheel
-- pip install tox
-- pip install coveralls
-script: []
+- pip install --upgrade pytest pytest-sugar
+- &install_deps pip install -r CI_REQUIREMENTS.txt
+- pip install --upgrade pytest-cov coveralls
+
+_python:
+- &python27
+  name: "Python 2.7"
+  python: 2.7
+- &pypy
+  name: "PyPy"
+  python: pypy
+- &python37
+  name: "Python 3.7"
+  python: 3.7
+  dist: xenial
+  sudo: true
+
+_helpers:
+- &build_package python setup.py bdist_wheel
+
+- &static_analysis
+  stage: Static analysis
+  <<: *python27
+  after_success: skip
+
+- &code_style_check
+  stage: Code style check
+  <<: *python27
+  after_success: skip
+
+script:
+- pip install -e .
+- py.test -vv --cov-config .coveragerc --cov-report= --cov=threaded test
+- coverage report -m --fail-under 87
 after_success:
 - coveralls
 
@@ -13,79 +44,62 @@ jobs:
   fast_finish: true
   include:
   - stage: test
-    name: "Python 2.7"
-    python: 2.7
-    script:
-    - tox -e py27
+    <<: *python27
   - stage: test
-    name: "PyPy"
-    python: pypy
-    script:
-    - tox -e pypy
+    <<: *pypy
 
-  - stage: Static analisys
+  - <<: *static_analysis
     name: "PyLint"
-    python: 2.7
-    services: []
     install:
     - *upgrade_python_toolset
-    - pip install tox
+    - *install_deps
+    - pip install --upgrade "pylint < 2.0"
     script:
-    - tox -e pylint
-    after_success: skip
-  - stage: Static analisys
+    - pylint threaded
+  - <<: *static_analysis
     name: "Bandit"
-    python: 2.7
-    services: []
     install:
     - *upgrade_python_toolset
-    - pip install tox
+    - pip install --upgrade bandit
     script:
-    - tox -e bandit
-    after_success: skip
-  - stage: Static analisys
+    - bandit -r threaded
+  - <<: *static_analysis
+    <<: *python37
     name: "MyPy"
-    python: 3.7
-    dist: xenial
-    sudo: true
-    services: []
     install:
     - *upgrade_python_toolset
-    - pip install tox
+    - *install_deps
+    - pip install --upgrade "mypy >= 0.620"
     script:
-    - tox -e mypy
-    after_success: skip
+    - mypy --strict threaded
 
-  - stage: Code style check
+  - <<: *code_style_check
     name: "PEP8"
-    python: 2.7
     install:
     - *upgrade_python_toolset
-    - pip install tox
+    - pip install --upgrade flake8
     script:
-    - tox -e pep8
-    after_success: skip
-  - stage: Code style check
+    - flake8
+  - <<: *code_style_check
     name: "PEP257"
-    python: 2.7
     install:
     - *upgrade_python_toolset
-    - pip install tox
+    - pip install --upgrade pydocstyle
     script:
-    - tox -e pep257
-    after_success: skip
+    - pydocstyle threaded
 
   - stage: deploy
     # This prevents job from appearing in test plan unless commit is tagged:
     if: tag IS present
-    # Run on pypy to build not cythonized wheel
-    python: pypy
+    <<: *pypy
+    name: Build universal bdist_wheel. Deploy bdist and sdist.
     services: []
     install:
     - *upgrade_python_toolset
     - pip install -r build_requirements.txt
     script:
-    - python setup.py bdist_wheel
+    - *build_package
+    before_deploy: []
     deploy:
     - provider: pypi
       # `skip_cleanup: true` is required to preserve binary wheels, built
