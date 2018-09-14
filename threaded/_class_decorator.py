@@ -110,7 +110,7 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
 
     def __call__(
         self,
-        *args,  # type: typing.Any
+        *args,  # type: typing.Union[typing.Callable, typing.Any]
         **kwargs  # type: typing.Any
     ):  # type: (...) -> typing.Any
         """Main decorator getter."""

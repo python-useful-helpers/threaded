@@ -71,10 +71,7 @@ class ThreadPooled(_base_threaded.APIPooled):
 
         :rtype: ThreadPoolExecutor
         """
-        if (
-            not isinstance(self.__executor, ThreadPoolExecutor) or
-            self.__executor.is_shutdown
-        ):
+        if not isinstance(self.__executor, ThreadPoolExecutor) or self.__executor.is_shutdown:
             self.configure()
         return self.__executor  # type: ignore
 
@@ -89,16 +86,14 @@ class ThreadPooled(_base_threaded.APIPooled):
         :return: wrapped function
         :rtype: typing.Callable[..., concurrent.futures.Future]
         """
-        # pylint: disable=missing-docstring
         # noinspection PyMissingOrEmptyDocstring
         @six.wraps(func)
-        def wrapper(
+        def wrapper(  # pylint: disable=missing-docstring
             *args,  # type: typing.Any
             **kwargs  # type: typing.Any
         ):  # type: (...) -> concurrent.futures.Future
             return self.executor.submit(func, *args, **kwargs)
 
-        # pylint: enable=missing-docstring
         return wrapper
 
 
@@ -110,6 +105,7 @@ def threadpooled(
 
     :param func: function to wrap
     :type func: typing.Optional[typing.Callable]
+    :return: ThreadPooled instance, if called as function or argumented decorator, else callable wrapper
     :rtype: typing.Union[ThreadPooled, typing.Callable[..., concurrent.futures.Future]]
     """
     if func is None:
@@ -132,8 +128,7 @@ class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
     ):  # type: (...) -> None
         """Override init due to difference between Python <3.5 and 3.5+.
 
-        :param max_workers: Maximum workers allowed.
-                            If none: cpu_count() or 1) * 5
+        :param max_workers: Maximum workers allowed. If none: cpu_count() or 1) * 5
         :type max_workers: typing.Optional[int]
         """
         if max_workers is None:  # Use 3.5+ behavior

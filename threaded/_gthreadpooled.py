@@ -40,9 +40,8 @@ class GThreadPooled(_base_threaded.APIPooled):
 
     __executor = None  # type: typing.Optional[gevent.threadpool.ThreadPool]
 
-    # pylint: disable=arguments-differ
     @classmethod
-    def configure(
+    def configure(  # pylint: disable=arguments-differ
         cls,  # type: typing.Type[GThreadPooled]
         max_workers=None,  # type: typing.Optional[int]
         hub=None  # type: typing.Optional[gevent.hub.Hub]
@@ -70,8 +69,6 @@ class GThreadPooled(_base_threaded.APIPooled):
             maxsize=max_workers,
             hub=hub
         )
-
-    # pylint: enable=arguments-differ
 
     @classmethod
     def shutdown(cls):  # type: (typing.Type[GThreadPooled]) -> None
@@ -103,16 +100,14 @@ class GThreadPooled(_base_threaded.APIPooled):
         :return: wrapped function
         :rtype: typing.Callable[..., gevent.event.AsyncResult]
         """
-        # pylint: disable=missing-docstring
         # noinspection PyMissingOrEmptyDocstring
         @six.wraps(func)
-        def wrapper(
+        def wrapper(  # pylint: disable=missing-docstring
             *args,  # type: typing.Any
             **kwargs  # type: typing.Any
         ):  # type: (...) -> gevent.event.AsyncResult
             return self.executor.spawn(func, *args, **kwargs)
 
-        # pylint: enable=missing-docstring
         return wrapper
 
     def __call__(  # pylint: disable=useless-super-delegation
@@ -132,6 +127,7 @@ def gthreadpooled(
 
     :param func: function to wrap
     :type func: typing.Optional[typing.Callable]
+    :return: GThreadPooled instance, if called as function or argumented decorator, else callable wrapper
     :rtype: typing.Union[GThreadPooled, typing.Callable[..., gevent.event.AsyncResult]]
     """
     if func is None:
