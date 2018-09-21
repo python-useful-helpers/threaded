@@ -20,7 +20,7 @@ import typing
 from . import _class_decorator
 
 
-__all__ = ('APIPooled',)
+__all__ = ("APIPooled",)
 
 
 class APIPooled(_class_decorator.BaseDecorator, metaclass=abc.ABCMeta):
@@ -32,7 +32,7 @@ class APIPooled(_class_decorator.BaseDecorator, metaclass=abc.ABCMeta):
 
     @classmethod
     @abc.abstractmethod
-    def configure(cls: typing.Type['APIPooled'], max_workers: typing.Optional[int] = None) -> None:
+    def configure(cls: typing.Type["APIPooled"], max_workers: typing.Optional[int] = None) -> None:
         """Pool executor create and configure.
 
         :param max_workers: Maximum workers
@@ -42,7 +42,7 @@ class APIPooled(_class_decorator.BaseDecorator, metaclass=abc.ABCMeta):
 
     @classmethod
     @abc.abstractmethod
-    def shutdown(cls: typing.Type['APIPooled']) -> None:
+    def shutdown(cls: typing.Type["APIPooled"]) -> None:
         """Shutdown executor."""
         raise NotImplementedError()  # pragma: no cover
 

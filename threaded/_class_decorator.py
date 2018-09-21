@@ -78,7 +78,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
         # pylint: enable=assigning-non-slot
 
     @property
-    def _func(self) -> typing.Optional[typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]]:
+    def _func(self) -> typing.Optional[typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]]]:
         """Get wrapped function.
 
         :rtype: typing.Optional[typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]]
@@ -87,7 +87,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def _get_function_wrapper(
-        self, func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
+        self, func: typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]]
     ) -> typing.Callable:
         """Here should be constructed and returned real decorator.
 
@@ -99,7 +99,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
 
     def __call__(
         self,
-        *args: typing.Union[typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]], typing.Any],
+        *args: typing.Union[typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]], typing.Any],
         **kwargs: typing.Any
     ) -> typing.Any:
         """Main decorator getter."""
@@ -117,7 +117,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
 
     @staticmethod
     def _await_if_required(
-        target: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
+        target: typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]]
     ) -> typing.Callable[..., typing.Any]:
         """Await result if coroutine was returned."""
 
@@ -142,7 +142,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
 
 # 8<----------------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import doctest  # pragma: no cover
 
     doctest.testmod(verbose=True)  # pragma: no cover

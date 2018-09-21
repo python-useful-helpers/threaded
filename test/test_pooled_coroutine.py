@@ -84,18 +84,18 @@ class TestAsyncIOTask(unittest.TestCase):
         @threaded.asynciotask
         @asyncio.coroutine
         def test():
-            return 'test'
+            return "test"
 
         loop = asyncio.get_event_loop()
         res = loop.run_until_complete(asyncio.wait_for(test(), 1))
-        self.assertEqual(res, 'test')
+        self.assertEqual(res, "test")
 
     def test_construct(self):
         @threaded.asynciotask()
         @asyncio.coroutine
         def test():
-            return 'test'
+            return "test"
 
         loop = asyncio.get_event_loop()
         res = loop.run_until_complete(asyncio.wait_for(test(), 1))
-        self.assertEqual(res, 'test')
+        self.assertEqual(res, "test")

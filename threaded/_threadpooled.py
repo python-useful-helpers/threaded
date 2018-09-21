@@ -25,18 +25,18 @@ import typing
 
 from . import _base_threaded
 
-__all__ = ('ThreadPooled', 'threadpooled')
+__all__ = ("ThreadPooled", "threadpooled")
 
 
 class ThreadPooled(_base_threaded.APIPooled):
     """Post function to ThreadPoolExecutor."""
 
-    __slots__ = ('__loop_getter', '__loop_getter_need_context')
+    __slots__ = ("__loop_getter", "__loop_getter_need_context")
 
     __executor = None  # type: typing.Optional[ThreadPoolExecutor]
 
     @classmethod
-    def configure(cls: typing.Type['ThreadPooled'], max_workers: typing.Optional[int] = None) -> None:
+    def configure(cls: typing.Type["ThreadPooled"], max_workers: typing.Optional[int] = None) -> None:
         """Pool executor create and configure.
 
         :param max_workers: Maximum workers
@@ -50,13 +50,13 @@ class ThreadPooled(_base_threaded.APIPooled):
         cls.__executor = ThreadPoolExecutor(max_workers=max_workers)
 
     @classmethod
-    def shutdown(cls: typing.Type['ThreadPooled']) -> None:
+    def shutdown(cls: typing.Type["ThreadPooled"]) -> None:
         """Shutdown executor."""
         if cls.__executor is not None:
             cls.__executor.shutdown()
 
     @property
-    def executor(self) -> 'ThreadPoolExecutor':
+    def executor(self) -> "ThreadPoolExecutor":
         """Executor instance.
 
         :rtype: ThreadPoolExecutor
@@ -67,7 +67,7 @@ class ThreadPooled(_base_threaded.APIPooled):
 
     def __init__(
         self,
-        func: typing.Optional[typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]] = None,
+        func: typing.Optional[typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]]] = None,
         *,
         loop_getter: typing.Optional[
             typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
@@ -118,8 +118,8 @@ class ThreadPooled(_base_threaded.APIPooled):
         return self.loop_getter
 
     def _get_function_wrapper(
-        self, func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
-    ) -> typing.Callable[..., typing.Union[concurrent.futures.Future, 'typing.Awaitable']]:
+        self, func: typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]]
+    ) -> typing.Callable[..., typing.Union[concurrent.futures.Future, "typing.Awaitable"]]:
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
@@ -135,8 +135,8 @@ class ThreadPooled(_base_threaded.APIPooled):
             *args: typing.Any, **kwargs: typing.Any
         ) -> typing.Union[
             concurrent.futures.Future,
-            'typing.Awaitable',
-            typing.Callable[..., typing.Union[concurrent.futures.Future, 'typing.Awaitable']],
+            "typing.Awaitable",
+            typing.Callable[..., typing.Union[concurrent.futures.Future, "typing.Awaitable"]],
         ]:
             loop = self._get_loop(*args, **kwargs)
 
@@ -149,12 +149,12 @@ class ThreadPooled(_base_threaded.APIPooled):
 
     def __call__(  # pylint: disable=useless-super-delegation
         self,
-        *args: typing.Union[typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]], typing.Any],
+        *args: typing.Union[typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]], typing.Any],
         **kwargs: typing.Any
     ) -> typing.Union[
         concurrent.futures.Future,
-        'typing.Awaitable',
-        typing.Callable[..., typing.Union[concurrent.futures.Future, 'typing.Awaitable']],
+        "typing.Awaitable",
+        typing.Callable[..., typing.Union[concurrent.futures.Future, "typing.Awaitable"]],
     ]:
         """Callable instance."""
         return super(ThreadPooled, self).__call__(*args, **kwargs)  # type: ignore
@@ -173,7 +173,7 @@ class ThreadPooled(_base_threaded.APIPooled):
 # pylint: disable=function-redefined, unused-argument
 @typing.overload
 def threadpooled(
-    func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]],
+    func: typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]],
     *,
     loop_getter: None = None,
     loop_getter_need_context: bool = False
@@ -184,7 +184,7 @@ def threadpooled(
 
 @typing.overload  # noqa: F811
 def threadpooled(
-    func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]],
+    func: typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]],
     *,
     loop_getter: typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop],
     loop_getter_need_context: bool = False
@@ -206,11 +206,11 @@ def threadpooled(
 
 # pylint: enable=unused-argument
 def threadpooled(  # noqa: F811
-    func: typing.Optional[typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]] = None,
+    func: typing.Optional[typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]]] = None,
     *,
     loop_getter: typing.Union[None, typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop] = None,
     loop_getter_need_context: bool = False
-) -> typing.Union[ThreadPooled, typing.Callable[..., typing.Union[concurrent.futures.Future, 'typing.Awaitable']]]:
+) -> typing.Union[ThreadPooled, typing.Callable[..., typing.Union[concurrent.futures.Future, "typing.Awaitable"]]]:
     """Post function to ThreadPoolExecutor.
 
     :param func: function to wrap

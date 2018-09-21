@@ -24,7 +24,7 @@ except ImportError:
 import threaded
 
 
-@unittest.skipIf(gevent is None, 'No gevent')
+@unittest.skipIf(gevent is None, "No gevent")
 class TestThreadPooled(unittest.TestCase):
     def tearDown(self):
         threaded.GThreadPooled.shutdown()

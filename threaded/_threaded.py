@@ -23,18 +23,18 @@ import typing
 
 from . import _class_decorator
 
-__all__ = ('Threaded', 'threaded')
+__all__ = ("Threaded", "threaded")
 
 
 class Threaded(_class_decorator.BaseDecorator):
     """Run function in separate thread."""
 
-    __slots__ = ('__name', '__daemon', '__started')
+    __slots__ = ("__name", "__daemon", "__started")
 
     def __init__(
         self,
         name: typing.Optional[
-            typing.Union[str, typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]]
+            typing.Union[str, typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]]]
         ] = None,
         daemon: bool = False,
         started: bool = False,
@@ -55,7 +55,7 @@ class Threaded(_class_decorator.BaseDecorator):
         self.__started = started
         if callable(name):
             func = name  # type: typing.Callable
-            self.__name = 'Threaded: ' + getattr(name, '__name__', str(hash(name)))  # type: str
+            self.__name = "Threaded: " + getattr(name, "__name__", str(hash(name)))  # type: str
         else:
             func, self.__name = None, name  # type: ignore
         super(Threaded, self).__init__(func=func)
@@ -96,7 +96,7 @@ class Threaded(_class_decorator.BaseDecorator):
         )  # pragma: no cover
 
     def _get_function_wrapper(
-        self, func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
+        self, func: typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]]
     ) -> typing.Callable[..., threading.Thread]:
         """Here should be constructed and returned real decorator.
 
@@ -108,7 +108,7 @@ class Threaded(_class_decorator.BaseDecorator):
         prepared = self._await_if_required(func)
         name = self.name
         if name is None:
-            name = 'Threaded: ' + getattr(func, '__name__', str(hash(func)))
+            name = "Threaded: " + getattr(func, "__name__", str(hash(func)))
 
         # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(prepared)  # pylint: disable=missing-docstring
@@ -122,7 +122,7 @@ class Threaded(_class_decorator.BaseDecorator):
 
     def __call__(  # pylint: disable=useless-super-delegation
         self,
-        *args: typing.Union[typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]], typing.Any],
+        *args: typing.Union[typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]], typing.Any],
         **kwargs: typing.Any
     ) -> typing.Union[threading.Thread, typing.Callable[..., threading.Thread]]:
         """Executable instance."""
@@ -162,7 +162,7 @@ def threaded(  # noqa: F811
     :rtype: typing.Union[Threaded, typing.Callable[..., threading.Thread]]
     """
     if callable(name):
-        func, name = (name, 'Threaded: ' + getattr(name, '__name__', str(hash(name))))
+        func, name = (name, "Threaded: " + getattr(name, "__name__", str(hash(name))))
         return Threaded(name=name, daemon=daemon, started=started)(func)  # type: ignore
     return Threaded(name=name, daemon=daemon, started=started)
 
