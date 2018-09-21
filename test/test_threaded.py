@@ -23,10 +23,11 @@ class ThreadedTest(unittest.TestCase):
         @threaded.threaded
         def func_test():
             pass
+
         # pylint: disable=assignment-from-no-return
         test_thread = func_test()
         # pylint: enable=assignment-from-no-return
-        self.assertEqual(test_thread.name, 'Threaded: func_test')
+        self.assertEqual(test_thread.name, "Threaded: func_test")
         self.assertFalse(test_thread.daemon)
         self.assertFalse(test_thread.isAlive())
 
@@ -38,19 +39,19 @@ class ThreadedTest(unittest.TestCase):
         # pylint: disable=assignment-from-no-return
         test_thread = func_test()
         # pylint: enable=assignment-from-no-return
-        self.assertEqual(test_thread.name, 'Threaded: func_test')
+        self.assertEqual(test_thread.name, "Threaded: func_test")
         self.assertFalse(test_thread.daemon)
         self.assertFalse(test_thread.isAlive())
 
     def test_name(self):
-        @threaded.threaded(name='test name')
+        @threaded.threaded(name="test name")
         def func_test():
             pass
 
         # pylint: disable=assignment-from-no-return
         test_thread = func_test()
         # pylint: enable=assignment-from-no-return
-        self.assertEqual(test_thread.name, 'test name')
+        self.assertEqual(test_thread.name, "test name")
         self.assertFalse(test_thread.daemon)
         self.assertFalse(test_thread.isAlive())
 
@@ -62,11 +63,11 @@ class ThreadedTest(unittest.TestCase):
         # pylint: disable=assignment-from-no-return
         test_thread = func_test()
         # pylint: enable=assignment-from-no-return
-        self.assertEqual(test_thread.name, 'Threaded: func_test')
+        self.assertEqual(test_thread.name, "Threaded: func_test")
         self.assertTrue(test_thread.daemon)
         self.assertFalse(test_thread.isAlive())
 
-    @mock.patch('threading.Thread', autospec=True)
+    @mock.patch("threading.Thread", autospec=True)
     def test_started(self, thread):
         @threaded.threaded(started=True)
         def func_test():

@@ -25,7 +25,7 @@ except ImportError:
 import threaded
 
 
-@unittest.skipIf(gevent is None, 'No gevent')
+@unittest.skipIf(gevent is None, "No gevent")
 class TestThreadPooled(unittest.TestCase):
     def tearDown(self):
         threaded.GThreadPooled.shutdown()
@@ -50,10 +50,7 @@ class TestThreadPooled(unittest.TestCase):
         thread_pooled = threaded.gthreadpooled()
         thread_pooled.configure()
 
-        self.assertEqual(
-            thread_pooled.executor.maxsize,
-            (os.cpu_count() or 1) * 5
-        )
+        self.assertEqual(thread_pooled.executor.maxsize, (os.cpu_count() or 1) * 5)
 
         thread_pooled.configure(max_workers=2)
 

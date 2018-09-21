@@ -30,25 +30,25 @@ except ImportError:  # pragma: no cover
 
 
 __all__ = (
-    'ThreadPooled', 'Threaded',
-    'threadpooled', 'threaded',
-    'AsyncIOTask', 'asynciotask'
+    "ThreadPooled",
+    "Threaded",
+    "threadpooled",
+    "threaded",
+    "AsyncIOTask",
+    "asynciotask",
 )  # type: typing.Tuple[str, ...]
 
 if GThreadPooled is not None:  # pragma: no cover
-    __all__ += (
-        'GThreadPooled',
-        'gthreadpooled'
-    )
+    __all__ += ("GThreadPooled", "gthreadpooled")
 
-__version__ = '2.0.2'
+__version__ = "2.0.2"
 __author__ = "Alexey Stepanov"
-__author_email__ = 'penguinolog@gmail.com'
+__author_email__ = "penguinolog@gmail.com"
 __maintainers__ = {
-    'Alexey Stepanov': 'penguinolog@gmail.com',
-    'Antonio Esposito': 'esposito.cloud@gmail.com',
-    'Dennis Dmitriev': 'dis-xcom@gmail.com',
+    "Alexey Stepanov": "penguinolog@gmail.com",
+    "Antonio Esposito": "esposito.cloud@gmail.com",
+    "Dennis Dmitriev": "dis-xcom@gmail.com",
 }
-__url__ = 'https://github.com/python-useful-helpers/threaded'
+__url__ = "https://github.com/python-useful-helpers/threaded"
 __description__ = "Decorators for running functions in Thread/ThreadPool/IOLoop"
 __license__ = "Apache License, Version 2.0"

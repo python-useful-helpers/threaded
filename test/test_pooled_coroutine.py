@@ -70,17 +70,12 @@ class TestThreadPooled(unittest.TestCase):
         def loop_getter(target):
             return target
 
-        @threaded.threadpooled(
-            loop_getter=loop_getter,
-            loop_getter_need_context=True
-        )
+        @threaded.threadpooled(loop_getter=loop_getter, loop_getter_need_context=True)
         @asyncio.coroutine
         def test(*args, **kwargs):
             return threading.current_thread().name
 
-        pooled_name = loop.run_until_complete(
-            asyncio.wait_for(test(loop), 1)
-        )
+        pooled_name = loop.run_until_complete(asyncio.wait_for(test(loop), 1))
         self.assertNotEqual(pooled_name, threading.current_thread().name)
 
 
@@ -89,18 +84,18 @@ class TestAsyncIOTask(unittest.TestCase):
         @threaded.asynciotask
         @asyncio.coroutine
         def test():
-            return 'test'
+            return "test"
 
         loop = asyncio.get_event_loop()
         res = loop.run_until_complete(asyncio.wait_for(test(), 1))
-        self.assertEqual(res, 'test')
+        self.assertEqual(res, "test")
 
     def test_construct(self):
         @threaded.asynciotask()
         @asyncio.coroutine
         def test():
-            return 'test'
+            return "test"
 
         loop = asyncio.get_event_loop()
         res = loop.run_until_complete(asyncio.wait_for(test(), 1))
-        self.assertEqual(res, 'test')
+        self.assertEqual(res, "test")
