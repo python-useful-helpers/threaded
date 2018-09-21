@@ -63,10 +63,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
     False
     """
 
-    def __init__(
-        self,
-        func: typing.Optional[typing.Callable] = None
-    ) -> None:
+    def __init__(self, func: typing.Optional[typing.Callable] = None) -> None:
         """Decorator.
 
         :param func: function to wrap
@@ -81,9 +78,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
         # pylint: enable=assigning-non-slot
 
     @property
-    def _func(
-        self
-    ) -> typing.Optional[typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]]:
+    def _func(self) -> typing.Optional[typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]]:
         """Get wrapped function.
 
         :rtype: typing.Optional[typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]]
@@ -92,8 +87,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def _get_function_wrapper(
-        self,
-        func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
+        self, func: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
     ) -> typing.Callable:
         """Here should be constructed and returned real decorator.
 
@@ -105,10 +99,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
 
     def __call__(
         self,
-        *args: typing.Union[
-            typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]],
-            typing.Any
-        ],
+        *args: typing.Union[typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]], typing.Any],
         **kwargs: typing.Any
     ) -> typing.Any:
         """Main decorator getter."""
@@ -129,11 +120,9 @@ class BaseDecorator(metaclass=abc.ABCMeta):
         target: typing.Callable[..., typing.Union['typing.Awaitable', typing.Any]]
     ) -> typing.Callable[..., typing.Any]:
         """Await result if coroutine was returned."""
+
         @functools.wraps(target)
-        def wrapper(
-            *args,  # type: typing.Any
-            **kwargs  # type: typing.Any
-        ) -> typing.Any:
+        def wrapper(*args, **kwargs):  # type: (typing.Any, typing.Any) -> typing.Any
             """Decorator/wrapper."""
             result = target(*args, **kwargs)
             if asyncio.iscoroutine(result):
@@ -147,9 +136,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
     def __repr__(self) -> str:
         """For debug purposes."""
         return "<{cls}({func!r}) at 0x{id:X}>".format(
-            cls=self.__class__.__name__,
-            func=self.__func,
-            id=id(self)
+            cls=self.__class__.__name__, func=self.__func, id=id(self)
         )  # pragma: no cover
 
 
@@ -157,4 +144,5 @@ class BaseDecorator(metaclass=abc.ABCMeta):
 
 if __name__ == '__main__':
     import doctest  # pragma: no cover
+
     doctest.testmod(verbose=True)  # pragma: no cover

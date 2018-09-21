@@ -20,27 +20,20 @@ import typing
 
 from . import _class_decorator
 
-__all__ = (
-    'AsyncIOTask',
-    'asynciotask',
-)
+__all__ = ('AsyncIOTask', 'asynciotask')
 
 
 class AsyncIOTask(_class_decorator.BaseDecorator):
     """Wrap to asyncio.Task."""
 
-    __slots__ = (
-        '__loop_getter',
-        '__loop_getter_need_context',
-    )
+    __slots__ = ('__loop_getter', '__loop_getter_need_context')
 
     def __init__(
         self,
         func: typing.Optional[typing.Callable[..., 'typing.Awaitable']] = None,
         *,
         loop_getter: typing.Union[
-            typing.Callable[..., asyncio.AbstractEventLoop],
-            asyncio.AbstractEventLoop
+            typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
         ] = asyncio.get_event_loop,
         loop_getter_need_context: bool = False
     ) -> None:
@@ -61,12 +54,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
         self.__loop_getter_need_context = loop_getter_need_context
 
     @property
-    def loop_getter(
-            self
-    ) -> typing.Union[
-        typing.Callable[..., asyncio.AbstractEventLoop],
-        asyncio.AbstractEventLoop
-    ]:
+    def loop_getter(self) -> typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]:
         """Loop getter.
 
         :rtype: typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
@@ -81,11 +69,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
         """
         return self.__loop_getter_need_context
 
-    def get_loop(
-        self,
-        *args,  # type: typing.Any
-        **kwargs  # type: typing.Any
-    ) -> asyncio.AbstractEventLoop:
+    def get_loop(self, *args, **kwargs):  # type: (typing.Any, typing.Any) -> asyncio.AbstractEventLoop
         """Get event loop in decorator class."""
         if callable(self.loop_getter):
             if self.loop_getter_need_context:
@@ -94,8 +78,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
         return self.loop_getter
 
     def _get_function_wrapper(
-        self,
-        func: typing.Callable[..., 'typing.Awaitable']
+        self, func: typing.Callable[..., 'typing.Awaitable']
     ) -> typing.Callable[..., asyncio.Task]:
         """Here should be constructed and returned real decorator.
 
@@ -106,19 +89,14 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
         """
         # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(func)  # pylint: disable=missing-docstring
-        def wrapper(
-            *args,  # type: typing.Any
-            **kwargs  # type: typing.Any
-        ) -> asyncio.Task:
+        def wrapper(*args, **kwargs):  # type: (typing.Any, typing.Any) -> asyncio.Task
             loop = self.get_loop(*args, **kwargs)
             return loop.create_task(func(*args, **kwargs))
 
         return wrapper
 
     def __call__(  # pylint: disable=useless-super-delegation
-        self,
-        *args: typing.Union[typing.Callable[..., 'typing.Awaitable'], typing.Any],
-        **kwargs: typing.Any
+        self, *args: typing.Union[typing.Callable[..., 'typing.Awaitable'], typing.Any], **kwargs: typing.Any
     ) -> typing.Union[asyncio.Task, typing.Callable[..., asyncio.Task]]:
         """Callable instance."""
         return super(AsyncIOTask, self).__call__(*args, **kwargs)  # type: ignore
@@ -130,12 +108,7 @@ class AsyncIOTask(_class_decorator.BaseDecorator):
             "{func!r}, "
             "loop_getter={self.loop_getter!r}, "
             "loop_getter_need_context={self.loop_getter_need_context!r}, "
-            ") at 0x{id:X}>".format(
-                cls=self.__class__.__name__,
-                func=self._func,
-                self=self,
-                id=id(self)
-            )
+            ") at 0x{id:X}>".format(cls=self.__class__.__name__, func=self._func, self=self, id=id(self))
         )  # pragma: no cover
 
 
@@ -145,8 +118,7 @@ def asynciotask(
     func: None = None,
     *,
     loop_getter: typing.Union[
-        typing.Callable[..., asyncio.AbstractEventLoop],
-        asyncio.AbstractEventLoop
+        typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
     ] = asyncio.get_event_loop,
     loop_getter_need_context: bool = False
 ) -> AsyncIOTask:
@@ -159,8 +131,7 @@ def asynciotask(
     func: typing.Callable[..., 'typing.Awaitable'],
     *,
     loop_getter: typing.Union[
-        typing.Callable[..., asyncio.AbstractEventLoop],
-        asyncio.AbstractEventLoop
+        typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
     ] = asyncio.get_event_loop,
     loop_getter_need_context: bool = False
 ) -> typing.Callable[..., asyncio.Task]:
@@ -173,8 +144,7 @@ def asynciotask(  # noqa: F811
     func: typing.Optional[typing.Callable[..., 'typing.Awaitable']] = None,
     *,
     loop_getter: typing.Union[
-        typing.Callable[..., asyncio.AbstractEventLoop],
-        asyncio.AbstractEventLoop
+        typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
     ] = asyncio.get_event_loop,
     loop_getter_need_context: bool = False
 ) -> typing.Union[AsyncIOTask, typing.Callable[..., asyncio.Task]]:
@@ -193,14 +163,10 @@ def asynciotask(  # noqa: F811
     :rtype: typing.Union[AsyncIOTask, typing.Callable[..., asyncio.Task]]
     """
     if func is None:
-        return AsyncIOTask(
-            func=func,
-            loop_getter=loop_getter,
-            loop_getter_need_context=loop_getter_need_context
-        )
+        return AsyncIOTask(func=func, loop_getter=loop_getter, loop_getter_need_context=loop_getter_need_context)
     return AsyncIOTask(  # type: ignore
-        func=None,
-        loop_getter=loop_getter,
-        loop_getter_need_context=loop_getter_need_context
+        func=None, loop_getter=loop_getter, loop_getter_need_context=loop_getter_need_context
     )(func)
+
+
 # pylint: enable=function-redefined

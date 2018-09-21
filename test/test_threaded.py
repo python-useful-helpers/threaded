@@ -23,6 +23,7 @@ class ThreadedTest(unittest.TestCase):
         @threaded.threaded
         def func_test():
             pass
+
         # pylint: disable=assignment-from-no-return
         test_thread = func_test()
         # pylint: enable=assignment-from-no-return

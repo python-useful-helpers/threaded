@@ -30,16 +30,16 @@ except ImportError:  # pragma: no cover
 
 
 __all__ = (
-    'ThreadPooled', 'Threaded',
-    'threadpooled', 'threaded',
-    'AsyncIOTask', 'asynciotask'
+    'ThreadPooled',
+    'Threaded',
+    'threadpooled',
+    'threaded',
+    'AsyncIOTask',
+    'asynciotask',
 )  # type: typing.Tuple[str, ...]
 
 if GThreadPooled is not None:  # pragma: no cover
-    __all__ += (
-        'GThreadPooled',
-        'gthreadpooled'
-    )
+    __all__ += ('GThreadPooled', 'gthreadpooled')
 
 __version__ = '2.0.2'
 __author__ = "Alexey Stepanov"

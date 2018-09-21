@@ -23,25 +23,22 @@ import shutil
 import sys
 
 try:
+    # noinspection PyPackageRequirements
     from Cython.Build import cythonize
+    # noinspection PyPackageRequirements
     import gevent
 except ImportError:
     gevent = cythonize = None
 
 import setuptools
 
-with open(
-    os.path.join(
-        os.path.dirname(__file__),
-        'threaded', '__init__.py'
-    )
-) as f:
+with open(os.path.join(os.path.dirname(__file__), 'threaded', '__init__.py')) as f:
     source = f.read()
 
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 
-with open('README.rst',) as f:
+with open('README.rst') as f:
     long_description = f.read()
 
 
@@ -60,24 +57,24 @@ requires_optimization = [
 ]
 
 if 'win32' != sys.platform:
-    requires_optimization.append(
-        _extension('threaded.__init__')
-    )
+    requires_optimization.append(_extension('threaded.__init__'))
 
-ext_modules = cythonize(
-    requires_optimization,
-    compiler_directives=dict(
-        always_allow_keywords=True,
-        binding=True,
-        embedsignature=True,
-        overflowcheck=True,
-        language_level=3,
+# noinspection PyCallingNonCallable
+ext_modules = (
+    cythonize(
+        requires_optimization,
+        compiler_directives=dict(
+            always_allow_keywords=True, binding=True, embedsignature=True, overflowcheck=True, language_level=3
+        ),
     )
-) if cythonize is not None else []
+    if cythonize is not None
+    else []
+)
 
 
 class BuildFailed(Exception):
     """For install clear scripts."""
+
     pass
 
 
@@ -103,7 +100,7 @@ class AllowFailRepair(build_ext.build_ext):
                 shutil.copyfile(src, dst)
         except (
             distutils.errors.DistutilsPlatformError,
-            getattr(globals()['__builtins__'], 'FileNotFoundError', OSError)
+            getattr(globals()['__builtins__'], 'FileNotFoundError', OSError),
         ):
             raise BuildFailed()
 
@@ -115,7 +112,7 @@ class AllowFailRepair(build_ext.build_ext):
             distutils.errors.CCompilerError,
             distutils.errors.DistutilsExecError,
             distutils.errors.DistutilsPlatformError,
-            ValueError
+            ValueError,
         ):
             raise BuildFailed()
 
@@ -167,11 +164,7 @@ def get_simple_vars_from_src(src):
     >>> get_simple_vars_from_src(multiple_assign)
     OrderedDict([('e', 1), ('f', 1), ('g', 1)])
     """
-    ast_data = (
-        ast.Str, ast.Num,
-        ast.List, ast.Set, ast.Dict, ast.Tuple,
-        ast.Bytes, ast.NameConstant,
-    )
+    ast_data = (ast.Str, ast.Num, ast.List, ast.Set, ast.Dict, ast.Tuple, ast.Bytes, ast.NameConstant)
 
     tree = ast.parse(src)
 
@@ -183,9 +176,7 @@ def get_simple_vars_from_src(src):
         try:
             if isinstance(node.value, ast_data):
                 value = ast.literal_eval(node.value)
-            elif isinstance(  # NameConstant in python < 3.4
-                node.value, ast.Name
-            ) and isinstance(
+            elif isinstance(node.value, ast.Name) and isinstance(  # NameConstant in python < 3.4
                 node.value.ctx, ast.Load  # Read constant
             ):
                 value = ast.literal_eval(node.value)
@@ -194,11 +185,7 @@ def get_simple_vars_from_src(src):
         except ValueError:
             continue
         for tgt in node.targets:
-            if isinstance(
-                tgt, ast.Name
-            ) and isinstance(
-                tgt.ctx, ast.Store
-            ):
+            if isinstance(tgt, ast.Name) and isinstance(tgt.ctx, ast.Store):
                 result[tgt.id] = value
     return result
 
@@ -207,37 +194,25 @@ variables = get_simple_vars_from_src(source)
 
 classifiers = [
     'Development Status :: 5 - Production/Stable',
-
     'Intended Audience :: Developers',
     'Topic :: Software Development :: Libraries :: Python Modules',
-
     'License :: OSI Approved :: Apache Software License',
-
     'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
-
     'Programming Language :: Python :: Implementation :: CPython',
     'Programming Language :: Python :: Implementation :: PyPy',
 ]
 
-keywords = [
-    'pooling',
-    'multithreading',
-    'threading',
-    'asyncio',
-    'gevent',
-    'development',
-]
+keywords = ['pooling', 'multithreading', 'threading', 'asyncio', 'gevent', 'development']
 
 setup_args = dict(
     name='threaded',
     author=variables['__author__'],
     author_email=variables['__author_email__'],
     maintainer=', '.join(
-        '{name} <{email}>'.format(name=name, email=email)
-        for name, email in variables['__maintainers__'].items()
+        '{name} <{email}>'.format(name=name, email=email) for name, email in variables['__maintainers__'].items()
     ),
     url=variables['__url__'],
     version=variables['__version__'],
@@ -254,17 +229,11 @@ setup_args = dict(
     # Blacklist setuptools 34.0.0-34.3.2 due to https://github.com/pypa/setuptools/issues/951
     # Blacklist setuptools 36.2.0 due to https://github.com/pypa/setuptools/issues/1086
     setup_requires="setuptools >= 21.0.0,!=24.0.0,"
-                   "!=34.0.0,!=34.0.1,!=34.0.2,!=34.0.3,!=34.1.0,!=34.1.1,!=34.2.0,!=34.3.0,!=34.3.1,!=34.3.2,"
-                   "!=36.2.0",
-    extras_require={
-        'gevent': [
-            'gevent >= 1.2.2'
-        ],
-    },
+    "!=34.0.0,!=34.0.1,!=34.0.2,!=34.0.3,!=34.1.0,!=34.1.1,!=34.2.0,!=34.3.0,!=34.3.1,!=34.3.2,"
+    "!=36.2.0",
+    extras_require={'gevent': ['gevent >= 1.2.2']},
     install_requires=required,
-    package_data={
-        'threaded': ['py.typed'],
-    },
+    package_data={'threaded': ['py.typed']},
 )
 if cythonize is not None:
     setup_args['ext_modules'] = ext_modules
@@ -273,12 +242,7 @@ if cythonize is not None:
 try:
     setuptools.setup(**setup_args)
 except BuildFailed:
-    print(
-        '*' * 80 + '\n'
-        '* Build Failed!\n'
-        '* Use clear scripts version.\n'
-        '*' * 80 + '\n'
-    )
+    print('*' * 80 + '\n' '* Build Failed!\n' '* Use clear scripts version.\n' '*' * 80 + '\n')
     del setup_args['ext_modules']
     del setup_args['cmdclass']
     setuptools.setup(**setup_args)

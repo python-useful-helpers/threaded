@@ -16,6 +16,8 @@ threaded
     :target: https://pypi.python.org/pypi/threaded
 .. image:: https://img.shields.io/github/license/python-useful-helpers/threaded.svg
     :target: https://raw.githubusercontent.com/python-useful-helpers/threaded/master/LICENSE
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/ambv/black
 
 threaded is a set of decorators, which wrap functions in:
 
