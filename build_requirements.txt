@@ -1,4 +1,4 @@
 Cython; platform_python_implementation == "CPython"
-wheel
+wheel<0.32.0
 -r CI_REQUIREMENTS.txt
 -r requirements.txt
