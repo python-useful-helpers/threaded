@@ -49,10 +49,10 @@ def _extension(modpath):
 
 
 requires_optimization = [
-    _extension("threaded._class_decorator"),
+    setuptools.Extension("threaded.class_decorator", ["threaded/class_decorator.pyx"]),
     _extension("threaded._base_threaded"),
-    _extension("threaded._asynciotask"),
-    _extension("threaded._threaded"),
+    setuptools.Extension("threaded._asynciotask", ["threaded/_asynciotask.pyx"]),
+    setuptools.Extension("threaded._threaded", ["threaded/_threaded.pyx"]),
     _extension("threaded._threadpooled"),
     _extension("threaded._gthreadpooled"),
 ]
@@ -83,7 +83,10 @@ class AllowFailRepair(build_ext.build_ext):
     """This class allows C extension building to fail and repairs init."""
 
     def run(self):
-        """Run."""
+        """Run.
+
+        :raises BuildFailed: cythonize impossible
+        """
         try:
             build_ext.build_ext.run(self)
 

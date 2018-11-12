@@ -18,15 +18,13 @@ import asyncio
 import functools
 import typing
 
-from . import class_decorator
+from threaded cimport class_decorator
 
-__all__ = ("AsyncIOTask", "asynciotask")
+cpdef tuple __all__ = ("AsyncIOTask", "asynciotask")
 
 
-class AsyncIOTask(class_decorator.BaseDecorator):
+cdef class AsyncIOTask(class_decorator.BaseDecorator):
     """Wrap to asyncio.Task."""
-
-    __slots__ = ("__loop_getter", "__loop_getter_need_context")
 
     def __init__(
         self,
@@ -35,7 +33,7 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         loop_getter: typing.Union[
             typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
         ] = asyncio.get_event_loop,
-        loop_getter_need_context: bool = False
+        bint loop_getter_need_context: bool = False
     ) -> None:
         """Wrap function in future and return.
 
@@ -50,24 +48,8 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         :type loop_getter_need_context: bool
         """
         super(AsyncIOTask, self).__init__(func=func)
-        self.__loop_getter = loop_getter
-        self.__loop_getter_need_context = loop_getter_need_context
-
-    @property
-    def loop_getter(self) -> typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]:
-        """Loop getter.
-
-        :rtype: typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
-        """
-        return self.__loop_getter
-
-    @property
-    def loop_getter_need_context(self) -> bool:
-        """Loop getter need execution context.
-
-        :rtype: bool
-        """
-        return self.__loop_getter_need_context
+        self.loop_getter = loop_getter
+        self.loop_getter_need_context = loop_getter_need_context
 
     def get_loop(self, *args, **kwargs):  # type: (typing.Any, typing.Any) -> asyncio.AbstractEventLoop
         """Get event loop in decorator class."""
@@ -112,34 +94,6 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         )  # pragma: no cover
 
 
-# pylint: disable=function-redefined, unused-argument
-@typing.overload
-def asynciotask(
-    func: None = None,
-    *,
-    loop_getter: typing.Union[
-        typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
-    ] = asyncio.get_event_loop,
-    loop_getter_need_context: bool = False
-) -> AsyncIOTask:
-    """Overload: no function."""
-    pass  # pragma: no cover
-
-
-@typing.overload  # noqa: F811
-def asynciotask(
-    func: typing.Callable[..., "typing.Awaitable"],
-    *,
-    loop_getter: typing.Union[
-        typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
-    ] = asyncio.get_event_loop,
-    loop_getter_need_context: bool = False
-) -> typing.Callable[..., asyncio.Task]:
-    """Overload: provided function."""
-    pass  # pragma: no cover
-
-
-# pylint: enable=unused-argument
 def asynciotask(  # noqa: F811
     func: typing.Optional[typing.Callable[..., "typing.Awaitable"]] = None,
     *,
@@ -167,6 +121,3 @@ def asynciotask(  # noqa: F811
     return AsyncIOTask(  # type: ignore
         func=None, loop_getter=loop_getter, loop_getter_need_context=loop_getter_need_context
     )(func)
-
-
-# pylint: enable=function-redefined

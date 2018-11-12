@@ -119,7 +119,7 @@ jobs:
     name: "PEP257"
     install:
     - *upgrade_python_toolset
-    - pip install --upgrade pydocstyle
+    - pip install --upgrade 'pydocstyle<3.0'
     script:
     - pydocstyle threaded
 

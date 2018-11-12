@@ -21,23 +21,22 @@ import functools
 import threading
 import typing
 
-from . import class_decorator
+from threaded cimport class_decorator
 
-__all__ = ("Threaded", "threaded")
+cpdef tuple __all__ = ("Threaded", "threaded")
 
 
-class Threaded(class_decorator.BaseDecorator):
+cdef class Threaded(class_decorator.BaseDecorator):
     """Run function in separate thread."""
 
-    __slots__ = ("__name", "__daemon", "__started")
 
     def __init__(
         self,
         name: typing.Optional[
             typing.Union[str, typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]]]
         ] = None,
-        daemon: bool = False,
-        started: bool = False,
+        bint daemon = False,
+        bint started = False,
     ) -> None:
         """Run function in separate thread.
 
@@ -51,39 +50,15 @@ class Threaded(class_decorator.BaseDecorator):
         :type started: bool
         """
         # pylint: disable=assigning-non-slot
-        self.__daemon = daemon
-        self.__started = started
+        self.daemon = daemon
+        self.started = started
         if callable(name):
             func = name  # type: typing.Callable
-            self.__name = "Threaded: " + getattr(name, "__name__", str(hash(name)))  # type: str
+            self.name = "Threaded: " + getattr(name, "__name__", str(hash(name)))  # type: str
         else:
-            func, self.__name = None, name  # type: ignore
+            func, self.name = None, name  # type: ignore
         super(Threaded, self).__init__(func=func)
         # pylint: enable=assigning-non-slot
-
-    @property
-    def name(self) -> typing.Optional[str]:
-        """Thread name.
-
-        :rtype: typing.Optional[str]
-        """
-        return self.__name
-
-    @property
-    def daemon(self) -> bool:
-        """Start thread as daemon.
-
-        :rtype: bool
-        """
-        return self.__daemon
-
-    @property
-    def started(self) -> bool:
-        """Return started thread.
-
-        :rtype: bool
-        """
-        return self.__started
 
     def __repr__(self) -> str:
         """For debug purposes."""
@@ -106,7 +81,7 @@ class Threaded(class_decorator.BaseDecorator):
         :rtype: typing.Callable[..., threading.Thread]
         """
         prepared = self._await_if_required(func)
-        name = self.name
+        cdef str name = self.name
         if name is None:
             name = "Threaded: " + getattr(func, "__name__", str(hash(func)))
 
@@ -129,24 +104,9 @@ class Threaded(class_decorator.BaseDecorator):
         return super(Threaded, self).__call__(*args, **kwargs)  # type: ignore
 
 
-# pylint: disable=function-redefined, unused-argument
-@typing.overload
-def threaded(
-    name: typing.Callable, daemon: bool = False, started: bool = False
-) -> typing.Callable[..., threading.Thread]:
-    """Overload: Call decorator without arguments."""
-    pass  # pragma: no cover
-
-
-@typing.overload  # noqa: F811
-def threaded(name: typing.Optional[str] = None, daemon: bool = False, started: bool = False) -> Threaded:
-    """Overload: Name is not callable."""
-    pass  # pragma: no cover
-
-
 # pylint: enable=unused-argument
 def threaded(  # noqa: F811
-    name: typing.Optional[typing.Union[str, typing.Callable]] = None, daemon: bool = False, started: bool = False
+    name: typing.Optional[typing.Union[str, typing.Callable]] = None, bint daemon: bool = False, bint started: bool = False
 ) -> typing.Union[Threaded, typing.Callable[..., threading.Thread]]:
     """Run function in separate thread.
 

@@ -41,7 +41,7 @@ __all__ = (
 if GThreadPooled is not None:  # pragma: no cover
     __all__ += ("GThreadPooled", "gthreadpooled")
 
-__version__ = "2.0.3"
+__version__ = "2.1.0"
 __author__ = "Alexey Stepanov"
 __author_email__ = "penguinolog@gmail.com"
 __maintainers__ = {
