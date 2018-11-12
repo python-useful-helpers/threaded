@@ -17,13 +17,13 @@
 import abc
 import typing
 
-from . import _class_decorator
+from . import class_decorator
 
 
 __all__ = ("APIPooled",)
 
 
-class APIPooled(_class_decorator.BaseDecorator, metaclass=abc.ABCMeta):
+class APIPooled(class_decorator.BaseDecorator, metaclass=abc.ABCMeta):
     """API description for pooled."""
 
     __slots__ = ()
