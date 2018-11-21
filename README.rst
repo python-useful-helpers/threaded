@@ -3,6 +3,9 @@ threaded
 
 .. image:: https://travis-ci.org/python-useful-helpers/threaded.svg?branch=master
     :target: https://travis-ci.org/python-useful-helpers/threaded
+.. image:: https://dev.azure.com/python-useful-helpers/threaded/_apis/build/status/python-useful-helpers.threaded?branchName=master
+    :alt: Azure DevOps builds
+    :target: https://dev.azure.com/python-useful-helpers/threaded/_build?definitionId=3
 .. image:: https://coveralls.io/repos/github/python-useful-helpers/threaded/badge.svg?branch=master
     :target: https://coveralls.io/github/python-useful-helpers/threaded?branch=master
 .. image:: https://readthedocs.org/projects/threaded/badge/?version=latest
@@ -57,9 +60,6 @@ Decorators:
 
 * `AsyncIOTask` - wrap in ``asyncio.Task``. Uses the same API, as `ThreadPooled`.
 * `asynciotask` is alias for `AsyncIOTask`.
-
-* `GThreadPooled` - wrap function in ``gevent.threadpool.ThreadPool``.
-* `gthreadpooled` is alias for `GThreadPooled`.
 
 .. note::
 
@@ -214,32 +214,6 @@ Usage with loop extraction from call arguments:
     loop = asyncio.get_event_loop()
     loop.run_until_complete(asyncio.wait_for(func(loop), timeout))
 
-GThreadPooled
--------------
-Post function to ``gevent.threadpool.ThreadPool``.
-
-.. code-block:: python
-
-    threaded.GThreadPooled.configure(max_workers=3)
-
-.. note::
-
-    By default, if executor is not configured - it configures with default parameters: ``max_workers=CPU_COUNT * 5``
-
-.. note::
-
-    Instead of standard ThreadPoolExecutor, gevent pool is not re-created during re-configuration.
-
-Basic usage example:
-
-.. code-block:: python
-
-    @threaded.GThreadPooled
-    def func():
-        pass
-
-    func().wait()
-
 Testing
 =======
 The main test mechanism for the package `threaded` is using `tox`.
@@ -252,6 +226,8 @@ For code checking several CI systems is used in parallel:
 1. `Travis CI: <https://travis-ci.org/python-useful-helpers/threaded>`_ is used for checking: PEP8, pylint, bandit, installation possibility and unit tests. Also it's publishes coverage on coveralls.
 
 2. `coveralls: <https://coveralls.io/github/python-useful-helpers/threaded>`_ is used for coverage display.
+
+3. `Azure CI: <https://dev.azure.com/python-useful-helpers/threaded/_build?definitionId=3>`_ is used for functional tests on Windows.
 
 CD system
 =========

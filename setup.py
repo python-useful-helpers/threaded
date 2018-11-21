@@ -32,10 +32,8 @@ try:
     # noinspection PyPackageRequirements
     from Cython.Build import cythonize
 
-    # noinspection PyPackageRequirements
-    import gevent
 except ImportError:
-    gevent = cythonize = None
+    cythonize = None
 
 
 with open(os.path.join(os.path.dirname(__file__), "threaded", "__init__.py")) as f:
@@ -63,7 +61,6 @@ requires_optimization = [
 
 if "win32" != sys.platform:
     requires_optimization.append(_extension("threaded.__init__"))
-    requires_optimization.append(_extension("threaded._gthreadpooled"))
 
 # noinspection PyCallingNonCallable
 ext_modules = (
@@ -73,7 +70,7 @@ ext_modules = (
             always_allow_keywords=True, binding=True, embedsignature=True, overflowcheck=True, language_level=3
         ),
     )
-    if cythonize is not None and "win32" != sys.platform
+    if cythonize is not None
     else []
 )
 
@@ -216,7 +213,7 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
 
-keywords = ["pooling", "multithreading", "threading", "asyncio", "gevent", "development"]
+keywords = ["pooling", "multithreading", "threading", "asyncio", "development"]
 
 setup_args = dict(
     name="threaded",
@@ -245,7 +242,6 @@ setup_args = dict(
         "setuptools_scm",
     ],
     use_scm_version=True,
-    extras_require={"gevent": ["gevent >= 1.2.2"]},
     install_requires=required,
     package_data={"threaded": ["py.typed"]},
 )
