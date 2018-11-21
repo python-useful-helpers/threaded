@@ -16,6 +16,8 @@
 
 import typing
 
+import pkg_resources
+
 # pylint: disable=no-name-in-module
 from ._asynciotask import AsyncIOTask, asynciotask
 from ._threaded import Threaded, threaded
@@ -27,6 +29,17 @@ try:  # pragma: no cover
 except ImportError:  # pragma: no cover
     GThreadPooled = gthreadpooled = None  # type: ignore
 # pylint: enable=no-name-in-module
+
+try:
+    __version__ = pkg_resources.get_distribution(__name__).version
+except pkg_resources.DistributionNotFound:
+    # package is not installed, try to get from SCM
+    try:
+        import setuptools_scm  # type: ignore
+
+        __version__ = setuptools_scm.get_version()
+    except ImportError:
+        pass
 
 
 __all__ = (
@@ -41,7 +54,6 @@ __all__ = (
 if GThreadPooled is not None:  # pragma: no cover
     __all__ += ("GThreadPooled", "gthreadpooled")
 
-__version__ = "2.1.0"
 __author__ = "Alexey Stepanov"
 __author_email__ = "penguinolog@gmail.com"
 __maintainers__ = {

@@ -17,10 +17,6 @@
 Asyncio is supported
 """
 
-import functools
-import threading
-import typing
-
 from threaded cimport class_decorator
 
 cpdef tuple __all__
