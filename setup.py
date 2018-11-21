@@ -59,11 +59,11 @@ requires_optimization = [
     setuptools.Extension("threaded._asynciotask", ["threaded/_asynciotask.pyx"]),
     setuptools.Extension("threaded._threaded", ["threaded/_threaded.pyx"]),
     _extension("threaded._threadpooled"),
-    _extension("threaded._gthreadpooled"),
 ]
 
 if "win32" != sys.platform:
     requires_optimization.append(_extension("threaded.__init__"))
+    requires_optimization.append(_extension("threaded._gthreadpooled"))
 
 # noinspection PyCallingNonCallable
 ext_modules = (
