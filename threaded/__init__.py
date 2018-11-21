@@ -23,13 +23,6 @@ from ._asynciotask import AsyncIOTask, asynciotask
 from ._threaded import Threaded, threaded
 from ._threadpooled import ThreadPooled, threadpooled
 
-
-try:  # pragma: no cover
-    from ._gthreadpooled import GThreadPooled, gthreadpooled
-except ImportError:  # pragma: no cover
-    GThreadPooled = gthreadpooled = None  # type: ignore
-# pylint: enable=no-name-in-module
-
 try:
     __version__ = pkg_resources.get_distribution(__name__).version
 except pkg_resources.DistributionNotFound:
@@ -50,9 +43,6 @@ __all__ = (
     "AsyncIOTask",
     "asynciotask",
 )  # type: typing.Tuple[str, ...]
-
-if GThreadPooled is not None:  # pragma: no cover
-    __all__ += ("GThreadPooled", "gthreadpooled")
 
 __author__ = "Alexey Stepanov"
 __author_email__ = "penguinolog@gmail.com"

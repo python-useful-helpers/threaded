@@ -13,7 +13,6 @@ Contents:
     threadpooled
     threaded
     asynciotask
-    gthreadpooled
 
 Indices and tables
 ==================
