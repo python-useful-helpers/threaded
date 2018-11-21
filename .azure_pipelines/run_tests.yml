@@ -1,0 +1,56 @@
+parameters:
+  name: ""
+  python: ""
+  architecture: "x64"
+  kind: "native"
+
+jobs:
+- job: ${{ format('{0}_{1}_{2}', parameters.name, parameters.architecture, parameters.kind) }}
+  dependsOn: PyLint
+  pool:
+    vmImage: "vs2017-win2016"
+
+  steps:
+  # ensure the required Python versions are available
+  - task: UsePythonVersion@0
+    displayName: setup python
+    inputs:
+      versionSpec: ${{ parameters.python }}
+      architecture: ${{ parameters.architecture }}
+
+  - script: "python -c \"import sys; print(sys.version); print(sys.executable)\""
+    displayName: show python information
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -U setuptools
+    displayName: upgrade pip and setuptools
+
+  - script: |
+      pip install -r requirements.txt
+    displayName: Install dependencies
+
+  - ${{ if eq(parameters.kind, 'cython') }}:
+    - script: |
+        pip install -r build_requirements.txt
+      displayName: Install build requirements
+
+  - script: |
+      pip install -U wheel
+      python setup.py bdist_wheel
+      pip install --pre --no-index -f dist threaded
+    displayName: Build and install
+
+  - script: |
+      pip install pytest pytest-sugar
+
+      pytest -vvv --junitxml=unit_result.xml test
+    displayName: PyTest
+
+  - task: PublishTestResults@2
+    displayName: publish test results via junit
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: "JUnit"
+      testResultsFiles: ${{ format('$(System.DefaultWorkingDirectory)/unit_result.xml') }}
+      testRunTitle: ${{ format('{0}_{1}_{2}', parameters.name, parameters.architecture, parameters.kind) }}
