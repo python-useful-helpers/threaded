@@ -80,7 +80,7 @@ jobs:
     install:
     - *upgrade_python_toolset
     - *install_deps
-    - pip install --upgrade "pylint >= 2.1"
+    - pip install --upgrade "pylint >= 2.2"
     script:
     - pylint threaded
   - <<: *static_analysis

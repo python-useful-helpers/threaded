@@ -123,7 +123,6 @@ def asynciotask(
     loop_getter_need_context: bool = False
 ) -> AsyncIOTask:
     """Overload: no function."""
-    pass  # pragma: no cover
 
 
 @typing.overload  # noqa: F811
@@ -136,7 +135,6 @@ def asynciotask(
     loop_getter_need_context: bool = False
 ) -> typing.Callable[..., asyncio.Task]:
     """Overload: provided function."""
-    pass  # pragma: no cover
 
 
 # pylint: enable=unused-argument
