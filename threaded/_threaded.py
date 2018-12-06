@@ -135,13 +135,11 @@ def threaded(
     name: typing.Callable, daemon: bool = False, started: bool = False
 ) -> typing.Callable[..., threading.Thread]:
     """Overload: Call decorator without arguments."""
-    pass  # pragma: no cover
 
 
 @typing.overload  # noqa: F811
 def threaded(name: typing.Optional[str] = None, daemon: bool = False, started: bool = False) -> Threaded:
     """Overload: Name is not callable."""
-    pass  # pragma: no cover
 
 
 # pylint: enable=unused-argument

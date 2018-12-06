@@ -179,7 +179,6 @@ def threadpooled(
     loop_getter_need_context: bool = False
 ) -> typing.Callable[..., concurrent.futures.Future]:
     """Overload: function callable, no loop getter."""
-    pass  # pragma: no cover
 
 
 @typing.overload  # noqa: F811
@@ -190,7 +189,6 @@ def threadpooled(
     loop_getter_need_context: bool = False
 ) -> typing.Callable[..., asyncio.Task]:
     """Overload: function callable, loop getter available."""
-    pass  # pragma: no cover
 
 
 @typing.overload  # noqa: F811
@@ -201,7 +199,6 @@ def threadpooled(
     loop_getter_need_context: bool = False
 ) -> ThreadPooled:
     """Overload: No function."""
-    pass  # pragma: no cover
 
 
 # pylint: enable=unused-argument

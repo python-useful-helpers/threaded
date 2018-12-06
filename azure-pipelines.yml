@@ -21,7 +21,7 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-      pip install -U pylint
+      pip install -U "pylint>=2.2"
       pylint -f msvs threaded
     displayName: 'PyLint'
 
