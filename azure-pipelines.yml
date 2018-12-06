@@ -74,21 +74,25 @@ jobs:
     matrix:
       Python34_x64:
         python.version: '3.4'
+        python.architecture: 'x64'
       Python34_x86:
         python.version: '3.4'
         python.architecture: 'x86'
       Python35_x64:
         python.version: '3.5'
+        python.architecture: 'x64'
       Python35_x86:
         python.version: '3.5'
         python.architecture: 'x86'
       Python36_x64:
         python.version: '3.6'
+        python.architecture: 'x64'
       Python36_x86:
         python.version: '3.6'
         python.architecture: 'x86'
       Python37_x64:
         python.version: '3.7'
+        python.architecture: 'x64'
       Python37_x86:
         python.version: '3.7'
         python.architecture: 'x86'
@@ -116,5 +120,5 @@ jobs:
 
   - script: |
       pip install -U twine
-      twine upload -r PyPI --config-file $(PYPIRC_PATH) dist/Advanced_Descriptors-* --skip-existing
+      twine upload -r PyPI --config-file $(PYPIRC_PATH) dist/threaded-* --skip-existing
     displayName: 'Deploy'
