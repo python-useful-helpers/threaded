@@ -86,11 +86,11 @@ cdef class AsyncIOTask(class_decorator.BaseDecorator):
     def __repr__(self) -> str:
         """For debug purposes."""
         return (
-            "<{cls}("
-            "{func!r}, "
-            "loop_getter={self.loop_getter!r}, "
-            "loop_getter_need_context={self.loop_getter_need_context!r}, "
-            ") at 0x{id:X}>".format(cls=self.__class__.__name__, func=self._func, self=self, id=id(self))
+            f"<{self.__class__.__name__}("
+            f"{self._func!r}, "
+            f"loop_getter={self.loop_getter!r}, "
+            f"loop_getter_need_context={self.loop_getter_need_context!r}, "
+            f") at 0x{id(self):X}>"
         )  # pragma: no cover
 
 

@@ -26,22 +26,10 @@ jobs:
     displayName: 'PyLint'
 
 - template: .azure_pipelines/run_tests.yml
-  parameters: {name: 'Python_34', python: '3.4', architecture: 'x64', kind: 'native'}
-- template: .azure_pipelines/run_tests.yml
-  parameters: {name: 'Python_35', python: '3.5', architecture: 'x64', kind: 'native'}
-- template: .azure_pipelines/run_tests.yml
   parameters: {name: 'Python_36', python: '3.6', architecture: 'x64', kind: 'native'}
 - template: .azure_pipelines/run_tests.yml
   parameters: {name: 'Python_37', python: '3.7', architecture: 'x64', kind: 'native'}
 
-- template: .azure_pipelines/run_tests.yml
-  parameters: {name: 'Python_34', python: '3.4', architecture: 'x64', kind: 'cython'}
-- template: .azure_pipelines/run_tests.yml
-  parameters: {name: 'Python_34', python: '3.4', architecture: 'x86', kind: 'cython'}
-- template: .azure_pipelines/run_tests.yml
-  parameters: {name: 'Python_35', python: '3.5', architecture: 'x64', kind: 'cython'}
-- template: .azure_pipelines/run_tests.yml
-  parameters: {name: 'Python_35', python: '3.5', architecture: 'x86', kind: 'cython'}
 - template: .azure_pipelines/run_tests.yml
   parameters: {name: 'Python_36', python: '3.6', architecture: 'x64', kind: 'cython'}
 - template: .azure_pipelines/run_tests.yml
@@ -53,15 +41,9 @@ jobs:
 
 - job: 'Build_and_deploy'
   dependsOn:
-  - Python_34_x64_native
-  - Python_35_x64_native
   - Python_36_x64_native
   - Python_37_x64_native
 
-  - Python_34_x64_cython
-  - Python_34_x86_cython
-  - Python_35_x64_cython
-  - Python_35_x86_cython
   - Python_36_x64_cython
   - Python_36_x86_cython
   - Python_37_x64_cython
@@ -72,18 +54,6 @@ jobs:
   strategy:
     maxParallel: 6
     matrix:
-      Python34_x64:
-        python.version: '3.4'
-        python.architecture: 'x64'
-      Python34_x86:
-        python.version: '3.4'
-        python.architecture: 'x86'
-      Python35_x64:
-        python.version: '3.5'
-        python.architecture: 'x64'
-      Python35_x86:
-        python.version: '3.5'
-        python.architecture: 'x86'
       Python36_x64:
         python.version: '3.6'
         python.architecture: 'x64'

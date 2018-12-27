@@ -60,15 +60,9 @@ cdef class Threaded(class_decorator.BaseDecorator):
         super(Threaded, self).__init__(func=func)
         # pylint: enable=assigning-non-slot
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # pragma: no cover
         """For debug purposes."""
-        return (
-            "{cls}("
-            "name={self.name!r}, "
-            "daemon={self.daemon!r}, "
-            "started={self.started!r}, "
-            ")".format(cls=self.__class__.__name__, self=self)
-        )  # pragma: no cover
+        return f"{self.__class__.__name__}(name={self.name!r}, daemon={self.daemon!r}, started={self.started!r}, )"
 
     def _get_function_wrapper(
         self, func: typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]]
