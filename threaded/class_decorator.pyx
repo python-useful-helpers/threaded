@@ -66,9 +66,7 @@ cdef class BaseDecorator:
 
     def __repr__(self) -> str:
         """For debug purposes."""
-        return "<{cls}({func!r}) at 0x{id:X}>".format(
-            cls=self.__class__.__name__, func=self._func, id=id(self)
-        )  # pragma: no cover
+        return f"<{self.__class__.__name__}({self.__func!r}) at 0x{id(self):X}>"  # pragma: no cover
 
     @staticmethod
     def _await_if_required(

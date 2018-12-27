@@ -14,13 +14,12 @@
 
 """Base classes for ThreadPooled and Threaded."""
 
+__all__ = ("APIPooled",)
+
 import abc
 import typing
 
 from . import class_decorator
-
-
-__all__ = ("APIPooled",)
 
 
 class APIPooled(class_decorator.BaseDecorator, metaclass=abc.ABCMeta):
@@ -28,7 +27,7 @@ class APIPooled(class_decorator.BaseDecorator, metaclass=abc.ABCMeta):
 
     __slots__ = ()
 
-    __executor = None  # type: typing.Optional[typing.Any]
+    __executor: typing.Optional[typing.Any] = None
 
     @classmethod
     @abc.abstractmethod
