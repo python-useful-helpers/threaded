@@ -14,13 +14,13 @@
 
 """AsyncIOTask implementation."""
 
+__all__ = ("AsyncIOTask", "asynciotask")
+
 import asyncio
 import functools
 import typing
 
 from . import class_decorator
-
-__all__ = ("AsyncIOTask", "asynciotask")
 
 
 class AsyncIOTask(class_decorator.BaseDecorator):
@@ -30,7 +30,7 @@ class AsyncIOTask(class_decorator.BaseDecorator):
 
     def __init__(
         self,
-        func: typing.Optional[typing.Callable[..., "typing.Awaitable"]] = None,
+        func: typing.Optional[typing.Callable[..., "typing.Awaitable[typing.Any]"]] = None,
         *,
         loop_getter: typing.Union[
             typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
@@ -78,8 +78,8 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         return self.loop_getter
 
     def _get_function_wrapper(
-        self, func: typing.Callable[..., "typing.Awaitable"]
-    ) -> typing.Callable[..., asyncio.Task]:
+        self, func: typing.Callable[..., "typing.Awaitable[typing.Any]"]
+    ) -> typing.Callable[..., "asyncio.Task[typing.Any]"]:
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
@@ -89,15 +89,17 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         """
         # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(func)  # pylint: disable=missing-docstring
-        def wrapper(*args, **kwargs):  # type: (typing.Any, typing.Any) -> asyncio.Task
+        def wrapper(*args, **kwargs):  # type: (typing.Any, typing.Any) -> asyncio.Task[typing.Any]
             loop = self.get_loop(*args, **kwargs)
             return loop.create_task(func(*args, **kwargs))
 
         return wrapper
 
     def __call__(  # pylint: disable=useless-super-delegation
-        self, *args: typing.Union[typing.Callable[..., "typing.Awaitable"], typing.Any], **kwargs: typing.Any
-    ) -> typing.Union[asyncio.Task, typing.Callable[..., asyncio.Task]]:
+        self,
+        *args: typing.Union[typing.Callable[..., "typing.Awaitable[typing.Any]"], typing.Any],
+        **kwargs: typing.Any
+    ) -> typing.Union["asyncio.Task[typing.Any]", typing.Callable[..., "asyncio.Task[typing.Any]"]]:
         """Callable instance."""
         return super(AsyncIOTask, self).__call__(*args, **kwargs)  # type: ignore
 
@@ -127,25 +129,25 @@ def asynciotask(
 
 @typing.overload  # noqa: F811
 def asynciotask(
-    func: typing.Callable[..., "typing.Awaitable"],
+    func: typing.Callable[..., "typing.Awaitable[typing.Any]"],
     *,
     loop_getter: typing.Union[
         typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
     ] = asyncio.get_event_loop,
     loop_getter_need_context: bool = False
-) -> typing.Callable[..., asyncio.Task]:
+) -> typing.Callable[..., "asyncio.Task[typing.Any]"]:
     """Overload: provided function."""
 
 
 # pylint: enable=unused-argument
 def asynciotask(  # noqa: F811
-    func: typing.Optional[typing.Callable[..., "typing.Awaitable"]] = None,
+    func: typing.Optional[typing.Callable[..., "typing.Awaitable[typing.Any]"]] = None,
     *,
     loop_getter: typing.Union[
         typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
     ] = asyncio.get_event_loop,
     loop_getter_need_context: bool = False
-) -> typing.Union[AsyncIOTask, typing.Callable[..., asyncio.Task]]:
+) -> typing.Union[AsyncIOTask, typing.Callable[..., "asyncio.Task[typing.Any]"]]:
     """Wrap function in future and return.
 
     :param func: Function to wrap

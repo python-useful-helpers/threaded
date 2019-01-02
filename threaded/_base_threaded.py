@@ -14,13 +14,12 @@
 
 """Base classes for ThreadPooled and Threaded."""
 
+__all__ = ("APIPooled",)
+
 import abc
 import typing
 
 from . import class_decorator
-
-
-__all__ = ("APIPooled",)
 
 
 class APIPooled(class_decorator.BaseDecorator, metaclass=abc.ABCMeta):

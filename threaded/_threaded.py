@@ -17,13 +17,13 @@
 Asyncio is supported
 """
 
+__all__ = ("Threaded", "threaded")
+
 import functools
 import threading
 import typing
 
 from . import class_decorator
-
-__all__ = ("Threaded", "threaded")
 
 
 class Threaded(class_decorator.BaseDecorator):
@@ -34,7 +34,7 @@ class Threaded(class_decorator.BaseDecorator):
     def __init__(
         self,
         name: typing.Optional[
-            typing.Union[str, typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]]]
+            typing.Union[str, typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]]
         ] = None,
         daemon: bool = False,
         started: bool = False,
@@ -54,7 +54,7 @@ class Threaded(class_decorator.BaseDecorator):
         self.__daemon = daemon
         self.__started = started
         if callable(name):
-            func = name  # type: typing.Callable
+            func = name
             self.__name = "Threaded: " + getattr(name, "__name__", str(hash(name)))  # type: str
         else:
             func, self.__name = None, name  # type: ignore
@@ -85,7 +85,7 @@ class Threaded(class_decorator.BaseDecorator):
         """
         return self.__started
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # pragma: no cover
         """For debug purposes."""
         return (
             "{cls}("
@@ -96,7 +96,7 @@ class Threaded(class_decorator.BaseDecorator):
         )  # pragma: no cover
 
     def _get_function_wrapper(
-        self, func: typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]]
+        self, func: typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]
     ) -> typing.Callable[..., threading.Thread]:
         """Here should be constructed and returned real decorator.
 
@@ -122,7 +122,7 @@ class Threaded(class_decorator.BaseDecorator):
 
     def __call__(  # pylint: disable=useless-super-delegation
         self,
-        *args: typing.Union[typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]], typing.Any],
+        *args: typing.Union[typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]], typing.Any],
         **kwargs: typing.Any
     ) -> typing.Union[threading.Thread, typing.Callable[..., threading.Thread]]:
         """Executable instance."""
@@ -132,7 +132,7 @@ class Threaded(class_decorator.BaseDecorator):
 # pylint: disable=function-redefined, unused-argument
 @typing.overload
 def threaded(
-    name: typing.Callable, daemon: bool = False, started: bool = False
+    name: typing.Callable[..., typing.Any], daemon: bool = False, started: bool = False
 ) -> typing.Callable[..., threading.Thread]:
     """Overload: Call decorator without arguments."""
 
@@ -144,7 +144,9 @@ def threaded(name: typing.Optional[str] = None, daemon: bool = False, started: b
 
 # pylint: enable=unused-argument
 def threaded(  # noqa: F811
-    name: typing.Optional[typing.Union[str, typing.Callable]] = None, daemon: bool = False, started: bool = False
+    name: typing.Optional[typing.Union[str, typing.Callable[..., typing.Any]]] = None,
+    daemon: bool = False,
+    started: bool = False
 ) -> typing.Union[Threaded, typing.Callable[..., threading.Thread]]:
     """Run function in separate thread.
 

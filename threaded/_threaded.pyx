@@ -60,7 +60,7 @@ cdef class Threaded(class_decorator.BaseDecorator):
         super(Threaded, self).__init__(func=func)
         # pylint: enable=assigning-non-slot
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # pragma: no cover
         """For debug purposes."""
         return (
             "{cls}("
