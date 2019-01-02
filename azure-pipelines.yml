@@ -84,18 +84,6 @@ jobs:
       Python35_x86:
         python.version: '3.5'
         python.architecture: 'x86'
-      Python36_x64:
-        python.version: '3.6'
-        python.architecture: 'x64'
-      Python36_x86:
-        python.version: '3.6'
-        python.architecture: 'x86'
-      Python37_x64:
-        python.version: '3.7'
-        python.architecture: 'x64'
-      Python37_x86:
-        python.version: '3.7'
-        python.architecture: 'x86'
 
   steps:
   - task: UsePythonVersion@0
