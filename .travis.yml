@@ -10,10 +10,10 @@ install:
 _python:
 - &python36
   name: "Python 3.6"
-  python: 3.6
+  python: "3.6"
 - &python37
   name: "Python 3.7"
-  python: 3.7
+  python: "3.7"
   dist: xenial
   sudo: true
 
@@ -53,7 +53,6 @@ after_success:
 - coveralls
 
 jobs:
-  fast_finish: true
   include:
   - stage: test
     <<: *python36
@@ -80,7 +79,7 @@ jobs:
     install:
     - *upgrade_python_toolset
     - *install_deps
-    - pip install --upgrade "mypy >= 0.620"
+    - pip install --upgrade "mypy >= 0.660"
     script:
     - mypy --strict threaded
 

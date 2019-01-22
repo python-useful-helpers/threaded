@@ -25,6 +25,33 @@ jobs:
       pylint -f msvs threaded
     displayName: 'PyLint'
 
+- job: 'MyPy'
+  pool:
+    vmIMage: 'VS2017-Win2016'
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.7'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -U setuptools
+      pip install -r requirements.txt
+    displayName: 'Install dependencies'
+
+  - script: |
+      pip install -U mypy
+      mypy --strict --junit-xml=mypy_result.xml threaded
+    displayName: 'MyPy'
+
+  - task: PublishTestResults@2
+    displayName: publish test results via junit
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: "JUnit"
+      testResultsFiles: ${{ format('$(System.DefaultWorkingDirectory)/mypy_result.xml') }}
+      testRunTitle: 'MyPy'
+
 - template: .azure_pipelines/run_tests.yml
   parameters: {name: 'Python_36', python: '3.6', architecture: 'x64', kind: 'native'}
 - template: .azure_pipelines/run_tests.yml
