@@ -79,13 +79,13 @@ jobs:
     - pip install --upgrade flake8
     script:
     - flake8
-  - <<: *code_style_check
-    name: "PEP257"
-    install:
-    - *upgrade_python_toolset
-    - pip install --upgrade pydocstyle
-    script:
-    - pydocstyle threaded
+#  - <<: *code_style_check
+#    name: "PEP257"
+#    install:
+#    - *upgrade_python_toolset
+#    - pip install --upgrade pydocstyle
+#    script:
+#    - pydocstyle threaded
 
   - stage: deploy
     # This prevents job from appearing in test plan unless commit is tagged:
