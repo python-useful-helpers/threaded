@@ -6,7 +6,9 @@ parameters:
 
 jobs:
 - job: ${{ format('{0}_{1}_{2}', parameters.name, parameters.architecture, parameters.kind) }}
-  dependsOn: PyLint
+  dependsOn:
+  - PyLint
+  - MyPy
   pool:
     vmImage: "vs2017-win2016"
 

@@ -10,21 +10,21 @@ install:
 _python:
 - &python34
   name: "Python 3.4"
-  python: 3.4
+  python: "3.4"
 - &python35
   name: "Python 3.5"
-  python: 3.5
+  python: "3.5"
 - &python36
   name: "Python 3.6"
-  python: 3.6
+  python: "3.6"
 - &python37
   name: "Python 3.7"
-  python: 3.7
+  python: "3.7"
   dist: xenial
   sudo: true
 - &pypy3
   name: "PyPy3"
-  python: pypy3.5
+  python: "pypy3.5"
 
 _helpers:
 - &install_cython pip install --upgrade Cython
@@ -95,7 +95,7 @@ jobs:
     install:
     - *upgrade_python_toolset
     - *install_deps
-    - pip install --upgrade "mypy >= 0.620"
+    - pip install --upgrade "mypy >= 0.660"
     script:
     - mypy --strict threaded
 
