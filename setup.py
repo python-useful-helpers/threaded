@@ -22,18 +22,13 @@ import os.path
 
 import setuptools
 
-with open(
-    os.path.join(
-        os.path.dirname(__file__),
-        'threaded', '__init__.py'
-    )
-) as f:
+with open(os.path.join(os.path.dirname(__file__), "threaded", "__init__.py")) as f:
     source = f.read()
 
-with open('requirements.txt') as f:
+with open("requirements.txt") as f:
     required = f.read().splitlines()
 
-with open('README.rst',) as f:
+with open("README.rst") as f:
     long_description = f.read()
 
 
@@ -140,22 +135,19 @@ keywords = [
     'pooling',
     'multithreading',
     'threading',
-    'gevent',
     'development',
 ]
 
 setup_args = dict(
-    name='threaded',
-    author=variables['__author__'],
-    author_email=variables['__author_email__'],
-    maintainer=', '.join(
-        '{name} <{email}>'.format(name=name, email=email)
-        for name, email in variables['__maintainers__'].items()
+    name="threaded",
+    author=variables["__author__"],
+    author_email=variables["__author_email__"],
+    maintainer=", ".join(
+        "{name} <{email}>".format(name=name, email=email) for name, email in variables["__maintainers__"].items()
     ),
-    url=variables['__url__'],
-    version=variables['__version__'],
-    license=variables['__license__'],
-    description=variables['__description__'],
+    url=variables["__url__"],
+    license=variables["__license__"],
+    description=variables["__description__"],
     long_description=long_description,
     classifiers=classifiers,
     keywords=keywords,
@@ -166,18 +158,15 @@ setup_args = dict(
     # situations as progressive releases of projects are done.
     # Blacklist setuptools 34.0.0-34.3.2 due to https://github.com/pypa/setuptools/issues/951
     # Blacklist setuptools 36.2.0 due to https://github.com/pypa/setuptools/issues/1086
-    setup_requires="setuptools >= 21.0.0,!=24.0.0,"
-                   "!=34.0.0,!=34.0.1,!=34.0.2,!=34.0.3,!=34.1.0,!=34.1.1,!=34.2.0,!=34.3.0,!=34.3.1,!=34.3.2,"
-                   "!=36.2.0",
-    extras_require={
-        'gevent': [
-            'gevent >= 1.2.2'
-        ],
-    },
+    setup_requires=[
+        "setuptools >= 21.0.0,!=24.0.0,"
+        "!=34.0.0,!=34.0.1,!=34.0.2,!=34.0.3,!=34.1.0,!=34.1.1,!=34.2.0,!=34.3.0,!=34.3.1,!=34.3.2,"
+        "!=36.2.0",
+        "setuptools_scm",
+    ],
+    use_scm_version=True,
     install_requires=required,
-    package_data={
-        'threaded': ['py.typed'],
-    },
+    package_data={"threaded": ["py.typed"]},
 )
 
 setuptools.setup(**setup_args)

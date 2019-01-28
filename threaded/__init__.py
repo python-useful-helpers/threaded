@@ -18,17 +18,22 @@ from __future__ import absolute_import
 
 import typing  # noqa  # pylint: disable=unused-import
 
+import pkg_resources  # type: ignore
 
 # pylint: disable=no-name-in-module
 from ._threaded import Threaded, threaded
 from ._threadpooled import ThreadPooled, threadpooled
 
-
 try:  # pragma: no cover
-    from ._gthreadpooled import GThreadPooled, gthreadpooled
-except ImportError:  # pragma: no cover
-    GThreadPooled = gthreadpooled = None  # type: ignore
-# pylint: enable=no-name-in-module
+    __version__ = pkg_resources.get_distribution(__name__).version
+except pkg_resources.DistributionNotFound:  # pragma: no cover
+    # package is not installed, try to get from SCM
+    try:
+        import setuptools_scm  # type: ignore
+
+        __version__ = setuptools_scm.get_version()
+    except ImportError:
+        pass
 
 
 __all__ = (
@@ -36,20 +41,13 @@ __all__ = (
     'threadpooled', 'threaded',
 )  # type: typing.Tuple[str, ...]
 
-if GThreadPooled is not None:  # pragma: no cover
-    __all__ += (
-        'GThreadPooled',
-        'gthreadpooled'
-    )
-
-__version__ = '1.0.7'
 __author__ = "Alexey Stepanov"
-__author_email__ = 'penguinolog@gmail.com'
+__author_email__ = "penguinolog@gmail.com"
 __maintainers__ = {
-    'Alexey Stepanov': 'penguinolog@gmail.com',
-    'Antonio Esposito': 'esposito.cloud@gmail.com',
-    'Dennis Dmitriev': 'dis-xcom@gmail.com',
+    "Alexey Stepanov": "penguinolog@gmail.com",
+    "Antonio Esposito": "esposito.cloud@gmail.com",
+    "Dennis Dmitriev": "dis-xcom@gmail.com",
 }
-__url__ = 'https://github.com/python-useful-helpers/threaded'
+__url__ = "https://github.com/python-useful-helpers/threaded"
 __description__ = "Decorators for running functions in Thread/ThreadPool/IOLoop"
 __license__ = "Apache License, Version 2.0"

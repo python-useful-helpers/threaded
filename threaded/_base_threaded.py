@@ -16,12 +16,14 @@
 
 from __future__ import absolute_import
 
+__all__ = ("APIPooled", 'cpu_count')
+
 import abc
 import typing  # noqa  # pylint: disable=unused-import
 
 import six
 
-from . import _class_decorator
+from . import class_decorator
 
 try:
     from multiprocessing import cpu_count
@@ -30,13 +32,8 @@ except ImportError:
         """Fake CPU count."""
         return 1
 
-__all__ = (
-    'APIPooled',
-    'cpu_count'
-)
 
-
-class APIPooled(six.with_metaclass(abc.ABCMeta, _class_decorator.BaseDecorator)):
+class APIPooled(six.with_metaclass(abc.ABCMeta, class_decorator.BaseDecorator)):
     """API description for pooled."""
 
     __slots__ = ()

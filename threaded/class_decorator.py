@@ -19,6 +19,8 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+__all__ = ("BaseDecorator",)
+
 import abc
 import functools
 import typing  # noqa  # pylint: disable=unused-import
@@ -69,7 +71,7 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
 
     def __init__(
         self,
-        func=None  # type: typing.Optional[typing.Callable]
+        func=None  # type: typing.Optional[typing.Callable[..., typing.Any]]
     ):  # type: (...) -> None
         """Decorator.
 
@@ -79,16 +81,16 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
         # noinspection PyArgumentList
         super(BaseDecorator, self).__init__()
         # pylint: disable=assigning-non-slot
-        self.__func = func  # type: typing.Optional[typing.Callable]
+        self.__func = func  # type: typing.Optional[typing.Callable[..., typing.Any]]
         if self.__func is not None:
             functools.update_wrapper(self, self.__func)
-            self.__wrapped__ = self.__func  # type: typing.Callable
+            self.__wrapped__ = self.__func  # type: typing.Callable[..., typing.Any]
         # pylint: enable=assigning-non-slot
 
     @property
     def _func(
         self
-    ):  # type: () -> typing.Optional[typing.Callable]
+    ):  # type: () -> typing.Optional[typing.Callable[..., typing.Any]]
         """Get wrapped function.
 
         :rtype: typing.Optional[typing.Callable]
@@ -98,8 +100,8 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
     @abc.abstractmethod
     def _get_function_wrapper(
         self,
-        func  # type: typing.Callable
-    ):  # type: (...) -> typing.Callable
+        func  # type: typing.Callable[..., typing.Any]
+    ):  # type: (...) -> typing.Callable[..., typing.Any]
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
@@ -110,14 +112,14 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
 
     def __call__(
         self,
-        *args,  # type: typing.Union[typing.Callable, typing.Any]
+        *args,  # type: typing.Union[typing.Callable[..., typing.Any], typing.Any]
         **kwargs  # type: typing.Any
     ):  # type: (...) -> typing.Any
         """Main decorator getter."""
         l_args = list(args)
 
         if self._func:
-            wrapped = self._func  # type: typing.Callable
+            wrapped = self._func  # type: typing.Callable[..., typing.Any]
         else:
             wrapped = l_args.pop(0)
 
@@ -137,6 +139,7 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
 
 # 8<----------------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import doctest  # pragma: no cover
+
     doctest.testmod(verbose=True)  # pragma: no cover

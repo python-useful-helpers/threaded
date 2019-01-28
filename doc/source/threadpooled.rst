@@ -15,32 +15,7 @@ API: Decorators: `ThreadPooled`, `threadpooled`.
         :param func: function to wrap
         :type func: typing.Optional[typing.Callable[..., typing.Union[typing.Any, typing.Awaitable]]]
 
-        :param loop_getter: Method to get event loop, if wrap in asyncio task
-
-            .. note:: Python 3 Only.
-
-        :type loop_getter: typing.Union[None, typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
-
-        :param loop_getter_need_context: Loop getter requires function context
-
-            .. note:: Python 3 Only.
-
-        :type loop_getter_need_context: bool
-
     .. note:: Attributes is read-only
-
-    .. py:attribute:: loop_getter
-
-        .. note:: Python 3 Only.
-
-        ``typing.Union[None, typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]``
-        Loop getter. If None: use ``concurent.futures.Future``, else use ``EventLoop`` for wrapped function.
-
-    .. py:attribute:: loop_getter_need_context
-
-        .. note:: Python 3 Only.
-
-        ``bool`` - Loop getter will use function call arguments.
 
     .. py:attribute:: executor
 
@@ -80,12 +55,6 @@ API: Decorators: `ThreadPooled`, `threadpooled`.
     :param func: function to wrap
     :type func: typing.Optional[typing.Callable[..., typing.Union[typing.Any, typing.Awaitable]]]
 
-    .. note:: Next arguments is Python 3 only:
-
-    :param loop_getter: Method to get event loop, if wrap in asyncio task
-    :type loop_getter: typing.Union[None, typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
-    :param loop_getter_need_context: Loop getter requires function context
-    :type loop_getter_need_context: bool
     :rtype: typing.Union[ThreadPooled, typing.Callable[..., typing.Union[concurrent.futures.Future, asyncio.Task]]]
 
 Not exported, but public accessed data type:

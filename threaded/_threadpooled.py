@@ -19,6 +19,8 @@ Uses backport of concurrent.futures.
 
 from __future__ import absolute_import
 
+__all__ = ("ThreadPooled", "threadpooled")
+
 # noinspection PyCompatibility
 import concurrent.futures
 import typing  # noqa  # pylint: disable=unused-import
@@ -26,11 +28,6 @@ import typing  # noqa  # pylint: disable=unused-import
 import six
 
 from . import _base_threaded
-
-__all__ = (
-    'ThreadPooled',
-    'threadpooled',
-)
 
 
 class ThreadPooled(_base_threaded.APIPooled):
@@ -55,9 +52,7 @@ class ThreadPooled(_base_threaded.APIPooled):
                 return
             cls.__executor.shutdown()
 
-        cls.__executor = ThreadPoolExecutor(
-            max_workers=max_workers,
-        )
+        cls.__executor = ThreadPoolExecutor(max_workers=max_workers)
 
     @classmethod
     def shutdown(cls):  # type: (typing.Type[ThreadPooled]) -> None
@@ -77,8 +72,8 @@ class ThreadPooled(_base_threaded.APIPooled):
 
     def _get_function_wrapper(
         self,
-        func  # type: typing.Callable
-    ):  # type: (...) -> typing.Callable[..., concurrent.futures.Future]
+        func  # type: typing.Callable[..., typing.Any]
+    ):  # type: (...) -> typing.Callable[..., concurrent.futures.Future[typing.Any]]
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
@@ -91,7 +86,7 @@ class ThreadPooled(_base_threaded.APIPooled):
         def wrapper(  # pylint: disable=missing-docstring
             *args,  # type: typing.Any
             **kwargs  # type: typing.Any
-        ):  # type: (...) -> concurrent.futures.Future
+        ):  # type: (...) -> concurrent.futures.Future[typing.Any]
             return self.executor.submit(func, *args, **kwargs)
 
         return wrapper
@@ -99,12 +94,12 @@ class ThreadPooled(_base_threaded.APIPooled):
 
 # pylint: disable=unexpected-keyword-arg, no-value-for-parameter
 def threadpooled(
-    func=None  # type: typing.Optional[typing.Callable]
-):  # type: (...) -> typing.Union[ThreadPooled, typing.Callable[..., concurrent.futures.Future]]
+    func=None  # type: typing.Optional[typing.Callable[..., typing.Any]]
+):  # type: (...) -> typing.Union[ThreadPooled, typing.Callable[..., concurrent.futures.Future[typing.Any]]]
     """Post function to ThreadPoolExecutor.
 
     :param func: function to wrap
-    :type func: typing.Optional[typing.Callable]
+    :type func: typing.Optional[typing.Callable[..., typing.Any]]
     :return: ThreadPooled instance, if called as function or argumented decorator, else callable wrapper
     :rtype: typing.Union[ThreadPooled, typing.Callable[..., concurrent.futures.Future]]
     """
@@ -133,12 +128,7 @@ class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
         """
         if max_workers is None:  # Use 3.5+ behavior
             max_workers = (_base_threaded.cpu_count() or 1) * 5
-        super(
-            ThreadPoolExecutor,
-            self
-        ).__init__(
-            max_workers=max_workers,
-        )
+        super(ThreadPoolExecutor, self).__init__(max_workers=max_workers)
 
     @property
     def max_workers(self):  # type: () -> int
