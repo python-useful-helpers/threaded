@@ -46,6 +46,7 @@ jobs:
     <<: *python27
   - stage: test
     <<: *pypy
+    allow_failure: true
 
   - <<: *static_analysis
     name: "PyLint"

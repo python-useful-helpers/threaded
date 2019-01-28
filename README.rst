@@ -21,8 +21,6 @@ threaded is a set of decorators, which wrap functions in:
 
   * `concurrent.futures.ThreadPool`
   * `threading.Thread`
-  * `asyncio.Task` in Python 3.
-  * `gevent.threadpool.ThreadPool` if gevent is installed.
 
 Why? Because copy-paste of `loop.create_task`, `threading.Thread` and `thread_pool.submit` is boring,
 especially if target functions is used by this way only.
@@ -49,16 +47,6 @@ Decorators:
 
 * `Threaded` - wrap in ``threading.Thread``.
 * `threaded` is alias for `Threaded`.
-
-* `AsyncIOTask` - wrap in ``asyncio.Task``. Uses the same API, as Python 3 `ThreadPooled`.
-* `asynciotask` is alias for `AsyncIOTask`.
-
-* `GThreadPooled` - wrap function in ``gevent.threadpool.ThreadPool``.
-* `gthreadpooled` is alias for `GThreadPooled`.
-
-.. note::
-
-    gevent is not in default package requirements.
 
 Usage
 =====
@@ -88,43 +76,6 @@ Python 2.7 usage:
         pass
 
     concurrent.futures.wait([func()])
-
-Python 3.3+ usage:
-
-.. code-block:: python
-
-    @threaded.ThreadPooled
-    def func():
-        pass
-
-    concurrent.futures.wait([func()])
-
-Python 3.3+ usage with asyncio:
-
-.. note::
-
-    if `loop_getter` is not callable, `loop_getter_need_context` is ignored.
-
-.. code-block:: python
-
-    loop = asyncio.get_event_loop()
-    @threaded.ThreadPooled(loop_getter=loop, loop_getter_need_context=False)
-    def func():
-        pass
-
-    loop.run_until_complete(asyncio.wait_for(func(), timeout))
-
-Python 3.3+ usage with asyncio and loop extraction from call arguments:
-
-.. code-block:: python
-
-    loop_getter = lambda tgt_loop: tgt_loop
-    @threaded.ThreadPooled(loop_getter=loop_getter, loop_getter_need_context=True)  # loop_getter_need_context is required
-    def func(*args, **kwargs):
-        pass
-
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(asyncio.wait_for(func(loop), timeout))
 
 During application shutdown, pool can be stopped (while it will be recreated automatically, if some component will request).
 
@@ -178,78 +129,6 @@ it can be started automatically before return:
     @threaded.Threaded(started=True)
     def func(*args, **kwargs):
         pass
-
-AsyncIOTask
------------
-Wrap in ``asyncio.Task``.
-
-.. note::
-
-    Python 3 only.
-
-usage with asyncio:
-
-.. code-block:: python
-
-    @threaded.AsyncIOTask
-    def func():
-        pass
-
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(asyncio.wait_for(func(), timeout))
-
-Provide event loop directly:
-
-.. note::
-
-    if `loop_getter` is not callable, `loop_getter_need_context` is ignored.
-
-.. code-block:: python
-
-    loop = asyncio.get_event_loop()
-    @threaded.AsyncIOTask(loop_getter=loop)
-    def func():
-        pass
-
-    loop.run_until_complete(asyncio.wait_for(func(), timeout))
-
-Usage with loop extraction from call arguments:
-
-.. code-block:: python
-
-    loop_getter = lambda tgt_loop: tgt_loop
-    @threaded.AsyncIOTask(loop_getter=loop_getter, loop_getter_need_context=True)
-    def func(*args, **kwargs):
-        pass
-
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(asyncio.wait_for(func(loop), timeout))
-
-GThreadPooled
--------------
-Post function to ``gevent.threadpool.ThreadPool``.
-
-.. code-block:: python
-
-    threaded.GThreadPooled.configure(max_workers=3)
-
-.. note::
-
-    By default, if executor is not configured - it configures with default parameters: ``max_workers=(CPU_COUNT or 1) * 5``
-
-.. note::
-
-    Instead of standard ThreadPoolExecutor, gevent pool is not re-created during re-configuration.
-
-Basic usage example:
-
-.. code-block:: python
-
-    @threaded.GThreadPooled
-    def func():
-        pass
-
-    func().wait()
 
 Testing
 =======
