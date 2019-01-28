@@ -18,7 +18,7 @@ from __future__ import absolute_import
 
 import typing  # noqa  # pylint: disable=unused-import
 
-import pkg_resources  # type: ignore
+import pkg_resources
 
 # pylint: disable=no-name-in-module
 from ._threaded import Threaded, threaded
