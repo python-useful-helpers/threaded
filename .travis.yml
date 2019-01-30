@@ -54,11 +54,6 @@ after_success:
 
 jobs:
   include:
-  - stage: test
-    <<: *python36
-  - stage: test
-    <<: *python37
-
   - <<: *static_analysis
     name: "PyLint"
     install:
@@ -82,26 +77,38 @@ jobs:
     - pip install --upgrade "mypy >= 0.660"
     script:
     - mypy --strict threaded
-
-  - <<: *test_cythonized
-    <<: *python36
-  - <<: *test_cythonized
-    <<: *python37
-
-  - <<: *code_style_check
+  - <<: *static_analysis
     name: "PEP8"
     install:
     - *upgrade_python_toolset
     - pip install --upgrade flake8
     script:
     - flake8
+
   - <<: *code_style_check
     name: "PEP257"
     install:
     - *upgrade_python_toolset
-    - pip install --upgrade 'pydocstyle<3.0'
+    - pip install --upgrade pydocstyle
     script:
     - pydocstyle threaded
+  - <<: *code_style_check
+    name: "Black formatting"
+    install:
+    - *upgrade_python_toolset
+    - pip install --upgrade black
+    script:
+    - black --check threaded
+
+  - stage: test
+    <<: *python36
+  - stage: test
+    <<: *python37
+
+  - <<: *test_cythonized
+    <<: *python36
+  - <<: *test_cythonized
+    <<: *python37
 
   - stage: deploy
     # This prevents job from appearing in test plan unless commit is tagged:
