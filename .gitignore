@@ -7,7 +7,7 @@
 
 ### Generated code
 /threaded/*.c
-
+/pip-wheel-metadata/
 ### TortoiseGit template
 # Project-level settings
 /.tgitconfig
