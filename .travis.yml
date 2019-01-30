@@ -94,13 +94,13 @@ jobs:
     script:
     - flake8
 
-  - <<: *code_style_check
-    name: "PEP257"
-    install:
-    - *upgrade_python_toolset
-    - pip install --upgrade pydocstyle
-    script:
-    - pydocstyle threaded
+#  - <<: *code_style_check
+#    name: "PEP257"
+#    install:
+#    - *upgrade_python_toolset
+#    - pip install --upgrade pydocstyle
+#    script:
+#    - pydocstyle threaded
 
   - stage: test
     <<: *python34
