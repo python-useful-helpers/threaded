@@ -101,13 +101,6 @@ jobs:
     - pip install --upgrade pydocstyle
     script:
     - pydocstyle threaded
-  - <<: *code_style_check
-    name: "Black formatting"
-    install:
-    - *upgrade_python_toolset
-    - pip install --upgrade black
-    script:
-    - black --check threaded
 
   - stage: test
     <<: *python34
