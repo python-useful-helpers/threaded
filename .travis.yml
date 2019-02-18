@@ -63,7 +63,7 @@ jobs:
     install:
     - *upgrade_python_toolset
     - *install_deps
-    - pip install --upgrade "mypy >= 0.660"
+    - pip install --upgrade "mypy >= 0.670"
     script:
     - mypy --strict threaded
   - <<: *static_analysis
