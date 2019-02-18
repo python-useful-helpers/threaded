@@ -74,14 +74,14 @@ jobs:
     install:
     - *upgrade_python_toolset
     - *install_deps
-    - pip install --upgrade "mypy >= 0.660"
+    - pip install --upgrade "mypy >= 0.670"
     script:
     - mypy --strict threaded
   - <<: *static_analysis
     name: "PEP8"
     install:
     - *upgrade_python_toolset
-    - pip install --upgrade flake8
+    - pip install --upgrade flake8 flake8-bugbear
     script:
     - flake8
 
