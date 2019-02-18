@@ -9,6 +9,7 @@ jobs:
   dependsOn:
   - PyLint
   - MyPy
+  - PEP8
   pool:
     vmImage: "vs2017-win2016"
 
