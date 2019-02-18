@@ -4,86 +4,86 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
 jobs:
-  - job: 'PEP8'
-    pool:
-      vmIMage: 'VS2017-Win2016'
-    steps:
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: '3.7'
+- job: 'PEP8'
+  pool:
+    vmIMage: 'VS2017-Win2016'
+  steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.7'
 
-      - script: |
-          python -m pip install --upgrade pip
-          pip install -U setuptools
-          pip install -r requirements.txt
-          pip install -U pytest pylint pytest-sugar pytest-flake8 flake8-bugbear flake8-docstrings
-        displayName: 'Install dependencies'
+    - script: |
+        python -m pip install --upgrade pip
+        pip install -U setuptools
+        pip install -r requirements.txt
+        pip install -U pytest pylint pytest-sugar pytest-flake8 flake8-bugbear flake8-docstrings
+      displayName: 'Install dependencies'
 
-      - script: |
-          pytest -vvv --flake8 -m flake8 --junitxml=flake8_result.xml threaded
-        displayName: 'PEP8'
+    - script: |
+        pytest -vvv --flake8 -m flake8 --junitxml=flake8_result.xml threaded
+      displayName: 'PEP8'
 
-      - task: PublishTestResults@2
-        displayName: publish test results via junit
-        condition: succeededOrFailed()
-        inputs:
-          testResultsFormat: "JUnit"
-          testResultsFiles: ${{ format('$(System.DefaultWorkingDirectory)/flake8_result.xml') }}
-          testRunTitle: 'PEP8'
+    - task: PublishTestResults@2
+      displayName: publish test results via junit
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: "JUnit"
+        testResultsFiles: ${{ format('$(System.DefaultWorkingDirectory)/flake8_result.xml') }}
+        testRunTitle: 'PEP8'
 
-  - job: 'PyLint'
-    pool:
-      vmIMage: 'VS2017-Win2016'
-    steps:
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: '3.7'
+- job: 'PyLint'
+  pool:
+    vmIMage: 'VS2017-Win2016'
+  steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.7'
 
-      - script: |
-          python -m pip install --upgrade pip
-          pip install -U setuptools
-          pip install -r requirements.txt
-          pip install -U pytest pylint pytest-pylint pytest-sugar
-        displayName: 'Install dependencies'
+    - script: |
+        python -m pip install --upgrade pip
+        pip install -U setuptools
+        pip install -r requirements.txt
+        pip install -U pytest pylint pytest-pylint pytest-sugar
+      displayName: 'Install dependencies'
 
-      - script: |
-          pytest -vvv --pylint -m pylint --junitxml=pylint_result.xml threaded
-        displayName: 'PyLint'
+    - script: |
+        pytest -vvv --pylint -m pylint --junitxml=pylint_result.xml threaded
+      displayName: 'PyLint'
 
-      - task: PublishTestResults@2
-        displayName: publish test results via junit
-        condition: succeededOrFailed()
-        inputs:
-          testResultsFormat: "JUnit"
-          testResultsFiles: ${{ format('$(System.DefaultWorkingDirectory)/pylint_result.xml') }}
-          testRunTitle: 'PyLint'
+    - task: PublishTestResults@2
+      displayName: publish test results via junit
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: "JUnit"
+        testResultsFiles: ${{ format('$(System.DefaultWorkingDirectory)/pylint_result.xml') }}
+        testRunTitle: 'PyLint'
 
-  - job: 'MyPy'
-    pool:
-      vmIMage: 'VS2017-Win2016'
-    steps:
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: '3.7'
+- job: 'MyPy'
+  pool:
+    vmIMage: 'VS2017-Win2016'
+  steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.7'
 
-      - script: |
-          python -m pip install --upgrade pip
-          pip install -U setuptools
-          pip install -r requirements.txt
-          pip install -U mypy
-        displayName: 'Install dependencies'
+    - script: |
+        python -m pip install --upgrade pip
+        pip install -U setuptools
+        pip install -r requirements.txt
+        pip install -U mypy
+      displayName: 'Install dependencies'
 
-      - script: |
-          mypy --strict --junit-xml=mypy_result.xml threaded
-        displayName: 'MyPy'
+    - script: |
+        mypy --strict --junit-xml=mypy_result.xml threaded
+      displayName: 'MyPy'
 
-      - task: PublishTestResults@2
-        displayName: publish test results via junit
-        condition: succeededOrFailed()
-        inputs:
-          testResultsFormat: "JUnit"
-          testResultsFiles: ${{ format('$(System.DefaultWorkingDirectory)/mypy_result.xml') }}
-          testRunTitle: 'MyPy'
+    - task: PublishTestResults@2
+      displayName: publish test results via junit
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: "JUnit"
+        testResultsFiles: ${{ format('$(System.DefaultWorkingDirectory)/mypy_result.xml') }}
+        testRunTitle: 'MyPy'
 
 - template: .azure_pipelines/run_tests.yml
   parameters: {name: 'Python_36', python: '3.6', architecture: 'x64', kind: 'native'}
