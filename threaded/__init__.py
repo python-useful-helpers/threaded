@@ -14,14 +14,19 @@
 
 """threaded module."""
 
+# Standard Library
 import typing
 
+# External Dependencies
 import pkg_resources
 
-# pylint: disable=no-name-in-module
-from ._asynciotask import AsyncIOTask, asynciotask
-from ._threaded import Threaded, threaded
-from ._threadpooled import ThreadPooled, threadpooled
+# Local Implementation
+from ._asynciotask import AsyncIOTask
+from ._asynciotask import asynciotask
+from ._threaded import Threaded
+from ._threaded import threaded
+from ._threadpooled import ThreadPooled
+from ._threadpooled import threadpooled
 
 try:  # pragma: no cover
     __version__ = pkg_resources.get_distribution(__name__).version

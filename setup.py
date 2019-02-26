@@ -14,19 +14,23 @@
 
 """Wrap in ProcessPool/ThreadPool executors or asyncio.Task."""
 
+# Standard Library
 import ast
 import collections
-from distutils.command import build_ext
 import distutils.errors
 import os.path
 import shutil
 import sys
+from distutils.command import build_ext
+
+# External Dependencies
+import setuptools
+
 try:
     import typing
 except ImportError:
     typing = None
 
-import setuptools
 
 try:
     # noinspection PyPackageRequirements

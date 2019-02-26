@@ -19,10 +19,12 @@ Asyncio is supported
 
 __all__ = ("Threaded", "threaded")
 
+# Standard Library
 import functools
 import threading
 import typing
 
+# Local Implementation
 from . import class_decorator
 
 
