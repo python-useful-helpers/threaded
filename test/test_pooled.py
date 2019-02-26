@@ -12,11 +12,13 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+# Standard Library
 import concurrent.futures
-from os import cpu_count
 import threading
 import unittest
+from os import cpu_count
 
+# Threaded Implementation
 import threaded
 
 

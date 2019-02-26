@@ -16,9 +16,11 @@
 
 __all__ = ("APIPooled",)
 
+# Standard Library
 import abc
 import typing
 
+# Local Implementation
 from . import class_decorator
 
 
