@@ -16,7 +16,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -U setuptools
         pip install -r requirements.txt
-        pip install -U pytest pylint pytest-sugar pytest-flake8 flake8-bugbear flake8-docstrings
+        pip install -U pytest pytest-sugar pytest-flake8 flake8-bugbear flake8-docstrings
       displayName: 'Install dependencies'
 
     - script: |
@@ -43,7 +43,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -U setuptools
         pip install -r requirements.txt
-        pip install -U pytest pylint pytest-pylint pytest-sugar
+        pip install -U pytest pylint pytest-pylint pytest-sugar isort[pyproject,requirements]
       displayName: 'Install dependencies'
 
     - script: |
