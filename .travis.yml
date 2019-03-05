@@ -59,7 +59,7 @@ jobs:
     install:
     - *upgrade_python_toolset
     - *install_deps
-    - pip install --upgrade "pylint >= 2.2"
+    - pip install --upgrade "pylint >= 2.3" isort[pyproject,requirements]
     script:
     - pylint threaded
   - <<: *static_analysis
