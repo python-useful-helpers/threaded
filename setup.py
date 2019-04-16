@@ -41,13 +41,13 @@ except ImportError:
 
 
 with open(os.path.join(os.path.dirname(__file__), "threaded", "__init__.py")) as f:
-    source = f.read()
+    SOURCE = f.read()
 
 with open("requirements.txt") as f:
-    required = f.read().splitlines()
+    REQUIRED = f.read().splitlines()
 
 with open("README.rst") as f:
-    long_description = f.read()
+    LONG_DESCRIPTION = f.read()
 
 
 def _extension(modpath: str) -> setuptools.Extension:
@@ -55,7 +55,7 @@ def _extension(modpath: str) -> setuptools.Extension:
     return setuptools.Extension(modpath, [modpath.replace(".", "/") + ".py"])
 
 
-requires_optimization = [
+REQUIRES_OPTIMIZATION = [
     setuptools.Extension("threaded.class_decorator", ["threaded/class_decorator.pyx"]),
     _extension("threaded._base_threaded"),
     setuptools.Extension("threaded._asynciotask", ["threaded/_asynciotask.pyx"]),
@@ -64,12 +64,12 @@ requires_optimization = [
 ]
 
 if "win32" != sys.platform:
-    requires_optimization.append(_extension("threaded.__init__"))
+    REQUIRES_OPTIMIZATION.append(_extension("threaded.__init__"))
 
 # noinspection PyCallingNonCallable
-ext_modules = (
+EXT_MODULES = (
     cythonize(
-        requires_optimization,
+        REQUIRES_OPTIMIZATION,
         compiler_directives=dict(
             always_allow_keywords=True, binding=True, embedsignature=True, overflowcheck=True, language_level=3
         ),
@@ -81,8 +81,6 @@ ext_modules = (
 
 class BuildFailed(Exception):
     """For install clear scripts."""
-
-    pass
 
 
 class AllowFailRepair(build_ext.build_ext):
@@ -115,7 +113,10 @@ class AllowFailRepair(build_ext.build_ext):
             raise BuildFailed()
 
     def build_extension(self, ext):
-        """build_extension."""
+        """build_extension.
+
+        :raises BuildFailed: cythonize impossible
+        """
         try:
             build_ext.build_ext.build_extension(self, ext)
         except (
@@ -198,9 +199,9 @@ def get_simple_vars_from_src(
     return result
 
 
-variables = get_simple_vars_from_src(source)
+VARIABLES = get_simple_vars_from_src(SOURCE)
 
-classifiers = [
+CLASSIFIERS = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -213,21 +214,21 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
 
-keywords = ["pooling", "multithreading", "threading", "asyncio", "development"]
+KEYWORDS = ["pooling", "multithreading", "threading", "asyncio", "development"]
 
 setup_args = dict(
     name="threaded",
-    author=variables["__author__"],
-    author_email=variables["__author_email__"],
+    author=VARIABLES["__author__"],
+    author_email=VARIABLES["__author_email__"],
     maintainer=", ".join(
-        "{name} <{email}>".format(name=name, email=email) for name, email in variables["__maintainers__"].items()
+        "{name} <{email}>".format(name=name, email=email) for name, email in VARIABLES["__maintainers__"].items()
     ),
-    url=variables["__url__"],
-    license=variables["__license__"],
-    description=variables["__description__"],
-    long_description=long_description,
-    classifiers=classifiers,
-    keywords=keywords,
+    url=VARIABLES["__url__"],
+    license=VARIABLES["__license__"],
+    description=VARIABLES["__description__"],
+    long_description=LONG_DESCRIPTION,
+    classifiers=CLASSIFIERS,
+    keywords=KEYWORDS,
     python_requires=">=3.4",
     # While setuptools cannot deal with pre-installed incompatible versions,
     # setting a lower bound is not harmful - it makes error messages cleaner. DO
@@ -242,11 +243,11 @@ setup_args = dict(
         "setuptools_scm",
     ],
     use_scm_version=True,
-    install_requires=required,
+    install_requires=REQUIRED,
     package_data={"threaded": ["py.typed"]},
 )
 if cythonize is not None:
-    setup_args["ext_modules"] = ext_modules
+    setup_args["ext_modules"] = EXT_MODULES
     setup_args["cmdclass"] = dict(build_ext=AllowFailRepair)
 
 try:

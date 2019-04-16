@@ -7,10 +7,7 @@ extension-pkg-whitelist=
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
-ignore=CVS,
-       .tox,
-       logs,
-       build
+ignore=CVS
 
 # Add files or directories matching the regex patterns to the blacklist. The
 # regex matches against base names, not paths.
@@ -65,37 +62,63 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
-disable=invalid-name,
-        misplaced-comparison-constant,
-        bad-continuation,
+disable=print-statement,
+        parameter-unpacking,
+        unpacking-in-except,
+        old-raise-syntax,
+        backtick,
+        long-suffix,
+        old-ne-operator,
+        old-octal-literal,
+        import-star-module-level,
         non-ascii-bytes-literal,
         raw-checker-failed,
         bad-inline-option,
         locally-disabled,
-        locally-enabled,
         file-ignored,
         suppressed-message,
         useless-suppression,
         deprecated-pragma,
         use-symbolic-message-instead,
-        duplicate-code,
-        too-many-ancestors,
-        too-few-public-methods,
-        too-many-public-methods,
-        too-many-return-statements,
-        too-many-branches,
-        too-many-arguments,
-        too-many-locals,
-        too-many-statements,
-        pointless-string-statement,
-        fixme,
-        redefined-outer-name,
-        cell-var-from-loop,
-        bare-except,
-        broad-except,
-        logging-format-interpolation,
-        anomalous-backslash-in-string,
+        apply-builtin,
+        basestring-builtin,
+        buffer-builtin,
+        cmp-builtin,
+        coerce-builtin,
+        execfile-builtin,
+        file-builtin,
+        long-builtin,
+        raw_input-builtin,
+        reduce-builtin,
+        standarderror-builtin,
+        unicode-builtin,
+        xrange-builtin,
+        coerce-method,
+        delslice-method,
+        getslice-method,
+        setslice-method,
         no-absolute-import,
+        old-division,
+        dict-iter-method,
+        dict-view-method,
+        next-method-called,
+        metaclass-assignment,
+        indexing-exception,
+        raising-string,
+        reload-builtin,
+        oct-method,
+        hex-method,
+        nonzero-method,
+        cmp-method,
+        input-builtin,
+        round-builtin,
+        intern-builtin,
+        unichr-builtin,
+        map-builtin-not-iterating,
+        zip-builtin-not-iterating,
+        range-builtin-not-iterating,
+        filter-builtin-not-iterating,
+        using-cmp-argument,
         eq-without-hash,
         div-method,
         idiv-method,
@@ -117,71 +140,27 @@ disable=invalid-name,
         xreadlines-attribute,
         deprecated-sys-function,
         exception-escape,
-        comprehension-escape
+        comprehension-escape,
+        similarities,
+        too-many-ancestors,
+        too-few-public-methods,
+        too-many-public-methods,
+        too-many-return-statements,
+        too-many-branches,
+        too-many-arguments,
+        too-many-locals,
+        too-many-statements,
+        too-many-instance-attributes,
+        misplaced-comparison-constant,
+        bad-continuation,
+        broad-except,
+        logging-fstring-interpolation
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
 # multiple time (only on the command line, not in the configuration file where
 # it should appear only once). See also the "--disable" option for examples.
-enable=old-style-class,
-       return-arg-in-generator,
-       slots-on-old-class,
-       super-on-old-class,
-       missing-super-argument,
-       print-statement,
-       parameter-unpacking,
-       unpacking-in-except,
-       old-raise-syntax,
-       backtick,
-       long-suffix,
-       old-ne-operator,
-       old-octal-literal,
-       import-star-module-level,
-       c-extension-no-member,
-       lowercase-l-suffix,
-       deprecated-module,
-       invalid-encoded-data,
-       property-on-old-class,
-       boolean-datetime,
-       deprecated-method,
-       apply-builtin,
-       basestring-builtin,
-       buffer-builtin,
-       cmp-builtin,
-       coerce-builtin,
-       execfile-builtin,
-       file-builtin,
-       long-builtin,
-       raw_input-builtin,
-       reduce-builtin,
-       standarderror-builtin,
-       unicode-builtin,
-       xrange-builtin,
-       coerce-method,
-       delslice-method,
-       getslice-method,
-       setslice-method,
-       old-division,
-       dict-iter-method,
-       dict-view-method,
-       next-method-called,
-       metaclass-assignment,
-       indexing-exception,
-       raising-string,
-       reload-builtin,
-       oct-method,
-       hex-method,
-       nonzero-method,
-       cmp-method,
-       input-builtin,
-       round-builtin,
-       intern-builtin,
-       unichr-builtin,
-       map-builtin-not-iterating,
-       zip-builtin-not-iterating,
-       range-builtin-not-iterating,
-       filter-builtin-not-iterating,
-       using-cmp-argument
+enable=c-extension-no-member
 
 
 [REPORTS]
@@ -224,7 +203,7 @@ never-returning-functions=sys.exit
 [VARIABLES]
 
 # List of additional names supposed to be defined in builtins. Remember that
-# you should avoid to define new builtins when possible.
+# you should avoid defining new builtins when possible.
 additional-builtins=
 
 # Tells whether unused global variables should be treated as a violation.
@@ -237,11 +216,11 @@ callbacks=cb_,
 
 # A regular expression matching the name of dummy variables (i.e. expected to
 # not be used).
-dummy-variables-rgx=_$|dummy
+dummy-variables-rgx=_+$|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?$)|dummy|^ignored_|^unused_
 
 # Argument names that match this expression will be ignored. Default to name
 # with leading underscore.
-ignored-argument-names=_.*
+ignored-argument-names=_.*|^ignored_|^unused_
 
 # Tells whether we should check for unused import in __init__ files.
 init-import=no
@@ -282,7 +261,7 @@ ignore-on-opaque-inference=yes
 # List of class names for which member attributes should not be checked (useful
 # for classes with dynamically set attributes). This supports the use of
 # qualified names.
-ignored-classes=
+ignored-classes=optparse.Values,thread._local,_thread._local
 
 # List of module names for which member attributes should not be checked
 # (useful for modules/projects where namespaces are manipulated during runtime
@@ -301,6 +280,14 @@ missing-member-hint-distance=1
 # The total number of similar names that should be taken in consideration when
 # showing a hint for a missing member.
 missing-member-max-choices=1
+
+
+[STRING]
+
+# This flag controls whether the implicit-str-concat-in-sequence should
+# generate a warning on implicit string concatenation in sequences defined over
+# several lines.
+check-str-concat-over-line-jumps=no
 
 
 [SPELLING]
@@ -335,7 +322,7 @@ ignore-docstrings=yes
 ignore-imports=no
 
 # Minimum lines number of a similarity.
-min-similarity-lines=10
+min-similarity-lines=4
 
 
 [MISCELLANEOUS]
@@ -347,6 +334,10 @@ notes=FIXME,
 
 
 [LOGGING]
+
+# Format style used to check logging format string. `old` means using %
+# formatting, while `new` is for `{}` formatting.
+logging-format-style=new
 
 # Logging modules to check that the string format arguments are in logging
 # function parameter format.
@@ -361,7 +352,7 @@ expected-line-ending-format=
 # Regexp for a line that is allowed to be longer than the limit.
 ignore-long-lines=^\s*(# )?<?https?://\S+>?$
 
-# Number of spaces of indent required inside a hanging  or continued line.
+# Number of spaces of indent required inside a hanging or continued line.
 indent-after-paren=4
 
 # String used as indentation unit. This is usually "    " (4 spaces) or "\t" (1
@@ -372,7 +363,7 @@ indent-string='    '
 max-line-length=120
 
 # Maximum number of lines in a module.
-max-module-lines=1500
+max-module-lines=1000
 
 # List of optional constructs for which whitespace checking is disabled. `dict-
 # separator` is used to allow tabulation in dicts, etc.: {1  : 1,\n222: 2}.
@@ -397,14 +388,14 @@ argument-naming-style=snake_case
 
 # Regular expression matching correct argument names. Overrides argument-
 # naming-style.
-argument-rgx=[a-z_][a-z0-9_]{2,30}$
+#argument-rgx=
 
 # Naming style matching correct attribute names.
 attr-naming-style=snake_case
 
 # Regular expression matching correct attribute names. Overrides attr-naming-
 # style.
-attr-rgx=[a-z_][a-z0-9_]{2,30}$
+#attr-rgx=
 
 # Bad variable names which should always be refused, separated by a comma.
 bad-names=foo,
@@ -419,21 +410,21 @@ class-attribute-naming-style=any
 
 # Regular expression matching correct class attribute names. Overrides class-
 # attribute-naming-style.
-class-attribute-rgx=([A-Za-z_][A-Za-z0-9_]{2,30}|(__.*__))$
+#class-attribute-rgx=
 
 # Naming style matching correct class names.
 class-naming-style=PascalCase
 
 # Regular expression matching correct class names. Overrides class-naming-
 # style.
-class-rgx=[A-Z_][a-zA-Z0-9]+$
+#class-rgx=
 
 # Naming style matching correct constant names.
 const-naming-style=UPPER_CASE
 
 # Regular expression matching correct constant names. Overrides const-naming-
 # style.
-const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
+#const-rgx=
 
 # Minimum line length for functions/classes that require docstrings, shorter
 # ones are exempt.
@@ -444,7 +435,7 @@ function-naming-style=snake_case
 
 # Regular expression matching correct function names. Overrides function-
 # naming-style.
-function-rgx=[a-z_][a-z0-9_]{2,30}$
+#function-rgx=
 
 # Good variable names which should always be accepted, separated by a comma.
 good-names=i,
@@ -458,28 +449,28 @@ good-names=i,
            ip
 
 # Include a hint for the correct naming format with invalid-name.
-include-naming-hint=no
+include-naming-hint=yes
 
 # Naming style matching correct inline iteration names.
 inlinevar-naming-style=any
 
 # Regular expression matching correct inline iteration names. Overrides
 # inlinevar-naming-style.
-inlinevar-rgx=[A-Za-z_][A-Za-z0-9_]*$
+#inlinevar-rgx=
 
 # Naming style matching correct method names.
 method-naming-style=snake_case
 
 # Regular expression matching correct method names. Overrides method-naming-
 # style.
-method-rgx=[a-z_][a-z0-9_]{2,30}$
+#method-rgx=
 
 # Naming style matching correct module names.
 module-naming-style=snake_case
 
 # Regular expression matching correct module names. Overrides module-naming-
 # style.
-module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
+#module-rgx=
 
 # Colon-delimited sets of names that determine each other's naming style when
 # the name regexes allow several styles.
@@ -499,7 +490,7 @@ variable-naming-style=snake_case
 
 # Regular expression matching correct variable names. Overrides variable-
 # naming-style.
-variable-rgx=[a-z_][a-z0-9_]{2,30}$
+#variable-rgx=
 
 
 [IMPORTS]
@@ -513,10 +504,7 @@ allow-wildcard-with-all=no
 analyse-fallback-blocks=no
 
 # Deprecated modules which should not be used, separated by a comma.
-deprecated-modules=regsub,
-                   TERMIOS,
-                   Bastion,
-                   rexec
+deprecated-modules=optparse,tkinter.tix
 
 # Create a graph of external dependencies in the given file (report RP0402 must
 # not be disabled).
@@ -541,10 +529,10 @@ known-third-party=enchant
 [DESIGN]
 
 # Maximum number of arguments for function / method.
-max-args=10
+max-args=5
 
 # Maximum number of attributes for a class (see R0902).
-max-attributes=15
+max-attributes=7
 
 # Maximum number of boolean expressions in an if statement.
 max-bool-expr=5
@@ -619,5 +607,6 @@ default-docstring-type=default
 [EXCEPTIONS]
 
 # Exceptions that will emit a warning when being caught. Defaults to
-# "Exception".
-overgeneral-exceptions=Exception
+# "BaseException, Exception".
+overgeneral-exceptions=BaseException,
+                       Exception
