@@ -27,7 +27,6 @@ threaded is a set of decorators, which wrap functions in:
   * `concurrent.futures.ThreadPool`
   * `threading.Thread`
   * `asyncio.Task` in Python 3.
-  * `gevent.threadpool.ThreadPool` if gevent is installed.
 
 Why? Because copy-paste of `loop.create_task`, `threading.Thread` and `thread_pool.submit` is boring,
 especially if target functions is used by this way only.
@@ -60,10 +59,6 @@ Decorators:
 
 * `AsyncIOTask` - wrap in ``asyncio.Task``. Uses the same API, as `ThreadPooled`.
 * `asynciotask` is alias for `AsyncIOTask`.
-
-.. note::
-
-    gevent is not in default package requirements.
 
 Usage
 =====
