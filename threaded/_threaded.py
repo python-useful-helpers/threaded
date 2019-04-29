@@ -19,24 +19,23 @@ Uses backport of concurrent.futures.
 
 from __future__ import absolute_import
 
-__all__ = ("Threaded", "threaded")
-
+# Standard Library
 import threading  # noqa  # pylint: disable=unused-import
 import typing  # noqa  # pylint: disable=unused-import
 
+# External Dependencies
 import six
 
+# Local Implementation
 from . import class_decorator
+
+__all__ = ("Threaded", "threaded")
 
 
 class Threaded(class_decorator.BaseDecorator):
     """Run function in separate thread."""
 
-    __slots__ = (
-        '__name',
-        '__daemon',
-        '__started',
-    )
+    __slots__ = ("__name", "__daemon", "__started")
 
     def __init__(
         self,
@@ -60,7 +59,7 @@ class Threaded(class_decorator.BaseDecorator):
         self.__started = started
         if callable(name):
             func = name  # type: typing.Optional[typing.Callable[..., typing.Any]]
-            self.__name = 'Threaded: ' + getattr(name, '__name__', str(hash(name)))  # type: str
+            self.__name = "Threaded: " + getattr(name, "__name__", str(hash(name)))  # type: str
         else:
             func, self.__name = None, name  # type: ignore
         super(Threaded, self).__init__(func=func)
@@ -97,16 +96,12 @@ class Threaded(class_decorator.BaseDecorator):
             "name={self.name!r}, "
             "daemon={self.daemon!r}, "
             "started={self.started!r}, "
-            ")".format(
-                cls=self.__class__.__name__,
-                self=self,
-            )
+            ")".format(cls=self.__class__.__name__, self=self)
         )  # pragma: no cover
 
     def _get_function_wrapper(
-        self,
-        func  # type: typing.Callable[..., typing.Any]
-    ):  # type: (...) -> typing.Callable[..., threading.Thread]
+        self, func
+    ):  # type: (typing.Callable[..., typing.Any]) -> typing.Callable[..., threading.Thread]
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
@@ -145,7 +140,7 @@ class Threaded(class_decorator.BaseDecorator):
 def threaded(
     name=None,  # type: typing.Optional[typing.Union[str, typing.Callable[..., typing.Any]]]
     daemon=False,  # type: bool
-    started=False  # type: bool
+    started=False,  # type: bool
 ):  # type: (...) -> typing.Union[Threaded, typing.Callable[..., threading.Thread]]
     """Run function in separate thread.
 
@@ -164,4 +159,6 @@ def threaded(
         func, name = (name, "Threaded: " + getattr(name, "__name__", str(hash(name))))
         return Threaded(name=name, daemon=daemon, started=started)(func)  # type: ignore
     return Threaded(name=name, daemon=daemon, started=started)
+
+
 # pylint: enable=unexpected-keyword-arg, no-value-for-parameter

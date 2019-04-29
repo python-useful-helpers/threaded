@@ -16,13 +16,18 @@
 
 from __future__ import absolute_import
 
+# Standard Library
 import typing  # noqa  # pylint: disable=unused-import
 
-import pkg_resources
+# External Dependencies
+import pkg_resources  # type: ignore
 
+# Local Implementation
 # pylint: disable=no-name-in-module
-from ._threaded import Threaded, threaded
-from ._threadpooled import ThreadPooled, threadpooled
+from ._threaded import Threaded
+from ._threaded import threaded
+from ._threadpooled import ThreadPooled
+from ._threadpooled import threadpooled
 
 try:  # pragma: no cover
     __version__ = pkg_resources.get_distribution(__name__).version
@@ -36,10 +41,7 @@ except pkg_resources.DistributionNotFound:  # pragma: no cover
         pass
 
 
-__all__ = (
-    'ThreadPooled', 'Threaded',
-    'threadpooled', 'threaded',
-)  # type: typing.Tuple[str, ...]
+__all__ = ("ThreadPooled", "Threaded", "threadpooled", "threaded")  # type: typing.Tuple[str, ...]
 
 __author__ = "Alexey Stepanov"
 __author_email__ = "penguinolog@gmail.com"

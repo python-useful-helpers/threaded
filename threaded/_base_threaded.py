@@ -16,18 +16,23 @@
 
 from __future__ import absolute_import
 
-__all__ = ("APIPooled", 'cpu_count')
-
+# Standard Library
 import abc
 import typing  # noqa  # pylint: disable=unused-import
 
+# External Dependencies
 import six
 
+# Local Implementation
 from . import class_decorator
+
+__all__ = ("APIPooled", "cpu_count")
+
 
 try:
     from multiprocessing import cpu_count
 except ImportError:
+
     def cpu_count():  # type: () -> int
         """Fake CPU count."""
         return 1

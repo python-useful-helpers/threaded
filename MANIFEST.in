@@ -1,9 +1,12 @@
-include *.rst LICENSE requirements.txt
+include *.rst LICENSE requirements.txt pyproject.toml
 global-exclude *.c
 exclude Makefile
 prune tools
-exclude .travis.yml appveyor.yml
-exclude tox.ini pytest.ini .coveragerc
+exclude .travis.yml appveyor.yml azure-pipelines.yml .pyup.yml
+exclude tox.ini pytest.ini .coveragerc .pylintrc
+exclude .gitignore .dockerignore
 prune test
 prune .github
-exclude CODEOWNERS CODE_OF_CONDUCT.md
+prune .azure_pipelines
+prune docs
+exclude CODEOWNERS CODE_OF_CONDUCT.md _config.yml

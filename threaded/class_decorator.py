@@ -19,13 +19,15 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-__all__ = ("BaseDecorator",)
-
+# Standard Library
 import abc
 import functools
 import typing  # noqa  # pylint: disable=unused-import
 
+# External Dependencies
 import six
+
+__all__ = ("BaseDecorator",)
 
 
 class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
@@ -69,10 +71,7 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
     False
     """
 
-    def __init__(
-        self,
-        func=None  # type: typing.Optional[typing.Callable[..., typing.Any]]
-    ):  # type: (...) -> None
+    def __init__(self, func=None):  # type: (typing.Optional[typing.Callable[..., typing.Any]]) -> None
         """Decorator.
 
         :param func: function to wrap
@@ -88,9 +87,7 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
         # pylint: enable=assigning-non-slot
 
     @property
-    def _func(
-        self
-    ):  # type: () -> typing.Optional[typing.Callable[..., typing.Any]]
+    def _func(self):  # type: () -> typing.Optional[typing.Callable[..., typing.Any]]
         """Get wrapped function.
 
         :rtype: typing.Optional[typing.Callable]
@@ -99,9 +96,8 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
 
     @abc.abstractmethod
     def _get_function_wrapper(
-        self,
-        func  # type: typing.Callable[..., typing.Any]
-    ):  # type: (...) -> typing.Callable[..., typing.Any]
+        self, func
+    ):  # type: (typing.Callable[..., typing.Any]) -> typing.Callable[..., typing.Any]
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
@@ -131,9 +127,7 @@ class BaseDecorator(six.with_metaclass(abc.ABCMeta, object)):
     def __repr__(self):  # type: () -> str
         """For debug purposes."""
         return "<{cls}({func!r}) at 0x{id:X}>".format(
-            cls=self.__class__.__name__,
-            func=self.__func,
-            id=id(self)
+            cls=self.__class__.__name__, func=self.__func, id=id(self)
         )  # pragma: no cover
 
 

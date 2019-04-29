@@ -19,15 +19,18 @@ Uses backport of concurrent.futures.
 
 from __future__ import absolute_import
 
-__all__ = ("ThreadPooled", "threadpooled")
-
+# Standard Library
 # noinspection PyCompatibility
 import concurrent.futures
 import typing  # noqa  # pylint: disable=unused-import
 
+# External Dependencies
 import six
 
+# Local Implementation
 from . import _base_threaded
+
+__all__ = ("ThreadPooled", "threadpooled")
 
 
 class ThreadPooled(_base_threaded.APIPooled):
@@ -71,9 +74,8 @@ class ThreadPooled(_base_threaded.APIPooled):
         return self.__executor  # type: ignore
 
     def _get_function_wrapper(
-        self,
-        func  # type: typing.Callable[..., typing.Any]
-    ):  # type: (...) -> typing.Callable[..., concurrent.futures.Future[typing.Any]]
+        self, func
+    ):  # type: (typing.Callable[..., typing.Any]) -> typing.Callable[..., concurrent.futures.Future[typing.Any]]
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
@@ -106,6 +108,8 @@ def threadpooled(
     if func is None:
         return ThreadPooled(func=func)
     return ThreadPooled(func=None)(func)  # type: ignore
+
+
 # pylint: enable=unexpected-keyword-arg, no-value-for-parameter
 
 
@@ -118,9 +122,8 @@ class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
     __slots__ = ()
 
     def __init__(
-        self,
-        max_workers=None  # type: typing.Optional[int]
-    ):  # type: (...) -> None
+        self, max_workers=None
+    ):  # type: (typing.Optional[int]) -> None
         """Override init due to difference between Python <3.5 and 3.5+.
 
         :param max_workers: Maximum workers allowed. If none: cpu_count() or 1) * 5
