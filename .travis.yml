@@ -46,7 +46,7 @@ _helpers:
     after_success: skip
 
 script:
-  - pip install -e .
+  - python setup.py develop -v
   - py.test -vv --cov-config .coveragerc --cov-report= --cov=threaded test
   - coverage report -m --fail-under 87
 after_success:
