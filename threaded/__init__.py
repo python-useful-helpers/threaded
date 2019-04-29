@@ -20,7 +20,7 @@ from __future__ import absolute_import
 import typing  # noqa  # pylint: disable=unused-import
 
 # External Dependencies
-import pkg_resources  # type: ignore
+import pkg_resources
 
 # Local Implementation
 # pylint: disable=no-name-in-module
