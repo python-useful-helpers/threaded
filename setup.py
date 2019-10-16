@@ -63,14 +63,7 @@ if cythonize is not None:
             setuptools.Extension("threaded.__init__", ["threaded/__init__.pyx"]),
         ]
     else:
-        REQUIRES_OPTIMIZATION = [
-            setuptools.Extension("threaded.class_decorator", ["threaded/class_decorator.pyx"]),
-            setuptools.Extension("threaded._base_threaded", ["threaded/_base_threaded.py"]),
-            setuptools.Extension("threaded._asynciotask", ["threaded/_asynciotask.pyx"]),
-            setuptools.Extension("threaded._threaded", ["threaded/_threaded.pyx"]),
-            setuptools.Extension("threaded._threadpooled", ["threaded/_threadpooled.py"]),
-            setuptools.Extension("threaded.__init__", ["threaded/__init__.pyx"]),
-        ]
+        REQUIRES_OPTIMIZATION = []
     INTERFACES = ["class_decorator.pxd", "_asynciotask.pxd", "_threaded.pxd"]
 
     EXT_MODULES = cythonize(
