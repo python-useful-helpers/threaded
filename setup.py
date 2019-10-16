@@ -249,7 +249,7 @@ SETUP_ARGS = dict(
     ],
     use_scm_version={'write_to': 'threaded/_version.py'},
     install_requires=REQUIRED,
-    package_data={PACKAGE_NAME: ["py.typed"]},
+    package_data={PACKAGE_NAME: INTERFACES + ["py.typed"]},
 )
 if cythonize is not None:
     SETUP_ARGS["ext_modules"] = EXT_MODULES

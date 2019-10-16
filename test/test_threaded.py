@@ -31,7 +31,7 @@ class ThreadedTest(unittest.TestCase):
         # pylint: enable=assignment-from-no-return
         self.assertEqual(test_thread.name, "Threaded: func_test")
         self.assertFalse(test_thread.daemon)
-        self.assertFalse(test_thread.isAlive())
+        self.assertFalse(test_thread.is_alive())
 
     def test_add_func(self):
         @threaded.threaded()
@@ -43,7 +43,7 @@ class ThreadedTest(unittest.TestCase):
         # pylint: enable=assignment-from-no-return
         self.assertEqual(test_thread.name, "Threaded: func_test")
         self.assertFalse(test_thread.daemon)
-        self.assertFalse(test_thread.isAlive())
+        self.assertFalse(test_thread.is_alive())
 
     def test_name(self):
         @threaded.threaded(name="test name")
@@ -55,7 +55,7 @@ class ThreadedTest(unittest.TestCase):
         # pylint: enable=assignment-from-no-return
         self.assertEqual(test_thread.name, "test name")
         self.assertFalse(test_thread.daemon)
-        self.assertFalse(test_thread.isAlive())
+        self.assertFalse(test_thread.is_alive())
 
     def test_daemon(self):
         @threaded.threaded(daemon=True)
@@ -67,7 +67,7 @@ class ThreadedTest(unittest.TestCase):
         # pylint: enable=assignment-from-no-return
         self.assertEqual(test_thread.name, "Threaded: func_test")
         self.assertTrue(test_thread.daemon)
-        self.assertFalse(test_thread.isAlive())
+        self.assertFalse(test_thread.is_alive())
 
     @mock.patch("threading.Thread", autospec=True)
     def test_started(self, thread):
