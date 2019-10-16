@@ -55,8 +55,8 @@ cdef class AsyncIOTask(class_decorator.BaseDecorator):
         """Get event loop in decorator class."""
         if callable(self.loop_getter):
             if self.loop_getter_need_context:
-                return self.loop_getter(*args, **kwargs)  # pylint: disable=not-callable
-            return self.loop_getter()  # pylint: disable=not-callable
+                return self.loop_getter(*args, **kwargs)
+            return self.loop_getter()
         return self.loop_getter
 
     def _get_function_wrapper(
@@ -70,7 +70,7 @@ cdef class AsyncIOTask(class_decorator.BaseDecorator):
         :rtype: typing.Callable[..., asyncio.Task]
         """
         # noinspection PyMissingOrEmptyDocstring
-        @functools.wraps(func)  # pylint: disable=missing-docstring
+        @functools.wraps(func)
         def wrapper(*args, **kwargs):  # type: (typing.Any, typing.Any) -> asyncio.Task
             loop = self.get_loop(*args, **kwargs)
             return loop.create_task(func(*args, **kwargs))

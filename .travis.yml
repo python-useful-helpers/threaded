@@ -1,6 +1,8 @@
-sudo: false
 language: python
 os: linux
+dist: xenial
+sudo: true
+
 install:
   - &upgrade_python_toolset pip install --upgrade pip setuptools wheel
   - &install_test_deps pip install --upgrade pytest pytest-sugar
@@ -14,8 +16,6 @@ _python:
   - &python37
     name: "Python 3.7"
     python: "3.7"
-    dist: xenial
-    sudo: true
 
 _helpers:
   - &install_cython pip install --upgrade Cython
@@ -74,7 +74,7 @@ jobs:
       install:
         - *upgrade_python_toolset
         - *install_deps
-        - pip install --upgrade "mypy >= 0.670"
+        - pip install --upgrade "mypy >= 0.700"
       script:
         - mypy --strict threaded
     - <<: *static_analysis

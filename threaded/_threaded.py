@@ -52,7 +52,6 @@ class Threaded(class_decorator.BaseDecorator):
         :param started: Return started thread
         :type started: bool
         """
-        # pylint: disable=assigning-non-slot
         self.__daemon: bool = daemon
         self.__started: bool = started
         if callable(name):
@@ -61,7 +60,6 @@ class Threaded(class_decorator.BaseDecorator):
         else:
             func, self.__name = None, name
         super(Threaded, self).__init__(func=func)
-        # pylint: enable=assigning-non-slot
 
     @property
     def name(self) -> typing.Optional[str]:
@@ -107,7 +105,7 @@ class Threaded(class_decorator.BaseDecorator):
             name = "Threaded: " + getattr(func, "__name__", str(hash(func)))
 
         # noinspection PyMissingOrEmptyDocstring
-        @functools.wraps(prepared)  # pylint: disable=missing-docstring
+        @functools.wraps(prepared)
         def wrapper(*args, **kwargs):  # type: (typing.Any, typing.Any) -> threading.Thread
             thread = threading.Thread(target=prepared, name=name, args=args, kwargs=kwargs, daemon=self.daemon)
             if self.started:
@@ -125,7 +123,6 @@ class Threaded(class_decorator.BaseDecorator):
         return super(Threaded, self).__call__(*args, **kwargs)  # type: ignore
 
 
-# pylint: disable=function-redefined, unused-argument
 @typing.overload
 def threaded(
     name: typing.Callable[..., typing.Any], daemon: bool = False, started: bool = False
@@ -138,7 +135,6 @@ def threaded(name: typing.Optional[str] = None, daemon: bool = False, started: b
     """Overload: Name is not callable."""
 
 
-# pylint: enable=unused-argument
 def threaded(  # noqa: F811
     name: typing.Optional[typing.Union[str, typing.Callable[..., typing.Any]]] = None,
     daemon: bool = False,
@@ -161,6 +157,3 @@ def threaded(  # noqa: F811
         func, name = (name, "Threaded: " + getattr(name, "__name__", str(hash(name))))
         return Threaded(name=name, daemon=daemon, started=started)(func)  # type: ignore
     return Threaded(name=name, daemon=daemon, started=started)
-
-
-# pylint: enable=function-redefined

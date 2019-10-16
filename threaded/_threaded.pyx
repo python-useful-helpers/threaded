@@ -49,7 +49,6 @@ cdef class Threaded(class_decorator.BaseDecorator):
         :param started: Return started thread
         :type started: bool
         """
-        # pylint: disable=assigning-non-slot
         self.daemon = daemon
         self.started = started
         if callable(name):
@@ -58,7 +57,6 @@ cdef class Threaded(class_decorator.BaseDecorator):
         else:
             func, self.name = None, name  # type: ignore
         super(Threaded, self).__init__(func=func)
-        # pylint: enable=assigning-non-slot
 
     def __repr__(self) -> str:  # pragma: no cover
         """For debug purposes."""
@@ -80,7 +78,7 @@ cdef class Threaded(class_decorator.BaseDecorator):
             name = "Threaded: " + getattr(func, "__name__", str(hash(func)))
 
         # noinspection PyMissingOrEmptyDocstring
-        @functools.wraps(prepared)  # pylint: disable=missing-docstring
+        @functools.wraps(prepared)
         def wrapper(*args, **kwargs):  # type: (typing.Any, typing.Any) -> threading.Thread
             thread = threading.Thread(target=prepared, name=name, args=args, kwargs=kwargs, daemon=self.daemon)
             if self.started:
@@ -89,7 +87,7 @@ cdef class Threaded(class_decorator.BaseDecorator):
 
         return wrapper
 
-    def __call__(  # pylint: disable=useless-super-delegation
+    def __call__(
         self,
         *args: typing.Union[typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]], typing.Any],
         **kwargs: typing.Any
@@ -98,7 +96,6 @@ cdef class Threaded(class_decorator.BaseDecorator):
         return super(Threaded, self).__call__(*args, **kwargs)  # type: ignore
 
 
-# pylint: enable=unused-argument
 def threaded(  # noqa: F811
     name: typing.Optional[typing.Union[str, typing.Callable]] = None, bint daemon: bool = False, bint started: bool = False
 ) -> typing.Union[Threaded, typing.Callable[..., threading.Thread]]:
@@ -119,6 +116,3 @@ def threaded(  # noqa: F811
         func, name = (name, "Threaded: " + getattr(name, "__name__", str(hash(name))))
         return Threaded(name=name, daemon=daemon, started=started)(func)  # type: ignore
     return Threaded(name=name, daemon=daemon, started=started)
-
-
-# pylint: enable=function-redefined

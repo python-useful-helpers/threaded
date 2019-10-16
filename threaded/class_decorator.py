@@ -77,13 +77,11 @@ class BaseDecorator(metaclass=abc.ABCMeta):
         """
         # noinspection PyArgumentList
         super(BaseDecorator, self).__init__()
-        # pylint: disable=assigning-non-slot
         self.__func: typing.Optional[
             typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]
         ] = func
         if self.__func is not None:
             functools.update_wrapper(self, self.__func)
-        # pylint: enable=assigning-non-slot
 
     @property
     def _func(self) -> typing.Optional[typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]]:

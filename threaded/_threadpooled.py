@@ -133,7 +133,7 @@ class ThreadPooled(_base_threaded.APIPooled):
         prepared = self._await_if_required(func)
 
         # noinspection PyMissingOrEmptyDocstring
-        @functools.wraps(prepared)  # pylint: disable=missing-docstring
+        @functools.wraps(prepared)
         def wrapper(
             *args: typing.Any, **kwargs: typing.Any
         ) -> typing.Union[
@@ -173,7 +173,6 @@ class ThreadPooled(_base_threaded.APIPooled):
         )
 
 
-# pylint: disable=function-redefined, unused-argument
 @typing.overload
 def threadpooled(
     func: typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]],
@@ -204,7 +203,6 @@ def threadpooled(
     """Overload: No function."""
 
 
-# pylint: enable=unused-argument
 def threadpooled(  # noqa: F811
     func: typing.Optional[typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]] = None,
     *,
@@ -234,9 +232,6 @@ def threadpooled(  # noqa: F811
     return ThreadPooled(  # type: ignore
         func=None, loop_getter=loop_getter, loop_getter_need_context=loop_getter_need_context
     )(func)
-
-
-# pylint: enable=function-redefined
 
 
 class ThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):

@@ -77,8 +77,8 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         """Get event loop in decorator class."""
         if callable(self.loop_getter):
             if self.loop_getter_need_context:
-                return self.loop_getter(*args, **kwargs)  # pylint: disable=not-callable
-            return self.loop_getter()  # pylint: disable=not-callable
+                return self.loop_getter(*args, **kwargs)
+            return self.loop_getter()
         return self.loop_getter
 
     def _get_function_wrapper(
@@ -92,7 +92,7 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         :rtype: typing.Callable[..., asyncio.Task]
         """
         # noinspection PyMissingOrEmptyDocstring
-        @functools.wraps(func)  # pylint: disable=missing-docstring
+        @functools.wraps(func)
         def wrapper(*args, **kwargs):  # type: (typing.Any, typing.Any) -> asyncio.Task[typing.Any]
             loop = self.get_loop(*args, **kwargs)
             return loop.create_task(func(*args, **kwargs))
@@ -118,7 +118,6 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         )  # pragma: no cover
 
 
-# pylint: disable=function-redefined, unused-argument
 @typing.overload
 def asynciotask(
     func: None = None,
@@ -143,7 +142,6 @@ def asynciotask(
     """Overload: provided function."""
 
 
-# pylint: enable=unused-argument
 def asynciotask(  # noqa: F811
     func: typing.Optional[typing.Callable[..., "typing.Awaitable[typing.Any]"]] = None,
     *,
@@ -171,6 +169,3 @@ def asynciotask(  # noqa: F811
     return AsyncIOTask(  # type: ignore
         func=None, loop_getter=loop_getter, loop_getter_need_context=loop_getter_need_context
     )(func)
-
-
-# pylint: enable=function-redefined
