@@ -66,7 +66,7 @@ if cythonize is not None:
         REQUIRES_OPTIMIZATION = [
             setuptools.Extension("threaded.class_decorator", ["threaded/class_decorator.pyx"]),
             setuptools.Extension("threaded._base_threaded", ["threaded/_base_threaded.py"]),
-            setuptools.Extension("threaded._asynciotask", ["threaded/_asynciotask.pyx"]),
+            setuptools.Extension("threaded._asynciotask", ["threaded/_asynciotask.py"]),
             setuptools.Extension("threaded._threaded", ["threaded/_threaded.pyx"]),
             setuptools.Extension("threaded._threadpooled", ["threaded/_threadpooled.py"]),
         ]
