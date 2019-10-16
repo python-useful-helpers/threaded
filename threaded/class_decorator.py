@@ -64,6 +64,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
     call_function: func_init
     >>> isinstance(func_init, TestDecorator)
     False
+
     """
 
     def __init__(
