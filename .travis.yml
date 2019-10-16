@@ -61,6 +61,7 @@ jobs:
         - *install_deps
         - pip install --upgrade "pylint >= 2.3" isort[pyproject,requirements]
       script:
+        - python setup.py --version
         - pylint threaded
     - <<: *static_analysis
       name: "Bandit"
@@ -76,6 +77,7 @@ jobs:
         - *install_deps
         - pip install --upgrade "mypy >= 0.700"
       script:
+        - python setup.py --version
         - mypy --strict threaded
     - <<: *static_analysis
       name: "PEP8"
