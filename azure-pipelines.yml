@@ -78,6 +78,10 @@ jobs:
         displayName: 'Install dependencies'
 
       - script: |
+          python setup.py --version
+        displayName: 'Generate version file'
+
+      - script: |
           mypy --strict --junit-xml=mypy_result.xml threaded
         displayName: 'MyPy'
 

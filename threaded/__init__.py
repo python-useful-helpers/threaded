@@ -17,9 +17,6 @@
 # Standard Library
 import typing
 
-# External Dependencies
-import pkg_resources
-
 # Local Implementation
 from ._asynciotask import AsyncIOTask
 from ._asynciotask import asynciotask
@@ -28,17 +25,10 @@ from ._threaded import threaded
 from ._threadpooled import ThreadPooled
 from ._threadpooled import threadpooled
 
-try:  # pragma: no cover
-    __version__ = pkg_resources.get_distribution(__name__).version
-except pkg_resources.DistributionNotFound:  # pragma: no cover
-    # package is not installed, try to get from SCM
-    try:
-        import setuptools_scm  # type: ignore
-
-        __version__ = setuptools_scm.get_version()
-    except ImportError:
-        pass
-
+try:
+    from ._version import version as __version__
+except ImportError:
+    pass
 
 __all__ = (
     "ThreadPooled",

@@ -1,4 +1,5 @@
-include *.rst LICENSE requirements.txt pyproject.toml
+include *.rst LICENSE requirements.txt
+global-include *.pyx *.pxd
 global-exclude *.c
 exclude Makefile
 prune tools

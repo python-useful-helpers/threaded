@@ -3,7 +3,10 @@
 /report.html
 /assets/*
 .cache/*
-.pytest_cache/
+.pytest_cache/*
+
+### Generated version
+/threaded/_version.py
 
 ### Generated code
 /threaded/*.c

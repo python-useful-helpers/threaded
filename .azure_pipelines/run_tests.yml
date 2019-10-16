@@ -40,14 +40,13 @@ jobs:
 
   - script: |
       pip install -U wheel
-      python setup.py bdist_wheel
-      pip install --pre --no-index -f dist threaded
+      python setup.py develop -v
     displayName: Build and install
 
   - script: |
-      pip install pytest pytest-sugar
+      pip install pytest pytest-sugar pytest-cov
 
-      pytest -vvv --junitxml=unit_result.xml test
+      pytest -vvv --junitxml=unit_result.xml --cov=threaded --cov-report=xml --cov-report=html --cov-report term test
     displayName: PyTest
 
   - task: PublishTestResults@2
@@ -57,3 +56,10 @@ jobs:
       testResultsFormat: "JUnit"
       testResultsFiles: ${{ format('$(System.DefaultWorkingDirectory)/unit_result.xml') }}
       testRunTitle: ${{ format('{0}_{1}_{2}', parameters.name, parameters.architecture, parameters.kind) }}
+
+  - ${{ if ne(parameters.kind, 'cython') }}:
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: ${{ format('$(System.DefaultWorkingDirectory)/coverage.xml') }}
+        reportDirectory: ${{ format('$(System.DefaultWorkingDirectory)/htmlcov') }}

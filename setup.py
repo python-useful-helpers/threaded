@@ -35,12 +35,13 @@ except ImportError:
 try:
     # noinspection PyPackageRequirements
     from Cython.Build import cythonize
-
 except ImportError:
     cythonize = None
 
 
-with open(os.path.join(os.path.dirname(__file__), "threaded", "__init__.py")) as f:
+PACKAGE_NAME = "threaded"
+
+with open(os.path.join(os.path.dirname(__file__), PACKAGE_NAME, "__init__.py")) as f:
     SOURCE = f.read()
 
 with open("requirements.txt") as f:
@@ -50,33 +51,37 @@ with open("README.rst") as f:
     LONG_DESCRIPTION = f.read()
 
 
-def _extension(modpath: str) -> setuptools.Extension:
-    """Make setuptools.Extension."""
-    return setuptools.Extension(modpath, [modpath.replace(".", "/") + ".py"])
-
-
-REQUIRES_OPTIMIZATION = [
-    setuptools.Extension("threaded.class_decorator", ["threaded/class_decorator.pyx"]),
-    _extension("threaded._base_threaded"),
-    setuptools.Extension("threaded._asynciotask", ["threaded/_asynciotask.pyx"]),
-    setuptools.Extension("threaded._threaded", ["threaded/_threaded.pyx"]),
-    _extension("threaded._threadpooled"),
-]
-
-if "win32" != sys.platform:
-    REQUIRES_OPTIMIZATION.append(_extension("threaded.__init__"))
-
 # noinspection PyCallingNonCallable
-EXT_MODULES = (
-    cythonize(
-        REQUIRES_OPTIMIZATION,
+if cythonize is not None:
+    if "win32" != sys.platform:
+        REQUIRES_OPTIMIZATION = [
+            setuptools.Extension("threaded.class_decorator", ["threaded/class_decorator.pyx"]),
+            setuptools.Extension("threaded._base_threaded", ["threaded/_base_threaded.py"]),
+            setuptools.Extension("threaded._asynciotask", ["threaded/_asynciotask.pyx"]),
+            setuptools.Extension("threaded._threaded", ["threaded/_threaded.pyx"]),
+            setuptools.Extension("threaded._threadpooled", ["threaded/_threadpooled.py"]),
+            setuptools.Extension("threaded.__init__", ["threaded/__init__.pyx"]),
+        ]
+    else:
+        REQUIRES_OPTIMIZATION = [
+            setuptools.Extension("threaded.class_decorator", ["threaded/class_decorator.pyx"]),
+            setuptools.Extension("threaded._base_threaded", ["threaded/_base_threaded.py"]),
+            setuptools.Extension("threaded._asynciotask", ["threaded/_asynciotask.pyx"]),
+            setuptools.Extension("threaded._threaded", ["threaded/_threaded.pyx"]),
+            setuptools.Extension("threaded._threadpooled", ["threaded/_threadpooled.py"]),
+        ]
+    INTERFACES = ["class_decorator.pxd", "_asynciotask.pxd", "_threaded.pxd"]
+
+    EXT_MODULES = cythonize(
+        module_list=REQUIRES_OPTIMIZATION,
         compiler_directives=dict(
             always_allow_keywords=True, binding=True, embedsignature=True, overflowcheck=True, language_level=3
         ),
     )
-    if cythonize is not None
-    else []
-)
+else:
+    REQUIRES_OPTIMIZATION = []
+    INTERFACES = []
+    EXT_MODULES = []
 
 
 class BuildFailed(Exception):
@@ -89,7 +94,7 @@ class AllowFailRepair(build_ext.build_ext):
     def run(self):
         """Run.
 
-        :raises BuildFailed: cythonize impossible
+        :raises BuildFailed: Build is failed and clean python code should be used.
         """
         try:
             build_ext.build_ext.run(self)
@@ -99,7 +104,7 @@ class AllowFailRepair(build_ext.build_ext):
             root_dir = os.path.abspath(os.path.join(__file__, ".."))
             target_dir = build_dir if not self.inplace else root_dir
 
-            src_file = os.path.join("threaded", "__init__.py")
+            src_file = os.path.join(PACKAGE_NAME, "__init__.py")
 
             src = os.path.join(root_dir, src_file)
             dst = os.path.join(target_dir, src_file)
@@ -115,7 +120,7 @@ class AllowFailRepair(build_ext.build_ext):
     def build_extension(self, ext):
         """build_extension.
 
-        :raises BuildFailed: cythonize impossible
+        :raises BuildFailed: Build is failed and clean python code should be used.
         """
         try:
             build_ext.build_ext.build_extension(self, ext)
@@ -206,15 +211,18 @@ CLASSIFIERS = [
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
 ]
 
 KEYWORDS = ["pooling", "multithreading", "threading", "asyncio", "development"]
 
-setup_args = dict(
-    name="threaded",
+SETUP_ARGS = dict(
+    name=PACKAGE_NAME,
     author=VARIABLES["__author__"],
     author_email=VARIABLES["__author_email__"],
     maintainer=", ".join(
@@ -226,7 +234,7 @@ setup_args = dict(
     long_description=LONG_DESCRIPTION,
     classifiers=CLASSIFIERS,
     keywords=KEYWORDS,
-    python_requires=">=3.6",
+    python_requires=">=3.6.0",
     # While setuptools cannot deal with pre-installed incompatible versions,
     # setting a lower bound is not harmful - it makes error messages cleaner. DO
     # NOT set an upper bound on setuptools, as that will lead to uninstallable
@@ -239,18 +247,19 @@ setup_args = dict(
         "!=36.2.0",
         "setuptools_scm",
     ],
-    use_scm_version=True,
+    use_scm_version={'write_to': 'threaded/_version.py'},
     install_requires=REQUIRED,
-    package_data={"threaded": ["py.typed"]},
+    package_data={PACKAGE_NAME: ["py.typed"]},
 )
 if cythonize is not None:
-    setup_args["ext_modules"] = EXT_MODULES
-    setup_args["cmdclass"] = dict(build_ext=AllowFailRepair)
+    SETUP_ARGS["ext_modules"] = EXT_MODULES
+    SETUP_ARGS["cmdclass"] = dict(build_ext=AllowFailRepair)
 
 try:
-    setuptools.setup(**setup_args)
+    setuptools.setup(**SETUP_ARGS)
 except BuildFailed:
     print("*" * 80 + "\n" "* Build Failed!\n" "* Use clear scripts version.\n" "*" * 80 + "\n")
-    del setup_args["ext_modules"]
-    del setup_args["cmdclass"]
-    setuptools.setup(**setup_args)
+    del SETUP_ARGS["ext_modules"]
+    del SETUP_ARGS["cmdclass"]
+    SETUP_ARGS["package_data"][PACKAGE_NAME] = ["py.typed"]
+    setuptools.setup(**SETUP_ARGS)
