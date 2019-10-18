@@ -16,7 +16,6 @@
 
 # Standard Library
 import ast
-import collections
 import distutils.errors
 import os.path
 import shutil
@@ -38,7 +37,6 @@ try:
 except ImportError:
     cythonize = None
 
-
 PACKAGE_NAME = "threaded"
 
 with open(os.path.join(os.path.dirname(__file__), PACKAGE_NAME, "__init__.py")) as f:
@@ -52,15 +50,19 @@ with open("README.rst") as f:
 
 
 # noinspection PyCallingNonCallable
-if cythonize is not None and "win32" != sys.platform:
+if cythonize is not None:
     REQUIRES_OPTIMIZATION = [
         setuptools.Extension("threaded.class_decorator", ["threaded/class_decorator.pyx"]),
         setuptools.Extension("threaded._base_threaded", ["threaded/_base_threaded.py"]),
         setuptools.Extension("threaded._asynciotask", ["threaded/_asynciotask.pyx"]),
         setuptools.Extension("threaded._threaded", ["threaded/_threaded.pyx"]),
         setuptools.Extension("threaded._threadpooled", ["threaded/_threadpooled.py"]),
-        setuptools.Extension("threaded.__init__", ["threaded/__init__.pyx"]),
+
     ]
+    if "win32" != sys.platform:
+        # NOTE: Do not make pyx/pxd - it kills windows
+        REQUIRES_OPTIMIZATION.append(setuptools.Extension("threaded.__init__", ["threaded/__init__.py"]),)
+
     INTERFACES = ["class_decorator.pxd", "_asynciotask.pxd", "_threaded.pxd"]
 
     EXT_MODULES = cythonize(
@@ -104,7 +106,7 @@ class AllowFailRepair(build_ext.build_ext):
                 shutil.copyfile(src, dst)
         except (
             distutils.errors.DistutilsPlatformError,
-            getattr(globals()["__builtins__"], "FileNotFoundError", OSError),
+            FileNotFoundError,
         ):
             raise BuildFailed()
 
@@ -127,7 +129,7 @@ class AllowFailRepair(build_ext.build_ext):
 # noinspection PyUnresolvedReferences
 def get_simple_vars_from_src(
     src: str
-) -> "typing.Dict[str, typing.Union[str, bytes, int, float, complex, list, set, dict, tuple, None]]":
+) -> "typing.Dict[str, typing.Union[str, bytes, int, float, complex, list, set, dict, tuple, None, bool, Ellipsis]]":
     """Get simple (string/number/boolean and None) assigned values from source.
 
     :param src: Source code
@@ -139,7 +141,7 @@ def get_simple_vars_from_src(
                     str, bytes,
                     int, float, complex,
                     list, set, dict, tuple,
-                    None,
+                    None, bool, Ellipsis
                 ]
             ]
 
@@ -152,32 +154,33 @@ def get_simple_vars_from_src(
 
     >>> string_sample = "a = '1'"
     >>> get_simple_vars_from_src(string_sample)
-    OrderedDict([('a', '1')])
+    {'a': '1'}
 
     >>> int_sample = "b = 1"
     >>> get_simple_vars_from_src(int_sample)
-    OrderedDict([('b', 1)])
+    {'b': 1}
 
     >>> list_sample = "c = [u'1', b'1', 1, 1.0, 1j, None]"
     >>> result = get_simple_vars_from_src(list_sample)
-    >>> result == collections.OrderedDict(
-    ...     [('c', [u'1', b'1', 1, 1.0, 1j, None])]
-    ... )
+    >>> result == {'c': [u'1', b'1', 1, 1.0, 1j, None]}
     True
 
     >>> iterable_sample = "d = ([1], {1: 1}, {1})"
     >>> get_simple_vars_from_src(iterable_sample)
-    OrderedDict([('d', ([1], {1: 1}, {1}))])
+    {'d': ([1], {1: 1}, {1})}
 
     >>> multiple_assign = "e = f = g = 1"
     >>> get_simple_vars_from_src(multiple_assign)
-    OrderedDict([('e', 1), ('f', 1), ('g', 1)])
+    {'e': 1, 'f': 1, 'g': 1}
     """
-    ast_data = (ast.Str, ast.Num, ast.List, ast.Set, ast.Dict, ast.Tuple, ast.Bytes, ast.NameConstant)
+    if sys.version_info[:2] < (3, 8):
+        ast_data = (ast.Str, ast.Num, ast.List, ast.Set, ast.Dict, ast.Tuple, ast.Bytes, ast.NameConstant, ast.Ellipsis)
+    else:
+        ast_data = ast.Constant
 
     tree = ast.parse(src)
 
-    result = collections.OrderedDict()
+    result = {}
 
     for node in ast.iter_child_nodes(tree):
         if not isinstance(node, ast.Assign):  # We parse assigns only

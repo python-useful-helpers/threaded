@@ -1,8 +1,8 @@
 [run]
 source =
-    threaded
+  threaded
 omit =
-    test/*
+  test/*
 branch = True
 [report]
 exclude_lines =

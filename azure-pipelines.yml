@@ -20,7 +20,7 @@ jobs:
         displayName: 'Install dependencies'
 
       - script: |
-          pytest -vvv --flake8 -m flake8 --junitxml=flake8_result.xml threaded
+          pytest --flake8 -m flake8 --junitxml=flake8_result.xml threaded
         displayName: 'PEP8'
 
       - task: PublishTestResults@2
@@ -74,7 +74,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -U setuptools
           pip install -r requirements.txt
-          pip install -U mypy
+          pip install -U "mypy>=0.700"
         displayName: 'Install dependencies'
 
       - script: |
@@ -98,66 +98,66 @@ jobs:
   - template: .azure_pipelines/run_tests.yml
     parameters: {name: 'Python_37', python: '3.7', architecture: 'x64', kind: 'native'}
 
-#  - template: .azure_pipelines/run_tests.yml
-#    parameters: {name: 'Python_36', python: '3.6', architecture: 'x64', kind: 'cython'}
-#  - template: .azure_pipelines/run_tests.yml
-#    parameters: {name: 'Python_36', python: '3.6', architecture: 'x86', kind: 'cython'}
-#  - template: .azure_pipelines/run_tests.yml
-#    parameters: {name: 'Python_37', python: '3.7', architecture: 'x64', kind: 'cython'}
-#  - template: .azure_pipelines/run_tests.yml
-#    parameters: {name: 'Python_37', python: '3.7', architecture: 'x86', kind: 'cython'}
+  - template: .azure_pipelines/run_tests.yml
+    parameters: {name: 'Python_36', python: '3.6', architecture: 'x64', kind: 'cython'}
+  - template: .azure_pipelines/run_tests.yml
+    parameters: {name: 'Python_36', python: '3.6', architecture: 'x86', kind: 'cython'}
+  - template: .azure_pipelines/run_tests.yml
+    parameters: {name: 'Python_37', python: '3.7', architecture: 'x64', kind: 'cython'}
+  - template: .azure_pipelines/run_tests.yml
+    parameters: {name: 'Python_37', python: '3.7', architecture: 'x86', kind: 'cython'}
 
 
-#  - job: 'Build_and_deploy'
-#    dependsOn:
-#      - Python_36_x64_native
-#      - Python_37_x64_native
-#
-##      - Python_36_x64_cython
-##      - Python_36_x86_cython
-##      - Python_37_x64_cython
-##      - Python_37_x86_cython
-#    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
-#    pool:
-#      vmIMage: 'VS2017-Win2016'
-#    strategy:
-#      maxParallel: 6
-#      matrix:
-#        Python36_x64:
-#          python.version: '3.6'
-#          python.architecture: 'x64'
-#        Python36_x86:
-#          python.version: '3.6'
-#          python.architecture: 'x86'
-#        Python37_x64:
-#          python.version: '3.7'
-#          python.architecture: 'x64'
-#        Python37_x86:
-#          python.version: '3.7'
-#          python.architecture: 'x86'
-#
-#    steps:
-#      - task: UsePythonVersion@0
-#        inputs:
-#          versionSpec: '$(python.version)'
-#          architecture: '$(python.architecture)'
-#
-#      - script: |
-#          python -m pip install --upgrade pip
-#          pip install -U setuptools
-#          pip install -r build_requirements.txt
-#        displayName: 'Install dependencies'
-#
-#      - script: |
-#          python setup.py bdist_wheel
-#        displayName: 'Build'
-#
-#      - task: TwineAuthenticate@0
-#        displayName: 'Twine Authenticate '
-#        inputs:
-#          externalFeeds: PyPI
-#
-#      - script: |
-#          pip install -U twine
-#          twine upload -r PyPI --config-file $(PYPIRC_PATH) dist/threaded-* --skip-existing
-#        displayName: 'Deploy'
+  - job: 'Build_and_deploy'
+    dependsOn:
+      - Python_36_x64_native
+      - Python_37_x64_native
+
+      - Python_36_x64_cython
+      - Python_36_x86_cython
+      - Python_37_x64_cython
+      - Python_37_x86_cython
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+    pool:
+      vmIMage: 'VS2017-Win2016'
+    strategy:
+      maxParallel: 6
+      matrix:
+        Python36_x64:
+          python.version: '3.6'
+          python.architecture: 'x64'
+        Python36_x86:
+          python.version: '3.6'
+          python.architecture: 'x86'
+        Python37_x64:
+          python.version: '3.7'
+          python.architecture: 'x64'
+        Python37_x86:
+          python.version: '3.7'
+          python.architecture: 'x86'
+
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '$(python.version)'
+          architecture: '$(python.architecture)'
+
+      - script: |
+          python -m pip install --upgrade pip
+          pip install -U setuptools
+          pip install -r build_requirements.txt
+        displayName: 'Install dependencies'
+
+      - script: |
+          python setup.py bdist_wheel
+        displayName: 'Build'
+
+      - task: TwineAuthenticate@0
+        displayName: 'Twine Authenticate '
+        inputs:
+          externalFeeds: PyPI
+
+      - script: |
+          pip install -U twine
+          twine upload -r PyPI --config-file $(PYPIRC_PATH) dist/threaded-* --skip-existing
+        displayName: 'Deploy'

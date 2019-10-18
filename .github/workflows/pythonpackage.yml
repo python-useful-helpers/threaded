@@ -28,5 +28,5 @@ jobs:
         python setup.py develop -v
     - name: Test with pytest
       run: |
-        py.test -vvv --cov-config .coveragerc --cov-report= --cov=threaded test
+        py.test --cov-config .coveragerc --cov-report= --cov=threaded test
         coverage report -m --fail-under 90
