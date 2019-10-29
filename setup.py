@@ -176,7 +176,7 @@ def get_simple_vars_from_src(
     if sys.version_info[:2] < (3, 8):
         ast_data = (ast.Str, ast.Num, ast.List, ast.Set, ast.Dict, ast.Tuple, ast.Bytes, ast.NameConstant, ast.Ellipsis)
     else:
-        ast_data = ast.Constant
+        ast_data = (ast.Constant, ast.List, ast.Set, ast.Dict, ast.Tuple)
 
     tree = ast.parse(src)
 
