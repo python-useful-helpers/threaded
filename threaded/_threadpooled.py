@@ -96,7 +96,7 @@ class ThreadPooled(_base_threaded.APIPooled):
 
     @property
     def loop_getter(
-        self
+        self,
     ) -> typing.Optional[typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]]:
         """Loop getter.
 
