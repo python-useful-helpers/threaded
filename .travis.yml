@@ -16,6 +16,9 @@ _python:
   - &python37
     name: "Python 3.7"
     python: "3.7"
+  - &python38
+    name: "Python 3.8"
+    python: "3.8"
 
 _helpers:
   - &install_cython pip install --upgrade Cython
@@ -106,11 +109,15 @@ jobs:
       <<: *python36
     - stage: test
       <<: *python37
+    - stage: test
+      <<: *python38
 
     - <<: *test_cythonized
       <<: *python36
     - <<: *test_cythonized
       <<: *python37
+    - <<: *test_cythonized
+      <<: *python38
 
     - stage: deploy
       # This prevents job from appearing in test plan unless commit is tagged:

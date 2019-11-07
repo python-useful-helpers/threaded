@@ -44,9 +44,6 @@ class TestThreadPooled(unittest.TestCase):
 
     def test_thread_pooled_config(self):
         thread_pooled = threaded.threadpooled()
-
-        self.assertEqual(thread_pooled.executor.max_workers, (cpu_count() or 1) * 5)
-
         thread_pooled.configure(max_workers=2)
 
         @thread_pooled
