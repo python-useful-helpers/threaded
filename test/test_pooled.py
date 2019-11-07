@@ -16,7 +16,6 @@
 import concurrent.futures
 import threading
 import unittest
-from os import cpu_count
 
 # Threaded Implementation
 import threaded
