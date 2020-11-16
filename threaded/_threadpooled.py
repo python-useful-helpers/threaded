@@ -140,7 +140,7 @@ class ThreadPooled(_base_threaded.APIPooled):
         @functools.wraps(prepared)
         def wrapper(
             *args: typing.Any, **kwargs: typing.Any
-        ) -> typing.Union["concurrent.futures.Future[typing.Any]", "typing.Awaitable[typing.Any]",]:
+        ) -> typing.Union["concurrent.futures.Future[typing.Any]", "typing.Awaitable[typing.Any]"]:
             """Main function wrapper.
 
             :return: coroutine or function
