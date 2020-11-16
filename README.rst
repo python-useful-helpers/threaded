@@ -3,9 +3,8 @@ threaded
 
 .. image:: https://travis-ci.com/python-useful-helpers/threaded.svg?branch=master
     :target: https://travis-ci.com/python-useful-helpers/threaded
-.. image:: https://dev.azure.com/python-useful-helpers/threaded/_apis/build/status/python-useful-helpers.threaded?branchName=master
-    :alt: Azure DevOps builds
-    :target: https://dev.azure.com/python-useful-helpers/threaded/_build?definitionId=3
+.. image:: https://github.com/python-useful-helpers/threaded/workflows/Python%20package/badge.svg
+    :target: https://github.com/python-useful-helpers/threaded/actions
 .. image:: https://coveralls.io/repos/github/python-useful-helpers/threaded/badge.svg?branch=master
     :target: https://coveralls.io/github/python-useful-helpers/threaded?branch=master
 .. image:: https://readthedocs.org/projects/threaded/badge/?version=latest
@@ -220,9 +219,8 @@ For code checking several CI systems is used in parallel:
 
 1. `Travis CI: <https://travis-ci.com/python-useful-helpers/threaded>`_ is used for checking: PEP8, pylint, bandit, installation possibility and unit tests. Also it's publishes coverage on coveralls.
 
-2. `coveralls: <https://coveralls.io/github/python-useful-helpers/threaded>`_ is used for coverage display.
-
-3. `Azure CI: <https://dev.azure.com/python-useful-helpers/threaded/_build?definitionId=3>`_ is used for functional tests on Windows.
+2. `GitHub actions: <https://github.com/python-useful-helpers/threaded/actions>`_ is used for checking: PEP8, pylint, bandit, installation possibility and unit tests.
+3. `coveralls: <https://coveralls.io/github/python-useful-helpers/threaded>`_ is used for coverage display.
 
 CD system
 =========
