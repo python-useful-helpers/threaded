@@ -109,7 +109,11 @@ class BaseDecorator(metaclass=abc.ABCMeta):
         *args: typing.Union[typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]], typing.Any],
         **kwargs: typing.Any,
     ) -> typing.Any:
-        """Main decorator getter."""
+        """Main decorator getter.
+
+        :return: result of decorated function or result getter
+        :rtype: Any
+        """
         l_args: typing.List[typing.Any] = list(args)
 
         if self._func:
@@ -126,11 +130,19 @@ class BaseDecorator(metaclass=abc.ABCMeta):
     def _await_if_required(
         target: typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]
     ) -> typing.Callable[..., typing.Any]:
-        """Await result if coroutine was returned."""
+        """Await result if coroutine was returned.
+
+        :return: function, which will await for result if it's required
+        :rtype: Callable[..., Any]
+        """
 
         @functools.wraps(target)
         def wrapper(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
-            """Decorator/wrapper."""
+            """Decorator/wrapper.
+
+            :return: target execution result (awaited if needed)
+            :rtype: Any
+            """
             result = target(*args, **kwargs)
             if asyncio.iscoroutine(result):
                 loop = asyncio.new_event_loop()
@@ -141,7 +153,11 @@ class BaseDecorator(metaclass=abc.ABCMeta):
         return wrapper
 
     def __repr__(self) -> str:
-        """For debug purposes."""
+        """For debug purposes.
+
+        :return: repr info
+        :rtype: str
+        """
         return f"<{self.__class__.__name__}({self.__func!r}) at 0x{id(self):X}>"  # pragma: no cover
 
 

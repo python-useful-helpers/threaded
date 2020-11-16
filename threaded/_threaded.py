@@ -86,7 +86,11 @@ class Threaded(class_decorator.BaseDecorator):
         return self.__started
 
     def __repr__(self) -> str:  # pragma: no cover
-        """For debug purposes."""
+        """For debug purposes.
+
+        :return: repr data
+        :rtype: str
+        """
         return f"{self.__class__.__name__}(name={self.name!r}, daemon={self.daemon!r}, started={self.started!r}, )"
 
     def _get_function_wrapper(
@@ -107,6 +111,11 @@ class Threaded(class_decorator.BaseDecorator):
         # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(prepared)
         def wrapper(*args: typing.Any, **kwargs: typing.Any) -> threading.Thread:
+            """Thread getter.
+
+            :return: Thread object
+            :rtype: threading.Thread
+            """
             thread = threading.Thread(target=prepared, name=name, args=args, kwargs=kwargs, daemon=self.daemon)
             if self.started:
                 thread.start()
@@ -119,7 +128,11 @@ class Threaded(class_decorator.BaseDecorator):
         *args: typing.Union[typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]], typing.Any],
         **kwargs: typing.Any,
     ) -> typing.Union[threading.Thread, typing.Callable[..., threading.Thread]]:
-        """Executable instance."""
+        """Executable instance.
+
+        :return: Thread object or Thread getter
+        :rtype: Union[threading.Thread, Callable[..., threading.Thread]]
+        """
         return super().__call__(*args, **kwargs)  # type: ignore
 
 

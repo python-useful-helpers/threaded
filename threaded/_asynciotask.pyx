@@ -55,7 +55,11 @@ cdef class AsyncIOTask(class_decorator.BaseDecorator):
         self.loop_getter_need_context = loop_getter_need_context
 
     def get_loop(self, *args, **kwargs):  # type: (typing.Any, typing.Any) -> asyncio.AbstractEventLoop
-        """Get event loop in decorator class."""
+        """Get event loop in decorator class.
+
+        :return: event loop if available or getter available
+        :rtype: Optional[asyncio.AbstractEventLoop]
+        """
         if callable(self.loop_getter):
             if self.loop_getter_need_context:
                 return self.loop_getter(*args, **kwargs)
@@ -75,6 +79,11 @@ cdef class AsyncIOTask(class_decorator.BaseDecorator):
         # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(func)
         def wrapper(*args, **kwargs):  # type: (typing.Any, typing.Any) -> asyncio.Task
+            """Function wrapper.
+
+            :return: asyncio.Task
+            :rtype: asyncio.Task[Any]
+            """
             loop = self.get_loop(*args, **kwargs)
             return loop.create_task(func(*args, **kwargs))
 
@@ -83,11 +92,19 @@ cdef class AsyncIOTask(class_decorator.BaseDecorator):
     def __call__(  # pylint: disable=useless-super-delegation
         self, *args: typing.Union[typing.Callable[..., "typing.Awaitable"], typing.Any], **kwargs: typing.Any
     ) -> typing.Union[asyncio.Task, typing.Callable[..., asyncio.Task]]:
-        """Callable instance."""
+        """Callable instance.
+
+        :return: asyncio.Task or getter
+        :rtype: Union[asyncio.Task[Any], Callable[..., asyncio.Task[Any]]]
+        """
         return super().__call__(*args, **kwargs)  # type: ignore
 
     def __repr__(self) -> str:
-        """For debug purposes."""
+        """For debug purposes.
+
+        :return: repr info
+        :rtype: str
+        """
         return (
             f"<{self.__class__.__name__}("
             f"{self._func!r}, "

@@ -52,7 +52,11 @@ cdef class BaseDecorator:
         raise NotImplementedError()  # pragma: no cover
 
     def __call__(self, *args: typing.Union[typing.Callable, typing.Any], **kwargs: typing.Any) -> typing.Any:
-        """Main decorator getter."""
+        """Main decorator getter.
+
+        :return: result of decorated function or result getter
+        :rtype: Any
+        """
         cdef list l_args = list(args)
 
         if self._func:
@@ -66,18 +70,30 @@ cdef class BaseDecorator:
         return wrapper
 
     def __repr__(self) -> str:
-        """For debug purposes."""
+        """For debug purposes.
+
+        :return: repr info
+        :rtype: str
+        """
         return f"<{self.__class__.__name__}({self._func!r}) at 0x{id(self):X}>"  # pragma: no cover
 
     @staticmethod
     def _await_if_required(
         target: typing.Callable[..., typing.Union["typing.Awaitable", typing.Any]]
     ) -> typing.Callable[..., typing.Any]:
-        """Await result if coroutine was returned."""
+        """Await result if coroutine was returned.
+
+        :return: function, which will await for result if it's required
+        :rtype: Callable[..., Any]
+        """
 
         @functools.wraps(target)
         def wrapper(*args, **kwargs):  # type: (typing.Any, typing.Any) -> typing.Any
-            """Decorator/wrapper."""
+            """Decorator/wrapper.
+
+            :return: target execution result (awaited if needed)
+            :rtype: Any
+            """
             result = target(*args, **kwargs)
             if asyncio.iscoroutine(result):
                 loop = asyncio.new_event_loop()

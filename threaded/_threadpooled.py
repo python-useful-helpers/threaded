@@ -113,7 +113,11 @@ class ThreadPooled(_base_threaded.APIPooled):
         return self.__loop_getter_need_context
 
     def _get_loop(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Optional[asyncio.AbstractEventLoop]:
-        """Get event loop in decorator class."""
+        """Get event loop in decorator class.
+
+        :return: event loop if available or getter available
+        :rtype: Optional[asyncio.AbstractEventLoop]
+        """
         if callable(self.loop_getter):
             if self.loop_getter_need_context:
                 return self.loop_getter(*args, **kwargs)  # pylint: disable=not-callable
@@ -128,7 +132,7 @@ class ThreadPooled(_base_threaded.APIPooled):
         :param func: Wrapped function
         :type func: typing.Callable
         :return: wrapped coroutine or function
-        :rtype: typing.Callable[..., typing.Union[typing.Awaitable, concurrent.futures.Future]]
+        :rtype: Callable[..., Union[Awaitable, concurrent.futures.Future]]
         """
         prepared = self._await_if_required(func)
 
@@ -136,11 +140,12 @@ class ThreadPooled(_base_threaded.APIPooled):
         @functools.wraps(prepared)
         def wrapper(
             *args: typing.Any, **kwargs: typing.Any
-        ) -> typing.Union[
-            "concurrent.futures.Future[typing.Any]",
-            "typing.Awaitable[typing.Any]",
-            typing.Callable[..., "typing.Union[concurrent.futures.Future[typing.Any], typing.Awaitable[typing.Any]]"],
-        ]:
+        ) -> typing.Union["concurrent.futures.Future[typing.Any]", "typing.Awaitable[typing.Any]",]:
+            """Main function wrapper.
+
+            :return: coroutine or function
+            :rtype: Union[Awaitable, concurrent.futures.Future]
+            """
             loop: typing.Optional[asyncio.AbstractEventLoop] = self._get_loop(*args, **kwargs)
 
             if loop is None:
@@ -159,11 +164,19 @@ class ThreadPooled(_base_threaded.APIPooled):
         "typing.Awaitable[typing.Any]",
         typing.Callable[..., "typing.Union[concurrent.futures.Future[typing.Any], typing.Awaitable[typing.Any]]"],
     ]:
-        """Callable instance."""
+        """Callable instance.
+
+        :return: Future, Awaitable or it's getter (depends of decoration way and asyncio.Loop provided)
+        :rtype: Union[concurrent.futures.Future[Any], Awaitable[Any] Callable[..., ...]]
+        """
         return super().__call__(*args, **kwargs)  # type: ignore
 
     def __repr__(self) -> str:  # pragma: no cover
-        """For debug purposes."""
+        """For debug purposes.
+
+        :return: repr info
+        :rtype: str
+        """
         return (
             f"<{self.__class__.__name__}("
             f"{self._func!r}, "
