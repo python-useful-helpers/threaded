@@ -17,11 +17,14 @@
 Asyncio is supported
 """
 
+# Standard Library
 import functools
 import threading
 import typing
 
+# Threaded Implementation
 from threaded cimport class_decorator
+
 
 cpdef tuple __all__ = ("Threaded", "threaded")
 
@@ -56,7 +59,7 @@ cdef class Threaded(class_decorator.BaseDecorator):
             self.name = "Threaded: " + getattr(name, "__name__", str(hash(name)))  # type: str
         else:
             func, self.name = None, name  # type: ignore
-        super(Threaded, self).__init__(func=func)
+        super().__init__(func=func)
 
     def __repr__(self) -> str:  # pragma: no cover
         """For debug purposes."""
@@ -93,7 +96,7 @@ cdef class Threaded(class_decorator.BaseDecorator):
         **kwargs: typing.Any
     ) -> typing.Union[threading.Thread, typing.Callable[..., threading.Thread]]:
         """Executable instance."""
-        return super(Threaded, self).__call__(*args, **kwargs)  # type: ignore
+        return super().__call__(*args, **kwargs)  # type: ignore
 
 
 def threaded(  # noqa: F811
@@ -109,7 +112,7 @@ def threaded(  # noqa: F811
     :type daemon: bool
     :param started: Return started thread
     :type started: bool
-    :return: Threaded instance, if called as function or argumented decorator, else callable wraper
+    :return: Threaded instance, if called as function or argumented decorator, else callable wrapper
     :rtype: typing.Union[Threaded, typing.Callable[..., threading.Thread]]
     """
     if callable(name):

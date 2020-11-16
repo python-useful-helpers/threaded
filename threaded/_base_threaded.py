@@ -29,8 +29,6 @@ class APIPooled(class_decorator.BaseDecorator, metaclass=abc.ABCMeta):
 
     __slots__ = ()
 
-    __executor: typing.Optional[typing.Any] = None
-
     @classmethod
     @abc.abstractmethod
     def configure(cls: typing.Type["APIPooled"], max_workers: typing.Optional[int] = None) -> None:

@@ -77,7 +77,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
         :type func: typing.Optional[typing.Callable]
         """
         # noinspection PyArgumentList
-        super(BaseDecorator, self).__init__()
+        super().__init__()
         self.__func: typing.Optional[
             typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]
         ] = func
@@ -129,7 +129,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
         """Await result if coroutine was returned."""
 
         @functools.wraps(target)
-        def wrapper(*args, **kwargs):  # type: (typing.Any, typing.Any) -> typing.Any
+        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
             """Decorator/wrapper."""
             result = target(*args, **kwargs)
             if asyncio.iscoroutine(result):
@@ -148,6 +148,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
 # 8<----------------------------------------------------------------------------
 
 if __name__ == "__main__":
+    # Standard Library
     import doctest  # pragma: no cover
 
     doctest.testmod(verbose=True)  # pragma: no cover

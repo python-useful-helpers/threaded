@@ -59,7 +59,7 @@ class Threaded(class_decorator.BaseDecorator):
             self.__name: typing.Optional[str] = "Threaded: " + getattr(name, "__name__", str(hash(name)))
         else:
             func, self.__name = None, name
-        super(Threaded, self).__init__(func=func)
+        super().__init__(func=func)
 
     @property
     def name(self) -> typing.Optional[str]:
@@ -106,7 +106,7 @@ class Threaded(class_decorator.BaseDecorator):
 
         # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(prepared)
-        def wrapper(*args, **kwargs):  # type: (typing.Any, typing.Any) -> threading.Thread
+        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> threading.Thread:
             thread = threading.Thread(target=prepared, name=name, args=args, kwargs=kwargs, daemon=self.daemon)
             if self.started:
                 thread.start()
@@ -120,7 +120,7 @@ class Threaded(class_decorator.BaseDecorator):
         **kwargs: typing.Any,
     ) -> typing.Union[threading.Thread, typing.Callable[..., threading.Thread]]:
         """Executable instance."""
-        return super(Threaded, self).__call__(*args, **kwargs)  # type: ignore
+        return super().__call__(*args, **kwargs)  # type: ignore
 
 
 @typing.overload
@@ -150,7 +150,7 @@ def threaded(  # noqa: F811
     :type daemon: bool
     :param started: Return started thread
     :type started: bool
-    :return: Threaded instance, if called as function or argumented decorator, else callable wraper
+    :return: Threaded instance, if called as function or argumented decorator, else callable wrapper
     :rtype: typing.Union[Threaded, typing.Callable[..., threading.Thread]]
     """
     if callable(name):

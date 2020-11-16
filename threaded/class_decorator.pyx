@@ -14,6 +14,7 @@
 
 """Base class for decorators."""
 
+# Standard Library
 import asyncio
 import functools
 import typing
@@ -34,7 +35,7 @@ cdef class BaseDecorator:
         :type func: typing.Optional[typing.Callable]
         """
         # noinspection PyArgumentList
-        super(BaseDecorator, self).__init__()
+        super().__init__()
         # pylint: disable=assigning-non-slot
         self._func = func  # type: typing.Optional[typing.Callable]
         if self._func is not None:

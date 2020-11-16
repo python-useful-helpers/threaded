@@ -88,7 +88,7 @@ class ThreadPooled(_base_threaded.APIPooled):
         :param loop_getter_need_context: Loop getter requires function context
         :type loop_getter_need_context: bool
         """
-        super(ThreadPooled, self).__init__(func=func)
+        super().__init__(func=func)
         self.__loop_getter: typing.Optional[
             typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
         ] = loop_getter
@@ -160,7 +160,7 @@ class ThreadPooled(_base_threaded.APIPooled):
         typing.Callable[..., "typing.Union[concurrent.futures.Future[typing.Any], typing.Awaitable[typing.Any]]"],
     ]:
         """Callable instance."""
-        return super(ThreadPooled, self).__call__(*args, **kwargs)  # type: ignore
+        return super().__call__(*args, **kwargs)  # type: ignore
 
     def __repr__(self) -> str:  # pragma: no cover
         """For debug purposes."""

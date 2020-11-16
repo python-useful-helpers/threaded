@@ -51,7 +51,7 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         :param loop_getter_need_context: Loop getter requires function context
         :type loop_getter_need_context: bool
         """
-        super(AsyncIOTask, self).__init__(func=func)
+        super().__init__(func=func)
         self.__loop_getter: typing.Union[
             typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
         ] = loop_getter
@@ -73,7 +73,7 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         """
         return self.__loop_getter_need_context
 
-    def get_loop(self, *args, **kwargs):  # type: (typing.Any, typing.Any) -> asyncio.AbstractEventLoop
+    def get_loop(self, *args: typing.Any, **kwargs: typing.Any) -> asyncio.AbstractEventLoop:
         """Get event loop in decorator class."""
         if callable(self.loop_getter):
             if self.loop_getter_need_context:
@@ -93,7 +93,7 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         """
         # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):  # type: (typing.Any, typing.Any) -> asyncio.Task[typing.Any]
+        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> "asyncio.Task[typing.Any]":
             loop = self.get_loop(*args, **kwargs)
             return loop.create_task(func(*args, **kwargs))
 
@@ -105,7 +105,7 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         **kwargs: typing.Any,
     ) -> typing.Union["asyncio.Task[typing.Any]", typing.Callable[..., "asyncio.Task[typing.Any]"]]:
         """Callable instance."""
-        return super(AsyncIOTask, self).__call__(*args, **kwargs)  # type: ignore
+        return super().__call__(*args, **kwargs)  # type: ignore
 
     def __repr__(self) -> str:
         """For debug purposes."""

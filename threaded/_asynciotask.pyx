@@ -14,11 +14,14 @@
 
 """AsyncIOTask implementation."""
 
+# Standard Library
 import asyncio
 import functools
 import typing
 
+# Threaded Implementation
 from threaded cimport class_decorator
+
 
 cpdef tuple __all__ = ("AsyncIOTask", "asynciotask")
 
@@ -47,7 +50,7 @@ cdef class AsyncIOTask(class_decorator.BaseDecorator):
         :param loop_getter_need_context: Loop getter requires function context
         :type loop_getter_need_context: bool
         """
-        super(AsyncIOTask, self).__init__(func=func)
+        super().__init__(func=func)
         self.loop_getter = loop_getter
         self.loop_getter_need_context = loop_getter_need_context
 
@@ -81,7 +84,7 @@ cdef class AsyncIOTask(class_decorator.BaseDecorator):
         self, *args: typing.Union[typing.Callable[..., "typing.Awaitable"], typing.Any], **kwargs: typing.Any
     ) -> typing.Union[asyncio.Task, typing.Callable[..., asyncio.Task]]:
         """Callable instance."""
-        return super(AsyncIOTask, self).__call__(*args, **kwargs)  # type: ignore
+        return super().__call__(*args, **kwargs)  # type: ignore
 
     def __repr__(self) -> str:
         """For debug purposes."""

@@ -26,6 +26,7 @@ from ._threadpooled import ThreadPooled
 from ._threadpooled import threadpooled
 
 try:
+    # Local Implementation
     from ._version import version as __version__
 except ImportError:
     pass
