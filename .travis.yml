@@ -6,7 +6,7 @@ install:
   - &upgrade_python_toolset pip install --upgrade pip setuptools wheel
   - &install_test_deps pip install --upgrade -r pytest_requirements.txt
   - &install_deps pip install -r CI_REQUIREMENTS.txt
-  - pip install --upgrade pytest-cov coveralls
+  - pip install --upgrade coveralls
 
 _python:
   - &python36
