@@ -6,11 +6,10 @@ PYTHON_VERSIONS="cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39"
 export PYTHONDONTWRITEBYTECODE=1
 
 package_name="$1"
-if [[ -z "$package_name" ]]
-then
-    # shellcheck disable=SC2210
-    &>2 echo "Please pass package name as a first argument of this script ($0)"
-    exit 1
+if [[ -z "$package_name" ]]; then
+  # shellcheck disable=SC2210
+  echo &>2 "Please pass package name as a first argument of this script ($0)"
+  exit 1
 fi
 
 arch=$(uname -m)
@@ -19,28 +18,33 @@ arch=$(uname -m)
 rm -rf /io/.tox
 rm -rf /io/*.egg-info
 rm -rf /io/.pytest_cache
+rm -fv /io/dist/*-linux_*.whl
 find /io/ -noleaf -name "*.py[co]" -delete
 
 echo
 echo
 echo "Compile wheels"
+cd /io
+
 for PYTHON in ${PYTHON_VERSIONS}; do
-    /opt/python/"${PYTHON}"/bin/pip install -U pip setuptools
-    /opt/python/"${PYTHON}"/bin/pip install -r /io/build_requirements.txt
-    /opt/python/"${PYTHON}"/bin/pip wheel /io/ -w /io/dist/
-    cd /io
-    /opt/python/"${PYTHON}"/bin/python setup.py bdist_wheel clean
+  echo "Python ${PYTHON} ${arch}:"
+  python_bin="/opt/python/${PYTHON}/bin"
+  "$python_bin/pip" install -U pip setuptools auditwheel
+  "$python_bin/pip" install -r /io/build_requirements.txt
+  "$python_bin/pip" wheel /io/ -w /io/dist/
+  "$python_bin/python" setup.py bdist_wheel clean
 
-done
-
-echo
-echo
-echo "Bundle external shared libraries into the wheels"
-for whl in /io/dist/${package_name}*${arch}.whl; do
+  wheels=(/io/dist/"${package_name}"*"${PYTHON}"*linux_"${arch}".whl)
+  for whl in "${wheels[@]}"; do
     echo "Repairing $whl..."
-    auditwheel repair "$whl" -w /io/dist/
+    "$python_bin/python" -m auditwheel repair "$whl" -w /io/dist/
+    echo "Cleanup OS specific wheels"
+    rm -fv "$whl"
+  done
+  echo
 done
 
+echo
 echo "Cleanup OS specific wheels"
 rm -fv /io/dist/*-linux_*.whl
 
@@ -49,14 +53,16 @@ echo
 echo "Install packages and test"
 echo "dist directory:"
 ls /io/dist
+echo
 
 for PYTHON in ${PYTHON_VERSIONS}; do
-    echo
-    echo -n "Test $PYTHON: $package_name "
-    /opt/python/"${PYTHON}"/bin/python -c "import platform;print(platform.platform())"
-    /opt/python/"${PYTHON}"/bin/pip install "$package_name" --no-index -f file:///io/dist
-    /opt/python/"${PYTHON}"/bin/pip install pytest
-    /opt/python/"${PYTHON}"/bin/py.test -vvv /io/test
+  echo -n "Test $PYTHON ${arch}: $package_name "
+  python_bin="/opt/python/${PYTHON}/bin"
+  "$python_bin/python" -c "import platform;print(platform.platform())"
+  "$python_bin/pip" install "$package_name" --no-index -f file:///io/dist
+  "$python_bin/pip" install -r /io/pytest_requirements.txt
+  "$python_bin/py.test" -vvv /io/test
+  echo
 done
 
 find /io/dist/ -noleaf -type f -not -name "*$package_name*" -delete

@@ -1,4 +1,5 @@
 pytest
 pytest-cov
+pytest-mock
 # pytest-sugar
 coverage[toml]>=5.0
