@@ -1,2 +1,2 @@
-Cython; platform_python_implementation == "CPython"
+Cython==3.0.5; platform_python_implementation == "CPython"
 -r CI_REQUIREMENTS.txt
