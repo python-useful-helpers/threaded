@@ -23,10 +23,10 @@ import threading
 import typing
 
 # Package Implementation
+
 from threaded cimport class_decorator
 
-
-cpdef tuple __all__ = ("Threaded", "threaded")
+__all__ = ("Threaded", "threaded")
 
 
 cdef class Threaded(class_decorator.BaseDecorator):

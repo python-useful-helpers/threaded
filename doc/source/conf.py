@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-#
 # threaded documentation build configuration file, created by
 # sphinx-quickstart on Sun Oct 30 13:40:52 2016.
 #
@@ -16,7 +13,7 @@
 import pkg_resources
 
 release = pkg_resources.get_distribution("threaded").version
-version = '.'.join(release.split('.')[:2])
+version = ".".join(release.split(".")[:2])
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -36,32 +33,32 @@ version = '.'.join(release.split('.')[:2])
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
-    'sphinx.ext.coverage',
-    'sphinx.ext.viewcode',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.doctest",
+    "sphinx.ext.coverage",
+    "sphinx.ext.viewcode",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The encoding of source files.
 #
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = 'threaded'
-copyright = '2016-2017, Alexey Stepanov'
-author = 'Alexey Stepanov'
+project = "threaded"
+copyright = "2016-2017, Alexey Stepanov"  # noqa: A001
+author = "Alexey Stepanov"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -113,7 +110,7 @@ exclude_patterns = []
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -130,14 +127,14 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = "alabaster"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
 html_theme_options = {
-    'page_width': 'auto',
+    "page_width": "auto",
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -166,7 +163,7 @@ html_theme_options = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -246,34 +243,30 @@ html_static_path = ['_static']
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'threadeddoc'
+htmlhelp_basename = "threadeddoc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-     # The paper size ('letterpaper' or 'a4paper').
-     #
-     # 'papersize': 'letterpaper',
-
-     # The font size ('10pt', '11pt' or '12pt').
-     #
-     # 'pointsize': '10pt',
-
-     # Additional stuff for the LaTeX preamble.
-     #
-     # 'preamble': '',
-
-     # Latex figure (float) alignment
-     #
-     # 'figure_align': 'htbp',
+    # The paper size ('letterpaper' or 'a4paper').
+    #
+    # 'papersize': 'letterpaper',
+    # The font size ('10pt', '11pt' or '12pt').
+    #
+    # 'pointsize': '10pt',
+    # Additional stuff for the LaTeX preamble.
+    #
+    # 'preamble': '',
+    # Latex figure (float) alignment
+    #
+    # 'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'threaded.tex', 'threaded Documentation',
-     'Alexey Stepanov', 'manual'),
+    (master_doc, "threaded.tex", "threaded Documentation", "Alexey Stepanov", "manual"),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -313,10 +306,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'threaded', 'threaded Documentation',
-     [author], 1)
-]
+man_pages = [(master_doc, "threaded", "threaded Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 #
@@ -329,9 +319,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'threaded', 'threaded Documentation',
-     author, 'threaded', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        "threaded",
+        "threaded Documentation",
+        author,
+        "threaded",
+        "One line description of project.",
+        "Miscellaneous",
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.

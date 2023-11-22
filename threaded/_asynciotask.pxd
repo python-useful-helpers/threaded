@@ -18,9 +18,6 @@
 from threaded cimport class_decorator
 
 
-cpdef tuple __all__
-
-
 cdef class AsyncIOTask(class_decorator.BaseDecorator):
     """Wrap to asyncio.Task."""
 

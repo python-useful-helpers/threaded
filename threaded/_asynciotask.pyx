@@ -20,10 +20,10 @@ import functools
 import typing
 
 # Package Implementation
+
 from threaded cimport class_decorator
 
-
-cpdef tuple __all__ = ("AsyncIOTask", "asynciotask")
+__all__ = ("AsyncIOTask", "asynciotask")
 
 
 cdef class AsyncIOTask(class_decorator.BaseDecorator):

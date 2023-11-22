@@ -21,9 +21,6 @@ Asyncio is supported
 from threaded cimport class_decorator
 
 
-cpdef tuple __all__
-
-
 cdef class Threaded(class_decorator.BaseDecorator):
     """Run function in separate thread."""
 

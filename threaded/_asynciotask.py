@@ -3,9 +3,9 @@
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
-#
+
 #         http://www.apache.org/licenses/LICENSE-2.0
-#
+
 #    Unless required by applicable law or agreed to in writing, software
 #    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -14,7 +14,7 @@
 
 """AsyncIOTask implementation."""
 
-__all__ = ("AsyncIOTask", "asynciotask")
+from __future__ import annotations
 
 # Standard Library
 import asyncio
@@ -24,6 +24,16 @@ import typing
 # Local Implementation
 from . import class_decorator
 
+if typing.TYPE_CHECKING:
+    from collections.abc import Awaitable
+    from collections.abc import Callable
+
+    from typing_extensions import ParamSpec
+
+    Spec = ParamSpec("Spec")
+
+__all__ = ("AsyncIOTask", "asynciotask")
+
 
 class AsyncIOTask(class_decorator.BaseDecorator):
     """Wrap to asyncio.Task."""
@@ -32,36 +42,32 @@ class AsyncIOTask(class_decorator.BaseDecorator):
 
     def __init__(
         self,
-        func: typing.Optional[typing.Callable[..., "typing.Awaitable[typing.Any]"]] = None,
+        func: Callable[..., Awaitable[typing.Any]] | None = None,
         *,
-        loop_getter: typing.Union[
-            typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
-        ] = asyncio.get_event_loop,
+        loop_getter: (Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop) = asyncio.get_event_loop,
         loop_getter_need_context: bool = False,
     ) -> None:
         """Wrap function in future and return.
 
         :param func: Function to wrap
-        :type func: typing.Optional[typing.Callable[..., typing.Awaitable]]
+        :type func: typing.Optional[Callable[..., Awaitable]]
         :param loop_getter: Method to get event loop, if wrap in asyncio task
         :type loop_getter: typing.Union[
-                               typing.Callable[..., asyncio.AbstractEventLoop],
+                               Callable[..., asyncio.AbstractEventLoop],
                                asyncio.AbstractEventLoop
                            ]
         :param loop_getter_need_context: Loop getter requires function context
         :type loop_getter_need_context: bool
         """
         super().__init__(func=func)
-        self.__loop_getter: typing.Union[
-            typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
-        ] = loop_getter
+        self.__loop_getter: (Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop) = loop_getter
         self.__loop_getter_need_context: bool = loop_getter_need_context
 
     @property
-    def loop_getter(self) -> typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]:
+    def loop_getter(self) -> Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop:
         """Loop getter.
 
-        :rtype: typing.Union[typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
+        :rtype: typing.Union[Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop]
         """
         return self.__loop_getter
 
@@ -86,39 +92,40 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         return self.loop_getter
 
     def _get_function_wrapper(
-        self, func: typing.Callable[..., "typing.Awaitable[typing.Any]"]
-    ) -> typing.Callable[..., "asyncio.Task[typing.Any]"]:
+        self, func: Callable[Spec, Awaitable[typing.Any]]
+    ) -> Callable[..., asyncio.Task[typing.Any]]:
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
-        :type func: typing.Callable[..., typing.Awaitable]
+        :type func: Callable[..., Awaitable]
         :return: wrapper, which will produce asyncio.Task on call with function called inside it
-        :rtype: typing.Callable[..., asyncio.Task]
+        :rtype: Callable[..., asyncio.Task]
         """
+
         # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(func)
-        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> "asyncio.Task[typing.Any]":
+        def wrapper(*args: Spec.args, **kwargs: Spec.kwargs) -> asyncio.Task[typing.Any]:
             """Function wrapper.
 
             :return: asyncio.Task
             :rtype: asyncio.Task[Any]
             """
             loop = self.get_loop(*args, **kwargs)
-            return loop.create_task(func(*args, **kwargs))
+            return loop.create_task(func(*args, **kwargs))  # type: ignore[arg-type]
 
         return wrapper
 
-    def __call__(  # pylint: disable=useless-super-delegation
+    def __call__(
         self,
-        *args: typing.Union[typing.Callable[..., "typing.Awaitable[typing.Any]"], typing.Any],
+        *args: Callable[..., Awaitable[typing.Any]] | typing.Any,
         **kwargs: typing.Any,
-    ) -> typing.Union["asyncio.Task[typing.Any]", typing.Callable[..., "asyncio.Task[typing.Any]"]]:
+    ) -> asyncio.Task[typing.Any] | Callable[..., asyncio.Task[typing.Any]]:
         """Callable instance.
 
         :return: asyncio.Task or getter
         :rtype: Union[asyncio.Task[Any], Callable[..., asyncio.Task[Any]]]
         """
-        return super().__call__(*args, **kwargs)  # type: ignore
+        return super().__call__(*args, **kwargs)  # type: ignore[no-any-return]
 
     def __repr__(self) -> str:
         """For debug purposes.
@@ -139,50 +146,50 @@ class AsyncIOTask(class_decorator.BaseDecorator):
 def asynciotask(
     func: None = None,
     *,
-    loop_getter: typing.Union[
-        typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
-    ] = asyncio.get_event_loop,
+    loop_getter: (Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop) = asyncio.get_event_loop,
     loop_getter_need_context: bool = False,
 ) -> AsyncIOTask:
     """Overload: no function."""
 
 
-@typing.overload  # noqa: F811
+@typing.overload
 def asynciotask(
-    func: typing.Callable[..., "typing.Awaitable[typing.Any]"],
+    func: Callable[..., Awaitable[typing.Any]],
     *,
-    loop_getter: typing.Union[
-        typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
-    ] = asyncio.get_event_loop,
+    loop_getter: (Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop) = asyncio.get_event_loop,
     loop_getter_need_context: bool = False,
-) -> typing.Callable[..., "asyncio.Task[typing.Any]"]:
+) -> Callable[..., asyncio.Task[typing.Any]]:
     """Overload: provided function."""
 
 
-def asynciotask(  # noqa: F811
-    func: typing.Optional[typing.Callable[..., "typing.Awaitable[typing.Any]"]] = None,
+def asynciotask(
+    func: Callable[..., Awaitable[typing.Any]] | None = None,
     *,
-    loop_getter: typing.Union[
-        typing.Callable[..., asyncio.AbstractEventLoop], asyncio.AbstractEventLoop
-    ] = asyncio.get_event_loop,
+    loop_getter: (Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop) = asyncio.get_event_loop,
     loop_getter_need_context: bool = False,
-) -> typing.Union[AsyncIOTask, typing.Callable[..., "asyncio.Task[typing.Any]"]]:
+) -> AsyncIOTask | Callable[..., asyncio.Task[typing.Any]]:
     """Wrap function in future and return.
 
     :param func: Function to wrap
-    :type func: typing.Optional[typing.Callable[..., typing.Awaitable]]
+    :type func: typing.Optional[Callable[..., Awaitable]]
     :param loop_getter: Method to get event loop, if wrap in asyncio task
     :type loop_getter: typing.Union[
-                           typing.Callable[..., asyncio.AbstractEventLoop],
+                           Callable[..., asyncio.AbstractEventLoop],
                            asyncio.AbstractEventLoop
                        ]
     :param loop_getter_need_context: Loop getter requires function context
     :type loop_getter_need_context: bool
     :return: AsyncIOTask instance, if called as function or argumented decorator, else callable wrapper
-    :rtype: typing.Union[AsyncIOTask, typing.Callable[..., asyncio.Task]]
+    :rtype: typing.Union[AsyncIOTask, Callable[..., asyncio.Task]]
     """
     if func is None:
-        return AsyncIOTask(func=func, loop_getter=loop_getter, loop_getter_need_context=loop_getter_need_context)
-    return AsyncIOTask(  # type: ignore
-        func=None, loop_getter=loop_getter, loop_getter_need_context=loop_getter_need_context
+        return AsyncIOTask(
+            func=func,
+            loop_getter=loop_getter,
+            loop_getter_need_context=loop_getter_need_context,
+        )
+    return AsyncIOTask(  # type: ignore[return-value]
+        func=None,
+        loop_getter=loop_getter,
+        loop_getter_need_context=loop_getter_need_context,
     )(func)

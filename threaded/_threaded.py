@@ -3,9 +3,9 @@
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
-#
+
 #         http://www.apache.org/licenses/LICENSE-2.0
-#
+
 #    Unless required by applicable law or agreed to in writing, software
 #    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -17,7 +17,7 @@
 Asyncio is supported
 """
 
-__all__ = ("Threaded", "threaded")
+from __future__ import annotations
 
 # Standard Library
 import functools
@@ -27,6 +27,16 @@ import typing
 # Local Implementation
 from . import class_decorator
 
+if typing.TYPE_CHECKING:
+    from collections.abc import Awaitable
+    from collections.abc import Callable
+
+    from typing_extensions import ParamSpec
+
+    Spec = ParamSpec("Spec")
+
+__all__ = ("Threaded", "threaded")
+
 
 class Threaded(class_decorator.BaseDecorator):
     """Run function in separate thread."""
@@ -35,9 +45,7 @@ class Threaded(class_decorator.BaseDecorator):
 
     def __init__(
         self,
-        name: typing.Optional[
-            typing.Union[str, typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]]
-        ] = None,
+        name: None | (str | Callable[..., Awaitable[typing.Any] | typing.Any]) = None,
         daemon: bool = False,
         started: bool = False,
     ) -> None:
@@ -46,7 +54,7 @@ class Threaded(class_decorator.BaseDecorator):
         :param name: New thread name.
                      If callable: use as wrapped function.
                      If none: use wrapped function name.
-        :type name: typing.Optional[typing.Union[str, typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]]]
+        :type name: typing.Optional[typing.Union[str, Callable[..., typing.Union[Awaitable, typing.Any]]]]
         :param daemon: Daemonize thread.
         :type daemon: bool
         :param started: Return started thread
@@ -55,14 +63,14 @@ class Threaded(class_decorator.BaseDecorator):
         self.__daemon: bool = daemon
         self.__started: bool = started
         if callable(name):
-            func: typing.Optional[typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]] = name
-            self.__name: typing.Optional[str] = "Threaded: " + getattr(name, "__name__", str(hash(name)))
+            func: Callable[..., Awaitable[typing.Any] | typing.Any] | None = name
+            self.__name: str | None = "Threaded: " + getattr(name, "__name__", str(hash(name)))
         else:
             func, self.__name = None, name
         super().__init__(func=func)
 
     @property
-    def name(self) -> typing.Optional[str]:
+    def name(self) -> str | None:
         """Thread name.
 
         :rtype: typing.Optional[str]
@@ -94,23 +102,23 @@ class Threaded(class_decorator.BaseDecorator):
         return f"{self.__class__.__name__}(name={self.name!r}, daemon={self.daemon!r}, started={self.started!r}, )"
 
     def _get_function_wrapper(
-        self, func: typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]
-    ) -> typing.Callable[..., threading.Thread]:
+        self, func: Callable[Spec, Awaitable[typing.Any] | typing.Any]
+    ) -> Callable[..., threading.Thread]:
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
-        :type func: typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]
+        :type func: Callable[..., typing.Union[Awaitable, typing.Any]]
         :return: wrapped function
-        :rtype: typing.Callable[..., threading.Thread]
+        :rtype: Callable[..., threading.Thread]
         """
-        prepared: typing.Callable[..., typing.Any] = self._await_if_required(func)
-        name: typing.Optional[str] = self.name
+        prepared: Callable[Spec, typing.Any] = self._await_if_required(func)
+        name: str | None = self.name
         if name is None:
             name = "Threaded: " + getattr(func, "__name__", str(hash(func)))
 
         # noinspection PyMissingOrEmptyDocstring
         @functools.wraps(prepared)
-        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> threading.Thread:
+        def wrapper(*args: Spec.args, **kwargs: Spec.kwargs) -> threading.Thread:
             """Thread getter.
 
             :return: Thread object
@@ -123,50 +131,56 @@ class Threaded(class_decorator.BaseDecorator):
 
         return wrapper
 
-    def __call__(  # pylint: disable=useless-super-delegation
+    def __call__(
         self,
-        *args: typing.Union[typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]], typing.Any],
+        *args: Callable[..., Awaitable[typing.Any] | typing.Any] | typing.Any,
         **kwargs: typing.Any,
-    ) -> typing.Union[threading.Thread, typing.Callable[..., threading.Thread]]:
+    ) -> threading.Thread | Callable[..., threading.Thread]:
         """Executable instance.
 
         :return: Thread object or Thread getter
         :rtype: Union[threading.Thread, Callable[..., threading.Thread]]
         """
-        return super().__call__(*args, **kwargs)  # type: ignore
+        return super().__call__(*args, **kwargs)  # type: ignore[no-any-return]
 
 
 @typing.overload
 def threaded(
-    name: typing.Callable[..., typing.Any], daemon: bool = False, started: bool = False
-) -> typing.Callable[..., threading.Thread]:
+    name: Callable[..., typing.Any], daemon: bool = False, started: bool = False
+) -> Callable[..., threading.Thread]:
     """Overload: Call decorator without arguments."""
 
 
-@typing.overload  # noqa: F811
-def threaded(name: typing.Optional[str] = None, daemon: bool = False, started: bool = False) -> Threaded:
+@typing.overload
+def threaded(name: str | None = None, daemon: bool = False, started: bool = False) -> Threaded:
     """Overload: Name is not callable."""
 
 
-def threaded(  # noqa: F811
-    name: typing.Optional[typing.Union[str, typing.Callable[..., typing.Any]]] = None,
+def threaded(
+    name: str | Callable[..., typing.Any] | None = None,
     daemon: bool = False,
     started: bool = False,
-) -> typing.Union[Threaded, typing.Callable[..., threading.Thread]]:
+) -> Threaded | Callable[..., threading.Thread]:
     """Run function in separate thread.
 
     :param name: New thread name.
                  If callable: use as wrapped function.
                  If none: use wrapped function name.
-    :type name: typing.Union[None, str, typing.Callable]
+    :type name: typing.Union[None, str, Callable]
     :param daemon: Daemonize thread.
     :type daemon: bool
     :param started: Return started thread
     :type started: bool
     :return: Threaded instance, if called as function or argumented decorator, else callable wrapper
-    :rtype: typing.Union[Threaded, typing.Callable[..., threading.Thread]]
+    :rtype: typing.Union[Threaded, Callable[..., threading.Thread]]
     """
     if callable(name):
         func, name = (name, "Threaded: " + getattr(name, "__name__", str(hash(name))))
-        return Threaded(name=name, daemon=daemon, started=started)(func)  # type: ignore
+        return Threaded(
+            name=name,
+            daemon=daemon,
+            started=started,
+        )(
+            func
+        )  # type: ignore[return-value]
     return Threaded(name=name, daemon=daemon, started=started)

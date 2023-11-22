@@ -15,6 +15,7 @@
 # Standard Library
 import asyncio
 import concurrent.futures
+import sys
 import threading
 import unittest
 
@@ -22,6 +23,7 @@ import unittest
 import threaded
 
 
+@unittest.skipIf(sys.version_info >= (3, 11), "No 'coroutine' in new python")
 class TestThreadPooled(unittest.TestCase):
     def tearDown(self):
         threaded.ThreadPooled.shutdown()
@@ -81,6 +83,7 @@ class TestThreadPooled(unittest.TestCase):
         self.assertNotEqual(pooled_name, threading.current_thread().name)
 
 
+@unittest.skipIf(sys.version_info >= (3, 11), "No 'coroutine' in new python")
 class TestAsyncIOTask(unittest.TestCase):
     def test_default(self):
         @threaded.asynciotask

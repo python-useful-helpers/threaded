@@ -19,6 +19,8 @@ import asyncio
 import functools
 import typing
 
+__all__ = ("BaseDecorator",)
+
 
 cdef class BaseDecorator:
     """Base class for decorators.

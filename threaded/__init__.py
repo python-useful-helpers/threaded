@@ -3,9 +3,9 @@
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
-#
+
 #         http://www.apache.org/licenses/LICENSE-2.0
-#
+
 #    Unless required by applicable law or agreed to in writing, software
 #    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -14,8 +14,7 @@
 
 """threaded module."""
 
-# Standard Library
-import typing
+from __future__ import annotations
 
 # Local Implementation
 from ._asynciotask import AsyncIOTask
@@ -25,7 +24,7 @@ from ._threaded import threaded
 from ._threadpooled import ThreadPooled
 from ._threadpooled import threadpooled
 
-try:
+try:  # noqa: SIM105,FURB107,RUF100
     # Local Implementation
     from ._version import version as __version__
 except ImportError:
@@ -38,7 +37,8 @@ __all__ = (
     "threaded",
     "AsyncIOTask",
     "asynciotask",
-)  # type: typing.Tuple[str, ...]
+    "__version__",
+)
 
 __author__ = "Alexey Stepanov"
 __author_email__ = "penguinolog@gmail.com"

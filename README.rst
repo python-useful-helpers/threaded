@@ -1,8 +1,6 @@
 threaded
 ========
 
-.. image:: https://travis-ci.com/python-useful-helpers/threaded.svg?branch=master
-    :target: https://travis-ci.com/python-useful-helpers/threaded
 .. image:: https://github.com/python-useful-helpers/threaded/workflows/Python%20package/badge.svg
     :target: https://github.com/python-useful-helpers/threaded/actions
 .. image:: https://coveralls.io/repos/github/python-useful-helpers/threaded/badge.svg?branch=master
@@ -36,17 +34,6 @@ Pros:
 * Open Source: https://github.com/python-useful-helpers/threaded
 * PyPI packaged: https://pypi.python.org/pypi/threaded
 * Tested: see bages on top
-* Support multiple Python versions:
-
-::
-
-    Python 3.4
-    Python 3.5
-    Python 3.6
-    Python 3.7
-    PyPy3 3.5+
-
-.. note:: For python 2.7/PyPy you can use versions 1.x.x
 
 Decorators:
 
@@ -66,10 +53,6 @@ ThreadPooled
 ------------
 Mostly it is required decorator: submit function to ThreadPoolExecutor on call.
 
-.. note::
-
-    API quite differs between Python 3 and Python 2.7. See API section below.
-
 .. code-block:: python
 
     threaded.ThreadPooled.configure(max_workers=3)
@@ -86,7 +69,7 @@ Mostly it is required decorator: submit function to ThreadPoolExecutor on call.
 
     concurrent.futures.wait([func()])
 
-Python 3.5+ usage with asyncio:
+Usage with asyncio:
 
 .. note::
 
@@ -217,11 +200,9 @@ CI systems
 ==========
 For code checking several CI systems is used in parallel:
 
-1. `Travis CI: <https://travis-ci.com/python-useful-helpers/threaded>`_ is used for checking: PEP8, pylint, bandit, installation possibility and unit tests. Also it's publishes coverage on coveralls.
-
 2. `GitHub actions: <https://github.com/python-useful-helpers/threaded/actions>`_ is used for checking: PEP8, pylint, bandit, installation possibility and unit tests.
 3. `coveralls: <https://coveralls.io/github/python-useful-helpers/threaded>`_ is used for coverage display.
 
 CD system
 =========
-`Travis CI: <https://travis-ci.com/python-useful-helpers/threaded>`_ is used for package delivery on PyPI.
+`GitHub actions: <https://github.com/python-useful-helpers/threaded/actions>`_ is used for package delivery on PyPI.

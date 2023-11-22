@@ -1,13 +1,11 @@
-#!/usr/bin/env python
-
 #    Copyright 2017 - 2020 Alexey Stepanov aka penguinolog
 ##
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
-#
+
 #         http://www.apache.org/licenses/LICENSE-2.0
-#
+
 #    Unless required by applicable law or agreed to in writing, software
 #    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -16,7 +14,7 @@
 
 """Base class for decorators."""
 
-__all__ = ("BaseDecorator",)
+from __future__ import annotations
 
 # Standard Library
 import abc
@@ -24,8 +22,18 @@ import asyncio
 import functools
 import typing
 
+if typing.TYPE_CHECKING:
+    from collections.abc import Awaitable
+    from collections.abc import Callable
 
-class BaseDecorator(metaclass=abc.ABCMeta):
+    from typing_extensions import ParamSpec
+
+    Spec = ParamSpec("Spec")
+
+__all__ = ("BaseDecorator",)
+
+
+class BaseDecorator(abc.ABC):
     """Base class for decorators.
 
     Implements wrapping and __call__, wrapper getter is abstract.
@@ -69,44 +77,42 @@ class BaseDecorator(metaclass=abc.ABCMeta):
 
     def __init__(
         self,
-        func: typing.Optional[typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]] = None,
+        func: Callable[..., Awaitable[typing.Any] | typing.Any] | None = None,
     ) -> None:
         """Decorator.
 
         :param func: function to wrap
-        :type func: typing.Optional[typing.Callable]
+        :type func: typing.Optional[Callable]
         """
         # noinspection PyArgumentList
         super().__init__()
-        self.__func: typing.Optional[
-            typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]
-        ] = func
+        self.__func: None | (Callable[..., Awaitable[typing.Any] | typing.Any]) = func
         if self.__func is not None:
             functools.update_wrapper(self, self.__func)
 
     @property
-    def _func(self) -> typing.Optional[typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]]:
+    def _func(self) -> Callable[..., Awaitable[typing.Any] | typing.Any] | None:
         """Get wrapped function.
 
-        :rtype: typing.Optional[typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]]
+        :rtype: typing.Optional[Callable[..., typing.Union[Awaitable, typing.Any]]]
         """
         return self.__func  # pragma: no cover
 
     @abc.abstractmethod
     def _get_function_wrapper(
-        self, func: typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]
-    ) -> typing.Callable[..., typing.Any]:
+        self, func: Callable[..., Awaitable[typing.Any] | typing.Any]
+    ) -> Callable[..., typing.Any]:
         """Here should be constructed and returned real decorator.
 
         :param func: Wrapped function
-        :type func: typing.Callable[..., typing.Union[typing.Awaitable, typing.Any]]
-        :rtype: typing.Callable
+        :type func: Callable[..., typing.Union[Awaitable, typing.Any]]
+        :rtype: Callable
         """
         raise NotImplementedError()  # pragma: no cover
 
     def __call__(
         self,
-        *args: typing.Union[typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]], typing.Any],
+        *args: Callable[..., Awaitable[typing.Any] | typing.Any] | typing.Any,
         **kwargs: typing.Any,
     ) -> typing.Any:
         """Main decorator getter.
@@ -114,22 +120,20 @@ class BaseDecorator(metaclass=abc.ABCMeta):
         :return: result of decorated function or result getter
         :rtype: Any
         """
-        l_args: typing.List[typing.Any] = list(args)
+        l_args: list[typing.Any] = list(args)
 
         if self._func:
-            wrapped: typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]] = self._func
+            wrapped: Callable[..., Awaitable[typing.Any] | typing.Any] = self._func
         else:
             wrapped = l_args.pop(0)
 
-        wrapper: typing.Callable[..., typing.Any] = self._get_function_wrapper(wrapped)
+        wrapper: Callable[..., typing.Any] = self._get_function_wrapper(wrapped)
         if self.__func:
             return wrapper(*l_args, **kwargs)
         return wrapper
 
     @staticmethod
-    def _await_if_required(
-        target: typing.Callable[..., typing.Union["typing.Awaitable[typing.Any]", typing.Any]]
-    ) -> typing.Callable[..., typing.Any]:
+    def _await_if_required(target: Callable[Spec, Awaitable[typing.Any] | typing.Any]) -> Callable[Spec, typing.Any]:
         """Await result if coroutine was returned.
 
         :return: function, which will await for result if it's required
@@ -137,7 +141,7 @@ class BaseDecorator(metaclass=abc.ABCMeta):
         """
 
         @functools.wraps(target)
-        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
+        def wrapper(*args: Spec.args, **kwargs: Spec.kwargs) -> typing.Any:
             """Decorator/wrapper.
 
             :return: target execution result (awaited if needed)
