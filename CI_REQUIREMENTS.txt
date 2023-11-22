@@ -1,4 +1,4 @@
 -r requirements.txt
 setuptools>=61.0.0
 setuptools_scm[toml]>=6.2
-wheel
+wheel==0.41.3
