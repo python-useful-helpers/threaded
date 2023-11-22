@@ -136,7 +136,7 @@ jobs:
 
   UploadCoverage:
     name: Upload coverage to Coveralls
-    needs: [ Test ]
+    needs: [ TestScript ]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
