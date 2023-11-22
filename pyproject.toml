@@ -52,7 +52,7 @@ write_to = "threaded/_version.py"
 # Disable building PyPy wheels on all platforms
 # Disable musllinux as not popular platform
 skip = ["pp*", "*-musllinux_*"]
-before-build = "pip install -U pip cython -r CI_REQUIREMENTS.txt"
+before-build = "python -m pip install -U pip cython -r CI_REQUIREMENTS.txt"
 build-frontend = { name = "build", args = ["--no-isolation"] }
 
 [tool.black]
