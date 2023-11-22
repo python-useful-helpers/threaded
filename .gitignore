@@ -815,3 +815,5 @@ fabric.properties
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# ruff
+/.ruff_cache/
