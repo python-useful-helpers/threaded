@@ -1,4 +1,4 @@
 flake8
-flake8-bugbear
+flake8-bugbear==23.9.16
 pep8-naming
 flake8-docstrings
