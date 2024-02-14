@@ -226,7 +226,7 @@ jobs:
       - name: Build package
         run: |
           python -m build
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: dist/*
           name: wheels
@@ -295,7 +295,7 @@ jobs:
           CIBW_ARCHS_WINDOWS: auto64
           CIBW_ARCHS_MACOS: x86_64 universal2 arm64
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: ./wheelhouse/*.whl
           name: wheels
