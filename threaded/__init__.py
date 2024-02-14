@@ -31,13 +31,13 @@ except ImportError:
     pass
 
 __all__ = (
+    "AsyncIOTask",
     "ThreadPooled",
     "Threaded",
-    "threadpooled",
-    "threaded",
-    "AsyncIOTask",
-    "asynciotask",
     "__version__",
+    "asynciotask",
+    "threaded",
+    "threadpooled",
 )
 
 __author__ = "Alexey Stepanov"

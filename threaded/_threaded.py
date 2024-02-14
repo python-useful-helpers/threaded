@@ -41,7 +41,7 @@ __all__ = ("Threaded", "threaded")
 class Threaded(class_decorator.BaseDecorator):
     """Run function in separate thread."""
 
-    __slots__ = ("__name", "__daemon", "__started")
+    __slots__ = ("__daemon", "__name", "__started")
 
     def __init__(
         self,

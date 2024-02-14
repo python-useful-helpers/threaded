@@ -44,7 +44,7 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         self,
         func: Callable[..., Awaitable[typing.Any]] | None = None,
         *,
-        loop_getter: (Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop) = asyncio.get_event_loop,
+        loop_getter: Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop = asyncio.get_event_loop,
         loop_getter_need_context: bool = False,
     ) -> None:
         """Wrap function in future and return.
@@ -60,7 +60,7 @@ class AsyncIOTask(class_decorator.BaseDecorator):
         :type loop_getter_need_context: bool
         """
         super().__init__(func=func)
-        self.__loop_getter: (Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop) = loop_getter
+        self.__loop_getter: Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop = loop_getter
         self.__loop_getter_need_context: bool = loop_getter_need_context
 
     @property
@@ -146,7 +146,7 @@ class AsyncIOTask(class_decorator.BaseDecorator):
 def asynciotask(
     func: None = None,
     *,
-    loop_getter: (Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop) = asyncio.get_event_loop,
+    loop_getter: Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop = asyncio.get_event_loop,
     loop_getter_need_context: bool = False,
 ) -> AsyncIOTask:
     """Overload: no function."""
@@ -156,7 +156,7 @@ def asynciotask(
 def asynciotask(
     func: Callable[..., Awaitable[typing.Any]],
     *,
-    loop_getter: (Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop) = asyncio.get_event_loop,
+    loop_getter: Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop = asyncio.get_event_loop,
     loop_getter_need_context: bool = False,
 ) -> Callable[..., asyncio.Task[typing.Any]]:
     """Overload: provided function."""
@@ -165,7 +165,7 @@ def asynciotask(
 def asynciotask(
     func: Callable[..., Awaitable[typing.Any]] | None = None,
     *,
-    loop_getter: (Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop) = asyncio.get_event_loop,
+    loop_getter: Callable[..., asyncio.AbstractEventLoop] | asyncio.AbstractEventLoop = asyncio.get_event_loop,
     loop_getter_need_context: bool = False,
 ) -> AsyncIOTask | Callable[..., asyncio.Task[typing.Any]]:
     """Wrap function in future and return.
