@@ -110,8 +110,7 @@ class AsyncIOTask(class_decorator.BaseDecorator):
             :return: asyncio.Task
             :rtype: asyncio.Task[Any]
             """
-            loop = self.get_loop(*args, **kwargs)
-            return loop.create_task(func(*args, **kwargs))  # type: ignore[arg-type]
+            return self.get_loop(*args, **kwargs).create_task(func(*args, **kwargs))  # type: ignore[arg-type]
 
         return wrapper
 
