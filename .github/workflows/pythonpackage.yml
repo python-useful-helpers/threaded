@@ -24,7 +24,7 @@ jobs:
           pip install --upgrade ruff
       - name: Lint with ruff
         run: |
-          ruff . --output-format github
+          ruff check . --output-format github
 
   PyLint:
     runs-on: ubuntu-latest
@@ -226,10 +226,10 @@ jobs:
       - name: Build package
         run: |
           python -m build
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: dist/*
-          name: wheels
+          name: built-sdist
 
   Metadata:
     name: Validate metadata
@@ -246,11 +246,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade twine
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.8
         with:
-          # unpacks default artifact into dist/
-          # if `name: wheels` is omitted, the action will create extra parent dir
-          name: wheels
+          pattern: built-*
+          merge-multiple: true
           path: dist
       - name: Validate metadata
         run: |
@@ -287,7 +286,7 @@ jobs:
           platforms: all
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.19.1
+        uses: pypa/cibuildwheel@v2.20.0
         env:
           # configure cibuildwheel to build native archs ('auto'), and some
           # emulated ones
@@ -298,7 +297,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
-          name: wheels
+          name: built-bdist
           retention-days: 3
 
   upload_pypi:
@@ -314,11 +313,10 @@ jobs:
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.8
         with:
-          # unpacks default artifact into dist/
-          # if `name: wheels` is omitted, the action will create extra parent dir
-          name: wheels
+          pattern: built-*
+          merge-multiple: true
           path: dist
 
       - name: Publish package distributions to PyPI
