@@ -96,7 +96,7 @@ jobs:
           pip install --upgrade refurb
       - name: Lint with refurb
         run: |
-          refurb threaded
+          refurb --format github threaded
 
   TestScript:
     needs: [PEP8, PyLint, MyPy, Black, Refurb]  # isort is broken
